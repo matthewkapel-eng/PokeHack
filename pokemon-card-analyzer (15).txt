@@ -1,0 +1,85 @@
+P
+PokeGrade
+INVESTMENT ANALYZER
+Real Comp Links
+30 cards
+EBAY APP ID FOR LIVE COMPS
+
+Free at developer.ebay.com/my/keys
+Sign up → Create App → copy "App ID (Client ID)"
+ANTHROPIC KEY AI EXPAND ONLY
+
+console.anthropic.com · saved locally only.
+SEARCH
+
+PSA 10 POP COUNT
+Max pop
+≤ 10,000
+0
+10,000
+PSA 10 PRICE
+Max price
+Any
+$0
+$10M
+POKÉMON
+All
+Pikachu
+Charizard
+Mew
+Lugia
+Umbreon
+Gengar
+Eevee
+Rayquaza
+Mewtwo
+Gyarados
+Dragonite
+ERA
+All
+WOTC
+EX Era
+DP/Plat
+Modern
+CATEGORY
+All
+Promo
+Holo
+Gold Star
+Shiny
+Japanese
+SCORE WEIGHTS
+Pop Scarcity
+
+8
+Fan Demand
+
+7
+Price / Value
+
+6
+Pop Growth
+
+5
+Vintage Age
+
+4
+⚡ Run Analysis
+✨
+AI Expand Database
+
+ALGORITHM
+Score = Σ(weightᵢ × factorᵢ)
+────────────────────
+Pop Scarcity = 1/log(pop+1)
+Fan Demand = tier × 0.1
+Price/Value = mkt vs psa10
+Pop Growth = Δpop/month ↑
+Vintage = (2026-year)/28
+⚠
+Prices & pops are estimates — verify on PSA Pop Report & eBay Sold. Use ⚡ Fetch Live Sales on each card for real comps.
+Showing — cards
+Score ↓
+Pop ↑
+Price
+Upside %

@@ -21,6 +21,14 @@ export default async function handler(req, res) {
   const { action, code, refresh_token } = req.method === 'POST' ? req.body : req.query;
 
   try {
+    // ── Return eBay OAuth authorization URL
+    if (action === 'auth_url') {
+      const ruName = encodeURIComponent(EBAY_REDIRECT_URI);
+      const scopes = encodeURIComponent('https://api.ebay.com/oauth/api_scope');
+      const authUrl = `https://auth.ebay.com/oauth2/authorize?client_id=${EBAY_CLIENT_ID}&response_type=code&redirect_uri=${ruName}&scope=${scopes}`;
+      return res.status(200).json({ auth_url: authUrl });
+    }
+
     // ── Exchange authorization code for access + refresh token
     if (action === 'exchange') {
       if (!code) return res.status(400).json({ error: 'Missing authorization code' });

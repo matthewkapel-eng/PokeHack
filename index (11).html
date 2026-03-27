@@ -1,0 +1,2120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PokeGrade — Card Investment Analyzer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg:#000000; --bg2:#0a0a0a; --bg3:#111111; --bg4:#1a1a1a;
+  --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.14);
+  --text:#f0f0f0; --muted:#666666; --dim:#2a2a2a;
+  --gold:#f5c842; --gold2:#d4a820;
+  --mint:#00e5a0; --red:#ff4444; --blue:#4da6ff; --purple:#b06aff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;}
+body{min-height:100vh;}
+
+/* ── Header ── */
+header{border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:rgba(9,9,15,0.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,#f0c040,#d4a820);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#09090f;}
+.logo-text{font-size:16px;font-weight:600;letter-spacing:-0.3px;}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;}
+.hdr-right{display:flex;gap:8px;align-items:center;}
+.hbadge{font-size:10px;font-family:'DM Mono',monospace;background:var(--bg3);border:1px solid var(--border2);padding:3px 9px;border-radius:20px;color:var(--muted);}
+.hbadge.on{color:var(--mint);border-color:rgba(56,217,169,0.3);}
+.hbadge.on::before{content:'● ';font-size:7px;}
+#dbCount{color:var(--gold);}
+
+/* ── Layout ── */
+.app{display:grid;grid-template-columns:270px 1fr;min-height:calc(100vh - 57px);}
+.sidebar{border-right:1px solid var(--border);padding:20px 16px;background:var(--bg2);overflow-y:auto;max-height:calc(100vh - 57px);position:sticky;top:57px;}
+.main{padding:24px 28px;overflow-y:auto;}
+
+/* ── Sidebar elements ── */
+.slabel{font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:8px;display:block;}
+.sgroup{margin-bottom:18px;}
+
+/* API key */
+.key-wrap{position:relative;}
+.key-input{width:100%;padding:8px 32px 8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;outline:none;transition:border-color 0.2s;}
+.key-input:focus{border-color:rgba(56,217,169,0.4);}
+.key-check{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--mint);}
+.key-hint{font-size:10px;color:var(--muted);margin-top:5px;line-height:1.5;}
+.key-hint a{color:var(--mint);text-decoration:none;}
+
+/* Search */
+.search-wrap{position:relative;margin-bottom:16px;}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:0.35;}
+.search-input{width:100%;padding:9px 10px 9px 34px;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:inherit;font-size:12px;outline:none;transition:border-color 0.2s;}
+.search-input:focus{border-color:rgba(240,192,64,0.35);}
+.search-input::placeholder{color:var(--muted);}
+
+/* Range sliders */
+.range-row{margin-bottom:4px;}
+.range-top{display:flex;justify-content:space-between;margin-bottom:4px;}
+.range-lbl{font-size:11px;color:var(--muted);}
+.range-val{font-size:11px;font-family:'DM Mono',monospace;color:var(--gold);}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--dim);border-radius:2px;outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--bg2);}
+.range-ends{display:flex;justify-content:space-between;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:3px;}
+
+/* Chips */
+.chip-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;}
+.chip{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--muted);transition:all 0.15s;user-select:none;}
+.chip:hover{border-color:var(--gold);color:var(--gold);}
+.chip.active{background:rgba(240,192,64,0.1);border-color:var(--gold);color:var(--gold);}
+
+/* Weight sliders */
+.wrow{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.wname{font-size:11px;color:var(--text);width:100px;flex-shrink:0;}
+.wval{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);width:16px;text-align:right;}
+
+/* Run + expand buttons */
+.run-btn{width:100%;padding:11px;border-radius:8px;font-size:13px;font-weight:600;background:var(--gold);color:#09090f;border:none;cursor:pointer;font-family:inherit;margin-top:4px;letter-spacing:-0.2px;transition:background 0.15s,transform 0.1s;}
+.run-btn:hover{background:var(--gold2);}
+.run-btn:active{transform:scale(0.98);}
+.run-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+/* AI Expand button */
+.expand-btn{width:100%;padding:9px;border-radius:8px;font-size:12px;font-weight:500;background:rgba(74,157,224,0.1);color:var(--blue);border:1px solid rgba(74,157,224,0.3);cursor:pointer;font-family:inherit;margin-top:8px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.expand-btn:hover{background:rgba(74,157,224,0.18);}
+.expand-btn:disabled{opacity:0.45;cursor:not-allowed;}
+.expand-progress{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);text-align:center;margin-top:6px;min-height:14px;}
+
+/* Algo box */
+.algo-box{margin-top:16px;padding:13px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);}
+.algo-box h4{font-size:10px;color:var(--gold);letter-spacing:0.5px;margin-bottom:7px;}
+.algo-formula{font-family:'DM Mono',monospace;font-size:10px;color:var(--mint);padding:7px 9px;background:var(--bg2);border-radius:5px;line-height:1.9;}
+
+/* ── Main area ── */
+.notice{background:rgba(240,192,64,0.06);border:1px solid rgba(240,192,64,0.2);border-radius:8px;padding:9px 13px;margin-bottom:18px;font-size:11px;color:var(--gold);display:flex;align-items:center;gap:8px;line-height:1.5;}
+.notice a{color:var(--mint);text-decoration:none;}
+
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.result-info{font-size:12px;color:var(--muted);}
+.result-info strong{color:var(--text);}
+.sort-row{display:flex;gap:5px;}
+.sort-btn{font-size:11px;padding:5px 11px;border-radius:6px;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--muted);font-family:inherit;transition:all 0.15s;}
+.sort-btn.active{background:var(--bg3);color:var(--text);border-color:var(--border2);}
+
+/* ── Card grid ── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px;}
+
+/* ── Card ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--score-color,var(--gold)),transparent);opacity:0;transition:opacity 0.2s;}
+.card:hover{border-color:var(--border2);box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+.card:hover::before,.card.open::before{opacity:1;}
+.card.open{border-color:rgba(240,192,64,0.25);}
+
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px;}
+.card-name{font-size:13px;font-weight:600;line-height:1.35;max-width:210px;}
+.card-set{font-size:10px;color:var(--muted);margin-top:2px;}
+.score-pill{padding:4px 9px;border-radius:20px;font-size:12px;font-weight:700;font-family:'DM Mono',monospace;flex-shrink:0;}
+.score-s{background:rgba(56,217,169,0.12);color:var(--mint);}
+.score-a{background:rgba(240,192,64,0.12);color:var(--gold);}
+.score-b{background:rgba(74,157,224,0.12);color:var(--blue);}
+.score-c{background:rgba(98,98,122,0.12);color:var(--muted);}
+
+/* Metrics row — tighter */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
+.metric{background:var(--bg3);border-radius:6px;padding:7px 8px;}
+.metric-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:2px;}
+.metric-val{font-size:13px;font-weight:600;font-family:'DM Mono',monospace;}
+.v-green{color:var(--mint);} .v-gold{color:var(--gold);} .v-red{color:var(--red);} .v-blue{color:var(--blue);}
+
+/* Score bars */
+.bars{margin-bottom:8px;}
+.brow{display:flex;align-items:center;gap:7px;margin-bottom:4px;}
+.bname{font-size:10px;color:var(--muted);width:100px;flex-shrink:0;}
+.btrack{flex:1;height:4px;background:var(--dim);border-radius:2px;overflow:hidden;}
+.bfill{height:100%;border-radius:2px;transition:width 0.6s cubic-bezier(.2,.8,.2,1);}
+.bscore{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);width:26px;text-align:right;}
+
+/* Tags */
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.tag{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:500;border:1px solid;text-transform:uppercase;letter-spacing:0.5px;}
+.tag-vintage{border-color:rgba(240,192,64,0.3);color:var(--gold);background:rgba(240,192,64,0.07);}
+.tag-promo{border-color:rgba(155,85,224,0.3);color:var(--purple);background:rgba(155,85,224,0.07);}
+.tag-japanese{border-color:rgba(224,85,85,0.3);color:var(--red);background:rgba(224,85,85,0.07);}
+.tag-shiny{border-color:rgba(56,217,169,0.3);color:var(--mint);background:rgba(56,217,169,0.07);}
+.tag-fan-fave{border-color:rgba(74,157,224,0.3);color:var(--blue);background:rgba(74,157,224,0.07);}
+.tag-low-pop{border-color:rgba(240,192,64,0.5);color:var(--gold);background:rgba(240,192,64,0.1);font-weight:700;}
+.tag-ai{border-color:rgba(56,217,169,0.25);color:var(--mint);background:rgba(56,217,169,0.06);}
+
+/* Expand panel */
+.detail{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.detail.open{display:block;}
+
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.ditem .dk{font-size:10px;color:var(--muted);margin-bottom:2px;}
+.ditem .dv{font-size:11px;font-family:'DM Mono',monospace;color:var(--text);}
+.rationale{font-size:11px;color:var(--muted);line-height:1.6;padding:9px 11px;background:var(--bg3);border-radius:6px;border-left:2px solid var(--gold);}
+
+/* Sparkline */
+.spark-wrap{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.spark-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.spark-title{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;}
+.spark-btns{display:flex;gap:3px;}
+.spark-btn{font-size:10px;padding:2px 7px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;transition:all 0.15s;}
+.spark-btn.active{background:var(--bg4);color:var(--text);border-color:var(--border2);}
+canvas.spark{width:100%;height:68px;display:block;}
+.spark-foot{display:flex;justify-content:space-between;margin-top:5px;}
+.spark-stat{font-size:10px;font-family:'DM Mono',monospace;}
+.spark-stat .sk{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;display:block;margin-bottom:1px;}
+
+/* Sales panel */
+.sales-wrap{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.sales-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.sales-title{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;}
+.fetch-btn{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;font-size:10px;font-weight:600;background:rgba(74,157,224,0.1);border:1px solid rgba(74,157,224,0.3);color:var(--blue);cursor:pointer;font-family:inherit;transition:all 0.2s;}
+.fetch-btn:hover{background:rgba(74,157,224,0.2);}
+.fetch-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.mini-spin{width:9px;height:9px;border:1.5px solid rgba(74,157,224,0.3);border-top-color:var(--blue);border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.sale-row{display:grid;grid-template-columns:88px 1fr 80px;align-items:center;gap:6px;padding:5px 8px;border-radius:5px;background:var(--bg3);font-size:10px;margin-bottom:3px;}
+.sale-date{font-family:'DM Mono',monospace;color:var(--muted);}
+.sale-plat{color:var(--muted);}
+.sale-price{font-family:'DM Mono',monospace;font-weight:600;color:var(--mint);text-align:right;}
+.trend-row{display:flex;align-items:center;justify-content:space-between;margin-top:7px;padding:7px 9px;border-radius:6px;background:var(--bg);border:1px solid var(--border);font-size:10px;}
+.trlbl{color:var(--muted);}
+.trbadge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;font-family:'DM Mono',monospace;}
+.trbadge-up{background:rgba(56,217,169,0.1);color:var(--mint);border:1px solid rgba(56,217,169,0.22);}
+.trbadge-dn{background:rgba(224,85,85,0.1);color:var(--red);border:1px solid rgba(224,85,85,0.22);}
+.trbadge-fl{background:rgba(240,192,64,0.1);color:var(--gold);border:1px solid rgba(240,192,64,0.22);}
+.trval{font-family:'DM Mono',monospace;font-weight:600;}
+.sales-err{font-size:10px;color:var(--red);padding:7px 9px;background:rgba(224,85,85,0.07);border-radius:5px;border:1px solid rgba(224,85,85,0.2);line-height:1.5;}
+.sales-ph{font-size:10px;color:var(--muted);padding:4px 0;}
+
+/* Skeleton / loading */
+@keyframes pulse{0%,100%{opacity:0.3}50%{opacity:0.7}}
+.skeleton-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;animation:pulse 1.5s ease-in-out infinite;}
+.skel{background:var(--bg3);border-radius:4px;margin-bottom:7px;}
+
+/* Empty */
+.empty{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty h3{font-size:17px;margin-bottom:7px;color:var(--text);}
+
+@media(max-width:860px){
+  .app{grid-template-columns:1fr;}
+  .sidebar{max-height:none;position:static;border-right:none;border-bottom:1px solid var(--border);}
+  .metrics{grid-template-columns:repeat(2,1fr);}
+  .cards-grid{grid-template-columns:1fr;}
+}
+
+  /* Comp links */
+  .comp-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);text-decoration:none;color:var(--text);font-size:11px;transition:border-color 0.15s,background 0.15s;}
+  .comp-link:hover{border-color:var(--border2);background:var(--bg4);}
+  .comp-link span:nth-child(2){flex:1;}
+  .comp-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .comp-arrow{color:var(--muted);font-size:12px;}
+
+
+.psa-confirmed{animation:fadeUp 0.3s ease both;}
+
+
+  /* Collapsible sections */
+  .collapsible-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:2px 0;user-select:none;}
+  .collapsible-hdr:hover .slabel{color:var(--text);}
+  .collapse-arrow{color:var(--muted);font-size:1rem;transition:transform 0.2s;transform:rotate(0deg);line-height:1;}
+  .collapse-arrow.open{transform:rotate(90deg);}
+  .collapsible-body{display:none;overflow:hidden;}
+  .collapsible-body.open{display:block;}
+  .mini-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;}
+  .badge-tag{font-size:8px;padding:1px 5px;border-radius:3px;background:var(--bg4);color:var(--muted);margin-left:4px;letter-spacing:0.5px;vertical-align:middle;}
+
+  /* Cleaner header */
+  header{padding:12px 24px;}
+  .logo-mark{width:28px;height:28px;border-radius:6px;font-size:13px;}
+  .logo-text{font-size:15px;}
+
+  /* Cleaner sidebar */
+  .sidebar{padding:16px 14px;}
+  .sgroup{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+  .sgroup:last-child{border-bottom:none;}
+
+  /* Tighter chips */
+  .chip{padding:3px 9px;font-size:11px;}
+
+  /* Range top inline */
+  .range-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+
+  /* Cleaner cards */
+  .card{border-radius:8px;padding:14px;}
+  .card-name{font-size:12px;}
+  .card-set{font-size:10px;}
+  .metric{padding:6px 8px;}
+  .metric-lbl{font-size:8px;}
+  .metric-val{font-size:12px;}
+
+  /* Cleaner main */
+  .main{padding:20px 24px;}
+  .notice{font-size:10px;padding:7px 11px;margin-bottom:14px;}
+
+  /* Better toolbar */
+  .toolbar{margin-bottom:14px;}
+  .sort-btn{font-size:10px;padding:4px 10px;}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">P</div>
+    <div>
+      <div class="logo-text">PokeGrade</div>
+      <div class="logo-sub">Investment Analyzer</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="hbadge on" id="ebayStatusBadge">● Real Comp Links</div>
+    <div class="hbadge"><span id="dbCount">36</span> cards · <span id="tcgStatus" style="color:var(--muted)">TCG ready</span></div>
+  </div>
+</header>
+
+<div class="app">
+  <aside class="sidebar">
+
+    <!-- ⚙ Settings (collapsed by default) -->
+    <div class="sgroup">
+      <div class="collapsible-hdr" onclick="toggleSection('settingsBody','settingsArrow')">
+        <span class="slabel" style="margin-bottom:0">&#9881; Settings &amp; API Keys</span>
+        <span class="collapse-arrow" id="settingsArrow">&#8250;</span>
+      </div>
+      <div class="collapsible-body open" id="settingsBody">
+        <div style="margin-top:12px">
+          <div class="mini-label">Anthropic Key <span class="badge-tag">AI Expand</span></div>
+          <div class="key-wrap">
+            <input class="key-input" type="password" id="apiKey" placeholder="sk-ant-..." oninput="saveKey(this.value)">
+            <span class="key-check" id="keyCheck"></span>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div class="mini-label">eBay <span class="badge-tag">Live Comps</span></div>
+            <span id="ebayConnectStatus" style="font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);">not connected</span>
+          </div>
+          <button onclick="connectEbay()" id="ebayConnectBtn" style="width:100%;padding:7px;background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.25);color:var(--mint);border-radius:6px;font-size:11px;font-family:inherit;cursor:pointer;transition:all 0.2s;">
+            Connect eBay Account
+          </button>
+        </div>
+        <div style="margin-top:10px">
+          <div class="mini-label">Apify Token <span class="badge-tag">PSA Pop Counts</span></div>
+          <div class="key-wrap">
+            <input class="key-input" type="password" id="apifyToken" placeholder="apify_api_..." oninput="saveApifyToken(this.value)" style="font-size:10px;">
+            <span class="key-check" id="apifyTokenCheck"></span>
+          </div>
+          <div class="key-hint" style="margin-top:6px">
+            Free at <a href="https://apify.com" target="_blank">apify.com</a> → Settings → Integrations → API Token<br>
+            Saves locally. Never share this key.
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <div class="mini-label">PSA Token <span class="badge-tag">Legacy</span></div>
+          <div class="key-wrap">
+            <input class="key-input" type="password" id="psaToken" placeholder="PSA access token..." oninput="savePsaToken(this.value)" style="font-size:10px;">
+            <span class="key-check" id="psaTokenCheck"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="sgroup">
+      <div class="search-wrap">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10.5 10.5L14 14" stroke-linecap="round"/></svg>
+        <input class="search-input" type="text" id="cardSearch" placeholder="Search cards, sets, years..." oninput="if(analysisRun)renderCards()">
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="sgroup">
+      <div class="collapsible-hdr" onclick="toggleSection('filtersBody','filtersArrow')">
+        <span class="slabel" style="margin-bottom:0">&#9965; Filters</span>
+        <span class="collapse-arrow open" id="filtersArrow">&#8250;</span>
+      </div>
+      <div class="collapsible-body open" id="filtersBody">
+        <div style="margin-top:12px">
+          <span class="mini-label">Pokémon</span>
+          <div style="display:flex;gap:6px;margin-top:5px;align-items:center;">
+            <select id="pokemonSelect" onchange="onPokemonSelect(this.value)"  style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:11px;padding:7px 9px;border-radius:6px;outline:none;cursor:pointer;">
+              <option value="all">All Pokémon</option>
+              <optgroup label="⭐ Fan Favorites">
+                <option value="pikachu">Pikachu</option>
+                <option value="charizard">Charizard</option>
+                <option value="mew">Mew</option>
+                <option value="mewtwo">Mewtwo</option>
+                <option value="lugia">Lugia</option>
+                <option value="umbreon">Umbreon</option>
+                <option value="gengar">Gengar</option>
+                <option value="eevee">Eevee</option>
+                <option value="rayquaza">Rayquaza</option>
+                <option value="gyarados">Gyarados</option>
+                <option value="dragonite">Dragonite</option>
+                <option value="blaziken">Blaziken</option>
+                <option value="garchomp">Garchomp</option>
+                <option value="lucario">Lucario</option>
+                <option value="gardevoir">Gardevoir</option>
+                <option value="sylveon">Sylveon</option>
+              </optgroup>
+              <optgroup label="── Gen 1 (Kanto)">
+                <option value="bulbasaur">Bulbasaur</option>
+                <option value="charmander">Charmander</option>
+                <option value="squirtle">Squirtle</option>
+                <option value="blastoise">Blastoise</option>
+                <option value="venusaur">Venusaur</option>
+                <option value="alakazam">Alakazam</option>
+                <option value="machamp">Machamp</option>
+                <option value="golem">Golem</option>
+                <option value="nidoking">Nidoking</option>
+                <option value="clefable">Clefable</option>
+                <option value="jolteon">Jolteon</option>
+                <option value="flareon">Flareon</option>
+                <option value="vaporeon">Vaporeon</option>
+                <option value="snorlax">Snorlax</option>
+                <option value="articuno">Articuno</option>
+                <option value="zapdos">Zapdos</option>
+                <option value="moltres">Moltres</option>
+              </optgroup>
+              <optgroup label="── Gen 2 (Johto)">
+                <option value="ho-oh">Ho-Oh</option>
+                <option value="celebi">Celebi</option>
+                <option value="espeon">Espeon</option>
+                <option value="tyranitar">Tyranitar</option>
+                <option value="suicune">Suicune</option>
+                <option value="entei">Entei</option>
+                <option value="raikou">Raikou</option>
+                <option value="ampharos">Ampharos</option>
+              </optgroup>
+              <optgroup label="── Gen 3 (Hoenn)">
+                <option value="kyogre">Kyogre</option>
+                <option value="groudon">Groudon</option>
+                <option value="deoxys">Deoxys</option>
+                <option value="latias">Latias</option>
+                <option value="latios">Latios</option>
+                <option value="absol">Absol</option>
+                <option value="flygon">Flygon</option>
+                <option value="salamence">Salamence</option>
+                <option value="metagross">Metagross</option>
+              </optgroup>
+              <optgroup label="── Gen 4 (Sinnoh)">
+                <option value="dialga">Dialga</option>
+                <option value="palkia">Palkia</option>
+                <option value="giratina">Giratina</option>
+                <option value="leafeon">Leafeon</option>
+                <option value="glaceon">Glaceon</option>
+                <option value="togekiss">Togekiss</option>
+                <option value="rotom">Rotom</option>
+              </optgroup>
+              <optgroup label="── Gen 5 (Unova)">
+                <option value="reshiram">Reshiram</option>
+                <option value="zekrom">Zekrom</option>
+                <option value="kyurem">Kyurem</option>
+                <option value="zoroark">Zoroark</option>
+                <option value="chandelure">Chandelure</option>
+              </optgroup>
+              <optgroup label="── Gen 6 (Kalos)">
+                <option value="xerneas">Xerneas</option>
+                <option value="yveltal">Yveltal</option>
+                <option value="zygarde">Zygarde</option>
+                <option value="greninja">Greninja</option>
+              </optgroup>
+              <optgroup label="── Gen 7 (Alola)">
+                <option value="solgaleo">Solgaleo</option>
+                <option value="lunala">Lunala</option>
+                <option value="necrozma">Necrozma</option>
+                <option value="mimikyu">Mimikyu</option>
+              </optgroup>
+              <optgroup label="── Gen 8 (Galar)">
+                <option value="zacian">Zacian</option>
+                <option value="zamazenta">Zamazenta</option>
+                <option value="eternatus">Eternatus</option>
+                <option value="urshifu">Urshifu</option>
+              </optgroup>
+              <optgroup label="── Gen 9 (Paldea)">
+                <option value="koraidon">Koraidon</option>
+                <option value="miraidon">Miraidon</option>
+                <option value="iron-valiant">Iron Valiant</option>
+                <option value="roaring-moon">Roaring Moon</option>
+              </optgroup>
+            </select>
+          </div>
+          <div id="pokemonChips" style="display:none"></div>
+        </div>
+        <div style="margin-top:12px">
+          <span class="mini-label">Era</span>
+          <div class="chip-row" id="eraChips" style="margin-top:5px">
+            <div class="chip active" onclick="toggleChip(this,'era')" data-val="all">All</div>
+            <div class="chip" onclick="toggleChip(this,'era')" data-val="wotc">WOTC</div>
+            <div class="chip" onclick="toggleChip(this,'era')" data-val="ex">EX Era</div>
+            <div class="chip" onclick="toggleChip(this,'era')" data-val="dp">DP/Plat</div>
+            <div class="chip" onclick="toggleChip(this,'era')" data-val="modern">Modern</div>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <span class="mini-label">Category</span>
+          <div class="chip-row" id="catChips" style="margin-top:5px">
+            <div class="chip active" onclick="toggleChip(this,'cat')" data-val="all">All</div>
+            <div class="chip" onclick="toggleChip(this,'cat')" data-val="promo">Promo</div>
+            <div class="chip" onclick="toggleChip(this,'cat')" data-val="holo">Holo</div>
+            <div class="chip" onclick="toggleChip(this,'cat')" data-val="gold-star">Gold Star</div>
+            <div class="chip" onclick="toggleChip(this,'cat')" data-val="shiny">Shiny</div>
+            <div class="chip" onclick="toggleChip(this,'cat')" data-val="japanese">Japanese</div>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <span class="mini-label">PSA Grade</span>
+          <div class="chip-row" id="gradeChips" style="margin-top:5px">
+            <div class="chip active" onclick="toggleChip(this,'grade')" data-val="all">All</div>
+            <div class="chip" onclick="toggleChip(this,'grade')" data-val="10">10</div>
+            <div class="chip" onclick="toggleChip(this,'grade')" data-val="9">9</div>
+            <div class="chip" onclick="toggleChip(this,'grade')" data-val="8">8</div>
+            <div class="chip" onclick="toggleChip(this,'grade')" data-val="7">7</div>
+            <div class="chip" onclick="toggleChip(this,'grade')" data-val="6">6</div>
+            <div class="chip" onclick="toggleChip(this,'grade')" data-val="5">5</div>
+            <div class="chip" onclick="toggleChip(this,'grade')" data-val="4">4</div>
+            <div class="chip" onclick="toggleChip(this,'grade')" data-val="3">3</div>
+            <div class="chip" onclick="toggleChip(this,'grade')" data-val="2">2</div>
+            <div class="chip" onclick="toggleChip(this,'grade')" data-val="1">1</div>
+            <div class="chip" onclick="toggleChip(this,'grade')" data-val="auth">Auth</div>
+          </div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="range-top"><span class="mini-label">Max Pop</span><span class="range-val" id="popVal">Any</span></div>
+          <input type="range" id="popRange" min="0" max="10000" value="10000" step="100" oninput="document.getElementById('popVal').textContent=parseInt(this.value)>=10000?'Any':'≤ '+parseInt(this.value).toLocaleString();if(analysisRun)renderCards()">
+          <div class="range-ends"><span>0</span><span>10K</span></div>
+        </div>
+        <div style="margin-top:12px">
+          <div class="range-top"><span class="mini-label">Max Price</span><span class="range-val" id="priceVal">Any</span></div>
+          <input type="range" id="priceRange" min="0" max="100" value="100" step="1" oninput="onPriceSlide(this.value)">
+          <div class="range-ends"><span>$0</span><span>$10M</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Score Weights -->
+    <div class="sgroup">
+      <div class="collapsible-hdr" onclick="toggleSection('weightsBody','weightsArrow')">
+        <span class="slabel" style="margin-bottom:0">&#9868; Score Weights</span>
+        <span class="collapse-arrow" id="weightsArrow">&#8250;</span>
+      </div>
+      <div class="collapsible-body" id="weightsBody">
+        <div style="margin-top:12px" id="weightSliders">
+          <div class="wrow"><span class="wname">Pop Scarcity</span><input type="range" min="0" max="10" value="8" class="weight-input" data-key="popScarcity" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-popScarcity">8</span></div>
+          <div class="wrow"><span class="wname">Fan Demand</span><input type="range" min="0" max="10" value="7" class="weight-input" data-key="fanDemand" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-fanDemand">7</span></div>
+          <div class="wrow"><span class="wname">Price / Value</span><input type="range" min="0" max="10" value="6" class="weight-input" data-key="priceValue" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-priceValue">6</span></div>
+          <div class="wrow"><span class="wname">Pop Growth</span><input type="range" min="0" max="10" value="5" class="weight-input" data-key="popGrowth" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-popGrowth">5</span></div>
+          <div class="wrow"><span class="wname">Vintage Age</span><input type="range" min="0" max="10" value="4" class="weight-input" data-key="vintage" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-vintage">4</span></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="run-btn" id="runBtn" onclick="runAnalysis()">&#9889; Run Analysis</button>
+    <button class="expand-btn" id="expandBtn" onclick="expandDatabase()">
+      <span>&#10024;</span><span id="expandBtnTxt">AI Expand Database</span>
+    </button>
+    <div class="expand-progress" id="expandProgress"></div>
+
+  </aside>
+
+  <main class="main">
+
+    <div class="notice">
+      <span>&#9888;</span>
+      <span>Prices &amp; pops are estimates — verify on <a href="https://www.psacard.com/pop" target="_blank">PSA Pop Report</a> &amp; <a href="https://www.ebay.com/sh/research" target="_blank">eBay Sold</a>. Use &#9889; Fetch Live Sales on each card for real comps.</span>
+    </div>
+    <div id="tcgLoadBar" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:11px;color:var(--text);font-weight:600;" id="tcgLoadMsg">Loading cards...</span>
+        <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);" id="tcgLoadCount"></span>
+      </div>
+      <div style="height:3px;background:var(--dim);border-radius:2px;overflow:hidden;">
+        <div id="tcgLoadProgress" style="height:100%;background:var(--gold);border-radius:2px;width:0%;transition:width 0.3s;"></div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="result-info">Showing <strong id="countDisplay">—</strong> cards</div>
+      <div class="sort-row">
+        <button class="sort-btn active" onclick="setSort('score',this)">Score &#8595;</button>
+        <button class="sort-btn" onclick="setSort('pop',this)">Pop &#8593;</button>
+        <button class="sort-btn" onclick="setSort('price',this)">Price</button>
+        <button class="sort-btn" onclick="setSort('upside',this)">Upside %</button>
+      </div>
+    </div>
+
+    <div class="cards-grid" id="cardsGrid"></div>
+
+  </main>
+</div>
+
+<script>
+// ─── Data ─────────────────────────────────────────────────────────────────────
+const CARDS = [
+  {
+    id:1, name:"Mew ☆ #101 EX Dragon Frontiers", set:"EX Dragon Frontiers #101/101", year:2006,
+    pokemon:"mew", era:"ex", cat:"gold-star", japanese:false,
+    pop10:57, popGrowthPerMonth:0.3, marketPrice:12000, psa10Price:14500,
+    rawPrice:800, fanTier:10,
+    tags:["vintage","fan-fave","low-pop"],
+    rationale:"Mew Gold Star sits at only 57 PSA 10 copies — one of the lowest genuine populations of any Gold Star. Foil wear kills grades. Fan demand is elite tier, Charizard Gold Star commands 3x more despite Mew being rarer in PSA 10.",
+    detail:{ distribution:"EX Dragon Frontiers boosters", gradeRate:"~3%", psaSubmit:"~1,900", note:"Japanese version even scarcer" }
+  },
+  {
+    id:2, name:"Shining Mew CoroCoro Promo (JP)", set:"CoroCoro Magazine (JP)", year:2001,
+    pokemon:"mew", era:"wotc", cat:"promo", japanese:true,
+    pop10:18, popGrowthPerMonth:0.1, marketPrice:9500, psa10Price:10800,
+    rawPrice:600, fanTier:10,
+    tags:["vintage","promo","japanese","fan-fave","low-pop"],
+    rationale:"Magazine peel damage destroyed most copies. Pop 10 of just 18 is extraordinary for a 2001 promo. English collectors are just starting to notice Japanese promos — pricing hasn't caught up.",
+    detail:{ distribution:"CoroCoro May 2001 insert", gradeRate:"<2%", psaSubmit:"~950", note:"Must be peeled from cardboard backing" }
+  },
+  {
+    id:3, name:"Mew — Southern Islands Holo", set:"Southern Islands (2001)", year:2001,
+    pokemon:"mew", era:"wotc", cat:"holo", japanese:false,
+    pop10:8, popGrowthPerMonth:0.05, marketPrice:22000, psa10Price:24500,
+    rawPrice:800, fanTier:10,
+    tags:["vintage","fan-fave","low-pop"],
+    rationale:"Single-digit PSA 10 pop. Cards were folded in booklets — centering and print lines are endemic. This is arguably the rarest English Mew in PSA 10 that most collectors don't know about.",
+    detail:{ distribution:"Mail-in promotion 2001", gradeRate:"<1%", psaSubmit:"~780", note:"Booklet fold causes centering issues" }
+  },
+  {
+    id:4, name:"Mew #29/124 XY Fates Collide Holo", set:"XY Fates Collide", year:2016,
+    pokemon:"mew", era:"ex", cat:"holo", japanese:false,
+    pop10:33, popGrowthPerMonth:0.8, marketPrice:280, psa10Price:420,
+    rawPrice:8, fanTier:10,
+    tags:["low-pop","fan-fave"],
+    rationale:"Pop of 33 PSA 10s is shockingly low for a 2016 English holo. XY era is completely overlooked right now — priced at $220 but has 10x upside if XY nostalgia follows the Base Set trajectory.",
+    detail:{ distribution:"XY Fates Collide booster packs", gradeRate:"~12%", psaSubmit:"~275", note:"Low submission rate — most copies are ungraded" }
+  },
+  {
+    id:5, name:"Mew #32/68 Hidden Fates Rev. Holo", set:"Hidden Fates", year:2019,
+    pokemon:"mew", era:"modern", cat:"holo", japanese:false,
+    pop10:23, popGrowthPerMonth:1.2, marketPrice:180, psa10Price:280,
+    rawPrice:6, fanTier:10,
+    tags:["low-pop","shiny","fan-fave"],
+    rationale:"Sub-25 PSA 10 pop on a modern reverse holo from a beloved set is remarkable. Reverse holos are dismissed vs Shiny Vaults — but this artifact of inattention is the opportunity.",
+    detail:{ distribution:"Hidden Fates booster packs", gradeRate:"~8%", psaSubmit:"~290", note:"Shiny Vault cards capture all attention" }
+  },
+  {
+    id:6, name:"Mew #40/73 Shining Legends Shining Holo", set:"SM Shining Legends", year:2017,
+    pokemon:"mew", era:"modern", cat:"shiny", japanese:false,
+    pop10:145, popGrowthPerMonth:2.1, marketPrice:380, psa10Price:480,
+    rawPrice:20, fanTier:10,
+    tags:["shiny","fan-fave"],
+    rationale:"Beautiful alt-art shiny Mew from 2017. Most copies were played, not collected. Pop is still manageable for a shiny card of this quality and the artwork is one of the best modern Mews.",
+    detail:{ distribution:"SM Shining Legends booster packs", gradeRate:"~15%", psaSubmit:"~965", note:"Shining mechanic = silver foil edges" }
+  },
+  {
+    id:7, name:"Charizard #4/102 Base Set Unlimited Holo", set:"Base Set Unlimited", year:1999,
+    pokemon:"charizard", era:"wotc", cat:"holo", japanese:false,
+    pop10:4200, popGrowthPerMonth:85, marketPrice:420000, psa10Price:450000,
+    rawPrice:12000, fanTier:10,
+    tags:["vintage","fan-fave"],
+    rationale:"The most famous card in existence. Pop is enormous but demand is equally massive. The benchmark for all investment comparisons — but growth rate is slowing as the pop climbs.",
+    detail:{ distribution:"Base Set Unlimited boosters", gradeRate:"~3.5%", psaSubmit:"~120,000", note:"Never truly 'undervalued' — market is efficient" }
+  },
+  {
+    id:8, name:"Lugia #9/111 Neo Genesis 1st Edition Holo", set:"Neo Genesis 1st Ed.", year:2000,
+    pokemon:"lugia", era:"wotc", cat:"holo", japanese:false,
+    pop10:342, popGrowthPerMonth:4.2, marketPrice:48000, psa10Price:52000,
+    rawPrice:2000, fanTier:9,
+    tags:["vintage","fan-fave","low-pop"],
+    rationale:"Lugia 1st Ed PSA 10 is far more rare than Charizard 1st Ed but commands less than half the price. The fan base is massive post-Gen-2 nostalgia and the card is genuinely hard to find in gem mint.",
+    detail:{ distribution:"Neo Genesis 1st Ed. boosters", gradeRate:"~2.8%", psaSubmit:"~12,200", note:"Print lines are endemic in Neo era" }
+  },
+  {
+    id:9, name:"Pikachu Illustrator (JP Promo)", set:"CoroCoro Illustration Contest", year:1998,
+    pokemon:"pikachu", era:"wotc", cat:"promo", japanese:true,
+    pop10:9, popGrowthPerMonth:0.02, marketPrice:5500000, psa10Price:6000000,
+    rawPrice:200000, fanTier:10,
+    tags:["vintage","promo","japanese","fan-fave","low-pop"],
+    rationale:"9 PSA 10 copies in existence. The most valuable Pokémon card period. Not 'undervalued' per se — but one of the clearest examples of pop scarcity driving value to absurd levels.",
+    detail:{ distribution:"Illustration contest prize (39 copies total)", gradeRate:"23%", psaSubmit:"~39", note:"Most famous individual card ever" }
+  },
+  {
+    id:10, name:"Umbreon Gold Star (JP)", set:"PCG-P Promo (JP)", year:2006,
+    pokemon:"umbreon", era:"ex", cat:"gold-star", japanese:true,
+    pop10:12, popGrowthPerMonth:0.1, marketPrice:18000, psa10Price:22000,
+    rawPrice:1200, fanTier:9,
+    tags:["vintage","japanese","fan-fave","low-pop"],
+    rationale:"Japanese Umbreon Gold Star has one of the lowest PSA 10 pops of any Gold Star. English version commands more but JP version is rarer. The gap is closing fast as collectors wise up.",
+    detail:{ distribution:"PCG-P Lottery/promotional event", gradeRate:"~2%", psaSubmit:"~600", note:"Different artwork from English version" }
+  },
+  {
+    id:11, name:"Mew ex SIR #205/091 Paldean Fates", set:"Paldean Fates", year:2024,
+    pokemon:"mew", era:"modern", cat:"shiny", japanese:false,
+    pop10:380, popGrowthPerMonth:42, marketPrice:1400, psa10Price:2000,
+    rawPrice:120, fanTier:10,
+    tags:["shiny","fan-fave"],
+    rationale:"Shiny Illustration Rare Mew from the Mew-themed anniversary set. 30th anniversary positioning will boost demand significantly. Pop is growing but 35% price upside vs raw still visible.",
+    detail:{ distribution:"Paldean Fates booster packs", gradeRate:"~22%", psaSubmit:"~1,725", note:"SIR treatment = gold border + art extension" }
+  },
+  {
+    id:12, name:"Gengar #5/102 1st Edition Base Set Holo", set:"Base Set 1st Edition", year:1999,
+    pokemon:"gengar", era:"wotc", cat:"holo", japanese:false,
+    pop10:189, popGrowthPerMonth:3.1, marketPrice:4200, psa10Price:5800,
+    rawPrice:300, fanTier:8,
+    tags:["vintage","fan-fave"],
+    rationale:"Gengar is a top-3 fan favorite but trades at 5-10% of Charizard 1st Ed price. The shadow box art on Base Set Gengar is iconic. Pop is modest — 189 PSA 10s is low for a card this beloved.",
+    detail:{ distribution:"Base Set 1st Edition boosters", gradeRate:"~3.2%", psaSubmit:"~5,900", note:"Shadow box art variant is distinct" }
+  },
+  {
+    id:13, name:"Mew Ancient Mew JP Error (Nintedo)", set:"Pokémon Movie Promo (JP)", year:2000,
+    pokemon:"mew", era:"wotc", cat:"promo", japanese:true,
+    pop10:41, popGrowthPerMonth:0.2, marketPrice:420, psa10Price:580,
+    rawPrice:18, fanTier:9,
+    tags:["vintage","promo","japanese","low-pop"],
+    rationale:"First print has 'Nintedo' misprinted instead of 'Nintendo'. Error + promo + Japanese = triple collector premium that the current price doesn't reflect. Pop is tiny at 41 PSA 10 copies.",
+    detail:{ distribution:"Pokémon 2000 movie promos (JP)", gradeRate:"~6%", psaSubmit:"~685", note:"Error on copyright line: 'Nintedo'" }
+  },
+  {
+    id:14, name:"Pikachu VMAX Rainbow #188/185 Vivid Voltage", set:"Vivid Voltage", year:2020,
+    pokemon:"pikachu", era:"modern", cat:"shiny", japanese:false,
+    pop10:1820, popGrowthPerMonth:95, marketPrice:240, psa10Price:320,
+    rawPrice:22, fanTier:10,
+    tags:["shiny","fan-fave"],
+    rationale:"Rainbow VMAX Pikachu with huge fan demand. Pop is growing fast but price premium over raw is minimal. Likely fully valued in short term — long hold only if you believe in sustained Pikachu demand.",
+    detail:{ distribution:"Vivid Voltage booster packs", gradeRate:"~25%", psaSubmit:"~7,280", note:"Textured rainbow foil grading surface" }
+  },
+  {
+    id:15, name:"Mew #4/17 POP Series 4", set:"POP Series 4 (Prize Card)", year:2007,
+    pokemon:"mew", era:"dp", cat:"promo", japanese:false,
+    pop10:29, popGrowthPerMonth:0.15, marketPrice:380, psa10Price:520,
+    rawPrice:15, fanTier:9,
+    tags:["promo","low-pop","vintage"],
+    rationale:"Tournament prize card — only distributed to competitive players who won. Most were played into the ground. 29 PSA 10s is a legitimately low number for a card with this distribution method.",
+    detail:{ distribution:"Organized play prize / league reward", gradeRate:"~5%", psaSubmit:"~580", note:"POP era is completely forgotten by market" }
+  },
+  {
+    id:16, name:"Charizard #4/102 1st Edition Base Set Holo", set:"Base Set 1st Edition", year:1999,
+    pokemon:"charizard", era:"wotc", cat:"holo", japanese:false,
+    pop10:3031, popGrowthPerMonth:52, marketPrice:420000, psa10Price:480000,
+    rawPrice:15000, fanTier:10,
+    tags:["vintage","fan-fave"],
+    rationale:"The holy grail alongside Illustrator. Pop is growing but demand keeps up. PSA 10 has massive premium over PSA 9. Entry price is extreme but liquidity is unmatched.",
+    detail:{ distribution:"Base Set 1st Edition boosters", gradeRate:"~2.5%", psaSubmit:"~121,000", note:"Shadow distinguishes 1st Ed from Unlimited" }
+  },
+  {
+    id:17, name:"Charizard ex SIR #228/193 Paldea Evolved", set:"Paldea Evolved", year:2023,
+    pokemon:"charizard", era:"modern", cat:"shiny", japanese:false,
+    pop10:2840, popGrowthPerMonth:120, marketPrice:180, psa10Price:260,
+    rawPrice:28, fanTier:10,
+    tags:["shiny","fan-fave"],
+    rationale:"Modern Charizard SIR with relentless demand. Pop growing but Charizard brand sustains price floor. Best short-term modern Charizard hold.",
+    detail:{ distribution:"Paldea Evolved booster packs", gradeRate:"~24%", psaSubmit:"~11,800", note:"SIR gold border + full-art" }
+  },
+  {
+    id:18, name:"Umbreon VMAX Alt Art #215/203 Evolving Skies", set:"Evolving Skies", year:2021,
+    pokemon:"umbreon", era:"modern", cat:"shiny", japanese:false,
+    pop10:1640, popGrowthPerMonth:38, marketPrice:820, psa10Price:980,
+    rawPrice:120, fanTier:10,
+    tags:["fan-fave","shiny"],
+    rationale:"The most beloved modern alt art. Brutal pull rate + iconic artwork. Arguably undervalued vs cultural impact. Strong hold for Umbreon fans.",
+    detail:{ distribution:"Evolving Skies booster packs", gradeRate:"~20%", psaSubmit:"~8,200", note:"One of the hardest modern pulls" }
+  },
+  {
+    id:19, name:"Gengar & Mimikyu GX #247/181 Team Up Alt Art", set:"SM Team Up", year:2019,
+    pokemon:"gengar", era:"modern", cat:"holo", japanese:false,
+    pop10:312, popGrowthPerMonth:4.8, marketPrice:480, psa10Price:620,
+    rawPrice:30, fanTier:9,
+    tags:["fan-fave","low-pop"],
+    rationale:"Tag Team GX era is overlooked. Alt Art Gengar/Mimikyu has double fan appeal. SM era cards grade well — sub-400 PSA 10s is an opportunity.",
+    detail:{ distribution:"SM Team Up booster packs", gradeRate:"~18%", psaSubmit:"~1,735", note:"Tag Team mechanic is now vintage nostalgia" }
+  },
+  {
+    id:20, name:"Lugia V Alt Art #138/195 Silver Tempest", set:"Silver Tempest", year:2022,
+    pokemon:"lugia", era:"modern", cat:"holo", japanese:false,
+    pop10:4200, popGrowthPerMonth:180, marketPrice:65, psa10Price:100,
+    rawPrice:8, fanTier:9,
+    tags:["fan-fave"],
+    rationale:"First premium Lugia V alt art. Pop manageable and price/raw premium reasonable. Strong long-term hold for Gen 2 collectors.",
+    detail:{ distribution:"Silver Tempest booster packs", gradeRate:"~21%", psaSubmit:"~4,380", note:"First premium Lugia V alt art" }
+  },
+  {
+    id:21, name:"Pikachu No.25 Topsun Blue Back (JP)", set:"Topsun (1994)", year:1994,
+    pokemon:"pikachu", era:"wotc", cat:"promo", japanese:true,
+    pop10:14, popGrowthPerMonth:0.05, marketPrice:18000, psa10Price:22000,
+    rawPrice:1500, fanTier:10,
+    tags:["vintage","japanese","promo","low-pop","fan-fave"],
+    rationale:"Pre-dates the official TCG. Earliest mass-market Pikachu card — 1994, full year before Base Set. Only 14 PSA 10s. Most collectors don't know it exists.",
+    detail:{ distribution:"Topsun vending machine packs (Japan)", gradeRate:"~1%", psaSubmit:"~1,400", note:"Blue back variant scarcer than green back" }
+  },
+  {
+    id:22, name:"Rayquaza ☆ #107/107 EX Deoxys", set:"EX Deoxys", year:2005,
+    pokemon:"gengar", era:"ex", cat:"gold-star", japanese:false,
+    pop10:220, popGrowthPerMonth:1.8, marketPrice:8200, psa10Price:10500,
+    rawPrice:600, fanTier:9,
+    tags:["vintage","fan-fave"],
+    rationale:"Most iconic Gold Star after Charizard. 220 PSA 10s reasonable for era. Demand rising sharply with Rayquaza cultural resurgence in modern sets.",
+    detail:{ distribution:"EX Deoxys boosters", gradeRate:"~3.5%", psaSubmit:"~6,285", note:"Gold foil star in name = Gold Star designation" }
+  },
+  {
+    id:23, name:"Charizard V Alt Art #079/073 Champion's Path", set:"Champion's Path", year:2020,
+    pokemon:"charizard", era:"modern", cat:"holo", japanese:false,
+    pop10:2100, popGrowthPerMonth:65, marketPrice:480, psa10Price:650,
+    rawPrice:30, fanTier:10,
+    tags:["fan-fave"],
+    rationale:"Walmart exclusive with limited initial supply. Among the most visually stunning Charizard cards ever printed. Pop growing but Charizard demand is bottomless.",
+    detail:{ distribution:"Champion's Path ETB (Walmart exclusive)", gradeRate:"~22%", psaSubmit:"~9,545", note:"Extremely limited box availability at launch" }
+  },
+  {
+    id:24, name:"Pikachu Holo WOTC Black Star Promo #27", set:"WOTC Black Star Promos", year:1999,
+    pokemon:"pikachu", era:"wotc", cat:"promo", japanese:false,
+    pop10:42, popGrowthPerMonth:0.3, marketPrice:2800, psa10Price:3600,
+    rawPrice:120, fanTier:10,
+    tags:["vintage","promo","fan-fave","low-pop"],
+    rationale:"One of the most condition-sensitive promos in the hobby. Pack-fresh copies rarely survive. 42 PSA 10s for a holo Pikachu promo from 1999 is genuinely rare.",
+    detail:{ distribution:"Nintendo Power magazine / promotions", gradeRate:"~4%", psaSubmit:"~1,050", note:"Holo variant — non-holo far more common" }
+  },
+  {
+    id:25, name:"Lugia #9/111 Neo Genesis Shadowless 1st Ed", set:"Neo Genesis (Shadowless)", year:2000,
+    pokemon:"lugia", era:"wotc", cat:"holo", japanese:false,
+    pop10:18, popGrowthPerMonth:0.08, marketPrice:65000, psa10Price:72000,
+    rawPrice:2500, fanTier:9,
+    tags:["vintage","fan-fave","low-pop"],
+    rationale:"One of the hobby's best-kept secrets. Only 18 PSA 10s. Shadowless distinction adds enormous value the market has been slow to price in.",
+    detail:{ distribution:"Neo Genesis early print run", gradeRate:"~1.5%", psaSubmit:"~1,200", note:"No drop shadow under card image = shadowless" }
+  },
+  {
+    id:26, name:"Gengar Prime #94/123 HS Triumphant", set:"HeartGold SoulSilver", year:2010,
+    pokemon:"gengar", era:"dp", cat:"holo", japanese:false,
+    pop10:134, popGrowthPerMonth:1.2, marketPrice:680, psa10Price:880,
+    rawPrice:40, fanTier:8,
+    tags:["vintage","fan-fave"],
+    rationale:"HGSS Prime cards are criminally underrated. Gengar Prime artwork is iconic. 134 PSA 10s at under $1K is a clear value gap for a fan-favorite in a beloved era.",
+    detail:{ distribution:"HeartGold SoulSilver booster packs", gradeRate:"~12%", psaSubmit:"~1,115", note:"Prime = ancient-style card border" }
+  },
+  {
+    id:27, name:"Umbreon Star PCG Mirage Crystal (JP)", set:"PCG Mirage Crystal (JP)", year:2006,
+    pokemon:"umbreon", era:"ex", cat:"gold-star", japanese:true,
+    pop10:8, popGrowthPerMonth:0.04, marketPrice:28000, psa10Price:34000,
+    rawPrice:2200, fanTier:9,
+    tags:["vintage","japanese","fan-fave","low-pop"],
+    rationale:"Only 8 PSA 10s worldwide. English version gets all attention but this JP-exclusive is objectively rarer and trades at a discount to true scarcity.",
+    detail:{ distribution:"PCG Mirage Crystal booster packs (JP only)", gradeRate:"~1.2%", psaSubmit:"~665", note:"Never released in English" }
+  },
+  {
+    id:28, name:"Mewtwo ex Full Art #54/113 BW Legendary Treasures", set:"BW Legendary Treasures", year:2013,
+    pokemon:"mew", era:"dp", cat:"holo", japanese:false,
+    pop10:62, popGrowthPerMonth:0.5, marketPrice:1200, psa10Price:1600,
+    rawPrice:55, fanTier:9,
+    tags:["vintage","fan-fave","low-pop"],
+    rationale:"BW Full Art era is the forgotten frontier. 62 PSA 10 copies is shockingly low. Silver full-art treatment aged beautifully and Mewtwo demand never wavers.",
+    detail:{ distribution:"BW Legendary Treasures booster packs", gradeRate:"~9%", psaSubmit:"~690", note:"BW Full Art silver border is distinctive" }
+  },
+  {
+    id:29, name:"Pikachu VMAX #044 Pokemon Center Promo (JP)", set:"Pokemon Center Promo", year:2021,
+    pokemon:"pikachu", era:"modern", cat:"promo", japanese:true,
+    pop10:31, popGrowthPerMonth:0.4, marketPrice:420, psa10Price:580,
+    rawPrice:22, fanTier:10,
+    tags:["promo","japanese","fan-fave","low-pop"],
+    rationale:"Japan Pokemon Center exclusive with clean art and 31 PSA 10s. Pokemon Center exclusives historically appreciate well as they age out of the market.",
+    detail:{ distribution:"Pokemon Center Japan exclusive", gradeRate:"~14%", psaSubmit:"~220", note:"Japan-only distribution" }
+  },
+  {
+    id:30, name:"Eevee #25/25 McDonald's 25th Anniversary Holo", set:"McDonald's 2021 Promo", year:2021,
+    pokemon:"pikachu", era:"modern", cat:"promo", japanese:false,
+    pop10:88, popGrowthPerMonth:1.9, marketPrice:220, psa10Price:280,
+    rawPrice:12, fanTier:8,
+    tags:["promo","low-pop"],
+    rationale:"McDonald's 25th Anniversary Eevee holo has a shockingly low pop for a mass-distributed promo. Kids played them. Sub-100 PSA 10s is genuinely rare for this distribution.",
+    detail:{ distribution:"McDonald's Happy Meal (2021)", gradeRate:"~8%", psaSubmit:"~1,100", note:"Holo set of 25 — Eevee most sought" }
+  },
+  {
+    id:31, name:"Gyarados #6/102 1st Edition Base Set Holo", set:"Base Set 1st Edition", year:1999,
+    pokemon:"gyarados", era:"wotc", cat:"holo", japanese:false,
+    pop10:312, popGrowthPerMonth:6.2, marketPrice:3200, psa10Price:4800,
+    rawPrice:180, fanTier:9,
+    tags:["vintage","fan-fave"],
+    rationale:"Gyarados 1st Ed is one of the most undervalued WOTC holos. 312 PSA 10s is genuinely scarce for a card with this name recognition. Trades at roughly 5% of Charizard 1st Ed despite comparable difficulty to grade.",
+    detail:{ distribution:"Base Set 1st Edition boosters", gradeRate:"~3.1%", psaSubmit:"~10,065", note:"Holo wave pattern is extremely condition sensitive" }
+  },
+  {
+    id:32, name:"Gyarados ex #114/116 EX FireRed LeafGreen", set:"EX FireRed LeafGreen", year:2004,
+    pokemon:"gyarados", era:"ex", cat:"holo", japanese:false,
+    pop10:44, popGrowthPerMonth:0.4, marketPrice:580, psa10Price:820,
+    rawPrice:28, fanTier:8,
+    tags:["vintage","low-pop"],
+    rationale:"EX era Gyarados ex sits at only 44 PSA 10s — a pop that reflects how few collectors were grading EX era cards. FireRed LeafGreen is a nostalgia set gaining traction fast.",
+    detail:{ distribution:"EX FireRed LeafGreen boosters", gradeRate:"~5%", psaSubmit:"~880", note:"EX era is the current undervalued frontier" }
+  },
+  {
+    id:33, name:"Gyarados ☆ #102/113 EX Delta Species", set:"EX Delta Species", year:2005,
+    pokemon:"gyarados", era:"ex", cat:"gold-star", japanese:false,
+    pop10:68, popGrowthPerMonth:0.5, marketPrice:1800, psa10Price:2600,
+    rawPrice:120, fanTier:9,
+    tags:["vintage","fan-fave","low-pop"],
+    rationale:"Gyarados Gold Star is one of the most visually stunning Gold Stars printed. 68 PSA 10s is low for a card with Gyarados's popularity. The red color variant is iconic and demand is quietly building.",
+    detail:{ distribution:"EX Delta Species boosters", gradeRate:"~4%", psaSubmit:"~1,700", note:"Gold Star = gold foil star in the card name" }
+  },
+  {
+    id:34, name:"Dragonite #4/62 Fossil 1st Edition Holo", set:"Fossil 1st Edition", year:1999,
+    pokemon:"dragonite", era:"wotc", cat:"holo", japanese:false,
+    pop10:178, popGrowthPerMonth:3.4, marketPrice:1400, psa10Price:2100,
+    rawPrice:80, fanTier:8,
+    tags:["vintage","fan-fave"],
+    rationale:"Dragonite Fossil 1st Ed is the definitive Dragonite card and it's still priced like a footnote. 178 PSA 10s is reasonable but demand is rising as Gen 1 collecting broadens beyond Charizard.",
+    detail:{ distribution:"Fossil 1st Edition boosters", gradeRate:"~3.8%", psaSubmit:"~4,685", note:"Fossil set print quality is inconsistent" }
+  },
+  {
+    id:35, name:"Dragonite ex #86/97 EX Dragon", set:"EX Dragon", year:2003,
+    pokemon:"dragonite", era:"ex", cat:"holo", japanese:false,
+    pop10:52, popGrowthPerMonth:0.5, marketPrice:420, psa10Price:680,
+    rawPrice:22, fanTier:8,
+    tags:["vintage","low-pop"],
+    rationale:"EX Dragon is the most on-theme set for Dragonite. Only 52 PSA 10s for a Dragonite ex from the Dragon-themed set. EX era is heating up and this is a prime sleeper.",
+    detail:{ distribution:"EX Dragon booster packs", gradeRate:"~5.5%", psaSubmit:"~945", note:"EX Dragon set focused on dragon-type Pokemon" }
+  },
+  {
+    id:36, name:"Dragonite VSTAR #191/202 Pokemon GO", set:"Pokemon GO", year:2022,
+    pokemon:"dragonite", era:"modern", cat:"shiny", japanese:false,
+    pop10:620, popGrowthPerMonth:18, marketPrice:95, psa10Price:140,
+    rawPrice:9, fanTier:8,
+    tags:["fan-fave","shiny"],
+    rationale:"Pokemon GO set is slept on as a modern collector set. Dragonite VSTAR full art has clean artwork and a growing pop that hasn't caught up to demand. Entry-level price makes it accessible.",
+    detail:{ distribution:"Pokemon GO booster packs", gradeRate:"~20%", psaSubmit:"~3,100", note:"Pokemon GO set tied to app anniversary" }
+  },
+  {
+    id:37, name:"Vaporeon ★ #102 EX Power Keepers", set:"EX Power Keepers", year:2007,
+    pokemon:"vaporeon", era:"ex", cat:"gold-star", japanese:false,
+    pop10:null, popGrowthPerMonth:0.5, marketPrice:1400, psa10Price:1800,
+    rawPrice:120, fanTier:8,
+    psaCert:"28274873",
+    tags:["vintage","fan-fave","low-pop"],
+    rationale:"Vaporeon Gold Star from EX Power Keepers. One of the more affordable Gold Stars with strong Eeveelution collector demand. Pop is low and the foil star treatment makes gem mint copies genuinely rare.",
+    detail:{ distribution:"EX Power Keepers boosters", gradeRate:"~4%", psaSubmit:"~1,000", note:"Gold Star = gold foil star in card name" }
+  },
+];
+
+let weights = { popScarcity:8, fanDemand:7, priceValue:6, popGrowth:5, vintage:4 };
+let activeFilters = { pokemon:'all', era:'all', cat:'all', grade:'all' };
+let currentSort = 'score';
+let analysisRun = false;
+let displayedCards = [];
+
+
+
+
+// ─── Pokemon TCG API Integration ─────────────────────────────────────────────
+// Fan favorites for fanTier scoring
+const FAN_TIERS = {
+  pikachu:10, charizard:10, mew:10, mewtwo:10, lugia:9, umbreon:10,
+  gengar:9, eevee:9, rayquaza:9, gyarados:8, dragonite:8, blaziken:8,
+  garchomp:8, lucario:9, gardevoir:8, sylveon:8, espeon:8, vaporeon:8,
+  jolteon:8, flareon:7, leafeon:7, glaceon:7, snorlax:8, alakazam:7,
+  blastoise:8, venusaur:7, articuno:7, zapdos:7, moltres:7, ho_oh:8,
+  celebi:8, suicune:8, entei:7, raikou:7, tyranitar:8, kyogre:8,
+  groudon:8, deoxys:7, latias:7, latios:7, absol:7, salamence:7,
+  metagross:7, dialga:8, palkia:7, giratina:8, togekiss:7, rotom:7,
+  zoroark:7, zacian:9, zamazenta:7, eternatus:7, greninja:8, mimikyu:9,
+  solgaleo:7, lunala:7, necrozma:7, koraidon:8, miraidon:8
+};
+
+// Rarity to estimated pop10 mapping
+const RARITY_POP = {
+  'Rare Holo VMAX': 800, 'Rare Secret': 400, 'Special Illustration Rare': 300,
+  'Illustration Rare': 500, 'Hyper Rare': 350, 'Rare Rainbow': 1200,
+  'Rare Ultra': 600, 'Rare Holo V': 900, 'Rare Holo': 1800,
+  'Rare Holo EX': 700, 'Rare Holo GX': 750, 'Rare Holo LV.X': 600,
+  'Rare BREAK': 800, 'Rare Prime': 400, 'Rare Holo Star': 150,
+  'Gold Star': 100, 'Shining': 200, 'Promo': 500,
+  'Rare': 2000, 'Uncommon': 3000, 'Common': 5000,
+  'LEGEND': 300, 'Classic Collection': 250, 'Amazing Rare': 600,
+  'Radiant Rare': 700, 'Trainer Gallery Rare Holo': 500
+};
+
+// Era detection from set release date
+function getEra(releaseDate) {
+  if (!releaseDate) return 'modern';
+  const year = parseInt(releaseDate.substring(0,4));
+  if (year <= 2003) return 'wotc';
+  if (year <= 2007) return 'ex';
+  if (year <= 2010) return 'dp';
+  return 'modern';
+}
+
+// Category detection from rarity/subtype
+function getCat(card) {
+  const r = (card.rarity || '').toLowerCase();
+  const name = (card.name || '').toLowerCase();
+  const sub = (card.subtypes || []).join(' ').toLowerCase();
+  if (r.includes('gold star') || r === 'gold star') return 'gold-star';
+  if (r.includes('shining') || name.includes('shining')) return 'shiny';
+  if (r.includes('promo') || sub.includes('promo')) return 'promo';
+  if (r.includes('rainbow') || r.includes('hyper') || r.includes('secret') ||
+      r.includes('illustration') || r.includes('special')) return 'shiny';
+  if (r.includes('holo')) return 'holo';
+  return 'holo';
+}
+
+// Tags from card data
+function getTags(card) {
+  const tags = [];
+  const r = (card.rarity || '').toLowerCase();
+  const year = card.set && card.set.releaseDate ? parseInt(card.set.releaseDate.substring(0,4)) : 2020;
+  const pokemon = (card.name || '').toLowerCase().split(' ')[0];
+  const pop = RARITY_POP[card.rarity] || 2000;
+
+  if (year <= 2007) tags.push('vintage');
+  if (r.includes('promo')) tags.push('promo');
+  if (card.set && card.set.name && card.set.name.toLowerCase().includes('japanese')) tags.push('japanese');
+  if (pop <= 300) tags.push('low-pop');
+  if (FAN_TIERS[pokemon] >= 9) tags.push('fan-fave');
+  if (r.includes('shining') || r.includes('rainbow') || r.includes('illustration')) tags.push('shiny');
+  return tags.length ? tags : ['holo'];
+}
+
+// Estimated PSA 10 price based on rarity + pokemon + year
+function estimatePrice(card) {
+  const base = RARITY_POP[card.rarity] || 2000;
+  const year = card.set && card.set.releaseDate ? parseInt(card.set.releaseDate.substring(0,4)) : 2020;
+  const pokemon = (card.name || '').toLowerCase().split(' ')[0];
+  const fanTier = FAN_TIERS[pokemon] || 5;
+  const ageMult = year <= 2003 ? 12 : year <= 2007 ? 5 : year <= 2013 ? 2 : 1;
+  const fanMult = fanTier >= 10 ? 3 : fanTier >= 8 ? 1.8 : 1;
+  const rarityMult = base <= 200 ? 8 : base <= 500 ? 4 : base <= 800 ? 2 : 1;
+  return Math.round(25 * ageMult * fanMult * rarityMult);
+}
+
+// Convert TCG API card to our CARDS format
+let tcgIdCounter = 1000;
+function tcgCardToLocal(card) {
+  const pokemon = (card.name || 'unknown').toLowerCase()
+    .replace(/\s*(ex|gx|v|vmax|vstar|✦|☆|★|&|and)\s*/gi, ' ')
+    .split(' ')[0].replace(/[^a-z0-9-]/g, '');
+  const year = card.set && card.set.releaseDate ? parseInt(card.set.releaseDate.substring(0,4)) : 2020;
+  const pop10 = RARITY_POP[card.rarity] || 1500;
+  const psa10Price = estimatePrice(card);
+  const fanTier = FAN_TIERS[pokemon] || 5;
+
+  return {
+    id: tcgIdCounter++,
+    name: card.name + (card.number ? ' #' + card.number : ''),
+    set: card.set ? card.set.name : 'Unknown Set',
+    year: year,
+    pokemon: pokemon,
+    era: getEra(card.set && card.set.releaseDate),
+    cat: getCat(card),
+    japanese: false,
+    pop10: pop10,
+    popGrowthPerMonth: pop10 > 2000 ? 25 : pop10 > 500 ? 5 : 1,
+    marketPrice: Math.round(psa10Price * 0.75),
+    psa10Price: psa10Price,
+    rawPrice: Math.round(psa10Price * 0.08),
+    fanTier: fanTier,
+    tags: getTags(card),
+    rationale: 'Fetched from Pokemon TCG API. ' + (card.rarity || '') + ' · ' + (card.set ? card.set.name : '') + '. Prices are estimates — use Fetch Comps for real data.',
+    detail: {
+      distribution: card.set ? card.set.name + ' booster packs' : 'Unknown',
+      gradeRate: '~10%',
+      psaSubmit: '~' + Math.round(pop10 / 0.1).toLocaleString(),
+      note: 'Data from Pokemon TCG API · Pop & prices estimated'
+    },
+    tcgImage: card.images && card.images.small ? card.images.small : null
+  };
+}
+
+let tcgLoaded = false;
+let currentTcgPokemon = null;
+
+// Cache to avoid re-fetching same pokemon
+const tcgCache = {};
+
+async function loadTcgCards(pokemonName) {
+  if (pokemonName === 'all' || !pokemonName) {
+    hideTcgLoader();
+    // Reset to hardcoded cards only
+    while (CARDS.length > 0 && CARDS[CARDS.length-1].id >= 1000) CARDS.pop();
+    tcgIdCounter = 1000;
+    currentTcgPokemon = null;
+    document.getElementById('dbCount').textContent = CARDS.length;
+    document.getElementById('tcgStatus').textContent = 'select pokemon to load cards';
+    document.getElementById('tcgStatus').style.color = 'var(--muted)';
+    if (analysisRun) renderCards();
+    return;
+  }
+
+  // Return cached results instantly
+  if (tcgCache[pokemonName]) {
+    while (CARDS.length > 36) CARDS.pop();
+    tcgIdCounter = 1000;
+    tcgCache[pokemonName].forEach(c => CARDS.push(c));
+    currentTcgPokemon = pokemonName;
+    document.getElementById('dbCount').textContent = CARDS.length;
+    document.getElementById('tcgStatus').textContent = tcgCache[pokemonName].length + ' cards (cached)';
+    document.getElementById('tcgStatus').style.color = 'var(--mint)';
+    if (analysisRun) renderCards();
+    return;
+  }
+
+  currentTcgPokemon = pokemonName;
+  showTcgLoader('Loading ' + pokemonName + ' cards...');
+
+  // Remove previous TCG cards, keep original hardcoded ones (id < 1000)
+  while (CARDS.length > 0 && CARDS[CARDS.length-1].id >= 1000) CARDS.pop();
+  tcgIdCounter = 1000;
+
+  try {
+    // Single fast fetch - 250 cards max, no wildcard (TCG API uses partial matching by default)
+    const url = `https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(pokemonName)}&pageSize=250&orderBy=-set.releaseDate`;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
+
+    if (!res.ok) throw new Error('TCG API returned ' + res.status);
+    const data = await res.json();
+    const cards = (data.data || []);
+
+    if (cards.length === 0) throw new Error('No cards found for "' + pokemonName + '"');
+
+    setTcgProgress(60, 'Processing ' + cards.length + ' cards...');
+
+    const newCards = [];
+    cards.forEach(c => {
+      const converted = tcgCardToLocal(c);
+      newCards.push(converted);
+      CARDS.push(converted);
+    });
+
+    // Cache for instant re-access
+    tcgCache[pokemonName] = newCards;
+
+    document.getElementById('dbCount').textContent = CARDS.length;
+    document.getElementById('tcgStatus').textContent = newCards.length + ' ' + pokemonName + ' cards';
+    document.getElementById('tcgStatus').style.color = 'var(--mint)';
+    hideTcgLoader();
+
+    if (analysisRun) renderCards();
+    else runAnalysis();
+
+  } catch(e) {
+    hideTcgLoader();
+    if (e.name === 'AbortError') {
+      document.getElementById('tcgStatus').textContent = 'Timeout — click Retry';
+    } else {
+      document.getElementById('tcgStatus').textContent = e.message || 'API error';
+    }
+    document.getElementById('tcgStatus').style.color = 'var(--red)';
+    if (analysisRun) renderCards();
+  }
+}
+
+function showTcgLoader(msg) {
+  document.getElementById('tcgLoadBar').style.display = 'block';
+  document.getElementById('tcgLoadMsg').textContent = msg;
+  document.getElementById('tcgLoadCount').textContent = '';
+  document.getElementById('tcgLoadProgress').style.width = '5%';
+}
+function setTcgProgress(pct, msg) {
+  document.getElementById('tcgLoadProgress').style.width = pct + '%';
+  document.getElementById('tcgLoadCount').textContent = msg;
+}
+function hideTcgLoader() {
+  document.getElementById('tcgLoadBar').style.display = 'none';
+}
+
+
+// ─── Pokemon dropdown ─────────────────────────────────────────────────────────
+function onPokemonSelect(val) {
+  activeFilters.pokemon = val;
+  loadTcgCards(val);
+}
+
+
+
+
+function updateEbayConnectStatus() {
+  const statusEl = document.getElementById('ebayConnectStatus');
+  const btnEl = document.getElementById('ebayConnectBtn');
+  if (isEbayTokenValid() || getEbayRefreshToken()) {
+    if (statusEl) { statusEl.textContent = '✓ connected'; statusEl.style.color = 'var(--mint)'; }
+    if (btnEl) { btnEl.textContent = '✓ eBay Connected'; btnEl.style.background = 'rgba(0,229,160,0.12)'; }
+    updateEbayStatus(true);
+  }
+}
+
+async function connectEbay() {
+  // Get the auth URL from Vercel (so client ID stays server-side)
+  try {
+    const res = await fetch(VERCEL_API + '?action=auth_url');
+    const data = await res.json();
+    if (data.auth_url) {
+      window.location.href = data.auth_url;
+    } else {
+      alert('Could not get eBay auth URL. Check Vercel deployment.');
+    }
+  } catch(e) {
+    alert('Could not connect to Vercel backend: ' + e.message);
+  }
+}
+
+
+// ─── Auto fetch sales when card expands ──────────────────────────────────────
+function autoFetchSales(cardId) {
+  // Only auto-fetch if eBay is connected
+  if (isEbayTokenValid() || getEbayRefreshToken()) {
+    fetchSales(cardId, null);
+  }
+}
+
+// ─── eBay OAuth ───────────────────────────────────────────────────────────────
+function saveEbayTokens(accessToken, refreshToken, expiresIn) {
+  persist('ebay_access_token', accessToken);
+  persist('ebay_refresh_token', refreshToken);
+  const expiry = Date.now() + (expiresIn * 1000);
+  persist('ebay_token_expiry', expiry.toString());
+}
+
+function getEbayAccessToken() { return retrieve('ebay_access_token'); }
+function getEbayRefreshToken() { return retrieve('ebay_refresh_token'); }
+function getEbayTokenExpiry() { return parseInt(retrieve('ebay_token_expiry') || '0'); }
+
+function isEbayTokenValid() {
+  const token = getEbayAccessToken();
+  const expiry = getEbayTokenExpiry();
+  return token && expiry > Date.now() + 60000; // valid if >1min remaining
+}
+
+async function refreshEbayToken() {
+  const refreshToken = getEbayRefreshToken();
+  if (!refreshToken) return null;
+  try {
+    const res = await fetch(VERCEL_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'refresh', refresh_token: refreshToken })
+    });
+    const data = await res.json();
+    if (data.access_token) {
+      persist('ebay_access_token', data.access_token);
+      const expiry = Date.now() + (data.expires_in * 1000);
+      persist('ebay_token_expiry', expiry.toString());
+      return data.access_token;
+    }
+  } catch(e) { console.warn('Token refresh failed:', e.message); }
+  return null;
+}
+
+async function getValidEbayToken() {
+  if (isEbayTokenValid()) return getEbayAccessToken();
+  return await refreshEbayToken();
+}
+
+async function exchangeEbayCode(code) {
+  try {
+    const res = await fetch(VERCEL_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'exchange', code: code })
+    });
+    const data = await res.json();
+    if (data.access_token) {
+      saveEbayTokens(data.access_token, data.refresh_token, data.expires_in);
+      updateEbayStatus(true);
+      return true;
+    }
+  } catch(e) { console.warn('Code exchange failed:', e.message); }
+  return false;
+}
+
+function updateEbayStatus(connected) {
+  const badge = document.getElementById('ebayStatusBadge');
+  if (badge) {
+    badge.textContent = connected ? '● eBay Connected' : '● Real Comp Links';
+    badge.style.color = connected ? 'var(--mint)' : '';
+    badge.style.borderColor = connected ? 'rgba(0,229,160,0.3)' : '';
+  }
+}
+
+// Check URL for eBay auth code on page load
+async function checkEbayCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  if (code) {
+    // Clean the URL
+    window.history.replaceState({}, document.title, window.location.pathname);
+    // Show connecting status
+    const badge = document.getElementById('ebayStatusBadge');
+    if (badge) badge.textContent = '⟳ Connecting eBay...';
+    const success = await exchangeEbayCode(code);
+    if (success) {
+      console.log('eBay connected successfully!');
+    }
+  } else if (isEbayTokenValid()) {
+    updateEbayStatus(true);
+  }
+}
+
+// eBay sold listings search via Vercel proxy
+async function searchEbaySold(cardName) {
+  const token = await getValidEbayToken();
+  if (!token) return null;
+
+  try {
+    const query = cardName.replace(/[☆★#\/]/g, '').trim() + ' PSA 10';
+    const res = await fetch(VERCEL_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'search', access_token: token, query: query })
+    });
+    const data = await res.json();
+    return data.items || null;
+  } catch(e) {
+    console.warn('eBay search failed:', e.message);
+    return null;
+  }
+}
+
+
+// ─── Collapsible sections ────────────────────────────────────────────────────
+function toggleSection(bodyId, arrowId) {
+  const body = document.getElementById(bodyId);
+  const arrow = document.getElementById(arrowId);
+  if (!body || !arrow) return;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+
+// ─── API Key Management ───────────────────────────────────────────────────────
+// Uses localStorage + cookie fallback so keys persist across sessions
+// even when opened as a local file (file:// protocol)
+
+function setCookie(name, val, days) {
+  const d = new Date();
+  d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = name + '=' + encodeURIComponent(val) + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+}
+
+function getCookie(name) {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? decodeURIComponent(match[2]) : '';
+}
+
+function persist(key, val) {
+  try { localStorage.setItem(key, val); } catch(e) {}
+  try { sessionStorage.setItem(key, val); } catch(e) {}
+  setCookie(key, val, 365);
+}
+
+// ── Hardcoded fallback keys (edit these once, never enter again) ──
+const HARDCODED_ANTHROPIC_KEY = '';  // paste your sk-ant-... key here
+const HARDCODED_EBAY_KEY = '';       // paste your eBay App ID here
+
+function retrieve(key) {
+  // Check hardcoded values first
+  if (key === 'pg_api_key' && HARDCODED_ANTHROPIC_KEY) return HARDCODED_ANTHROPIC_KEY;
+  if (key === 'pg_ebay_key' && HARDCODED_EBAY_KEY) return HARDCODED_EBAY_KEY;
+  try { const v = localStorage.getItem(key); if (v) return v; } catch(e) {}
+  try { const v = sessionStorage.getItem(key); if (v) return v; } catch(e) {}
+  return getCookie(key) || '';
+}
+
+function saveKey(val) {
+  const k = val.trim();
+  persist('pg_api_key', k);
+  const ok = k.startsWith('sk-ant-');
+  const el = document.getElementById('keyCheck');
+  if (el) { el.textContent = ok ? '&#10003;' : ''; el.style.color = 'var(--mint)'; }
+}
+function getKey() { return retrieve('pg_api_key'); }
+
+
+
+// ─── Vercel Backend URL ───────────────────────────────────────────────────────
+const VERCEL_API = 'https://poke-hack.vercel.app/api/ebay-token';
+
+// ─── Apify Token ──────────────────────────────────────────────────────────────
+function saveApifyToken(val) {
+  const k = val.trim();
+  persist('pg_apify_token', k);
+  const ok = k.startsWith('apify_api_') || k.length > 20;
+  const el = document.getElementById('apifyTokenCheck');
+  if (el) { el.textContent = ok ? '✓' : ''; el.style.color = 'var(--mint)'; }
+}
+function getApifyToken() { return retrieve('pg_apify_token'); }
+
+// ─── Apify PSA Pop Scraper ────────────────────────────────────────────────────
+async function fetchApifyPsaPop(cardId) {
+  const token = getApifyToken();
+  if (!token || token.length < 10) return;
+
+  const card = displayedCards.find(c => c.id === cardId);
+  if (!card) return;
+
+  // Only run if this card has a PSA cert number
+  if (!card.psaCert) return;
+
+  try {
+    const runUrl = 'https://api.apify.com/v2/acts/lulzasaur~psa-pop-scraper/run-sync-get-dataset-items?token=' + token;
+
+    const res = await fetch(runUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        certNumber: card.psaCert,
+        specId: null
+      })
+    });
+
+    if (!res.ok) throw new Error('Apify error ' + res.status);
+    const items = await res.json();
+
+    if (!items || !items.length) return;
+
+    const popData = items[0];
+    console.log('PSA Pop data:', JSON.stringify(popData));
+    // PSA API returns population in gradeBreakdown array or direct fields
+    // Try multiple field name formats
+    function getGradeCount(data, grade) {
+      return data['grade' + grade] || data['pop' + grade] || data['PSA' + grade] ||
+             data['Grade' + grade] || data['psa' + grade] ||
+             (data.gradeBreakdown && data.gradeBreakdown[grade]) ||
+             (data.grades && data.grades[grade]) || 0;
+    }
+    const pop10 = getGradeCount(popData, 10);
+    const pop9  = getGradeCount(popData, 9);
+    const pop8  = getGradeCount(popData, 8);
+    const pop7  = getGradeCount(popData, 7);
+    const pop6  = getGradeCount(popData, 6);
+    const pop5  = getGradeCount(popData, 5);
+    const pop4  = getGradeCount(popData, 4);
+    const pop3  = getGradeCount(popData, 3);
+    const pop2  = getGradeCount(popData, 2);
+    const pop1  = getGradeCount(popData, 1);
+    const totalPop = popData.total || popData.totalPop || popData.totalPopulation ||
+                     [pop10,pop9,pop8,pop7,pop6,pop5,pop4,pop3,pop2,pop1].reduce((a,b)=>a+b,0);
+
+    if (pop10 > 0) {
+      // Update card data
+      const cardObj = CARDS.find(c => c.id === cardId);
+      if (cardObj) {
+        cardObj.pop10 = pop10;
+        cardObj._popData = popData;
+      }
+
+      // Update the pop display
+      const detailEl = document.getElementById('detail-' + cardId);
+      if (detailEl) {
+        // Show full grade breakdown
+        const existing = detailEl.querySelector('.apify-pop-data');
+        if (existing) existing.remove();
+
+        const breakdown = document.createElement('div');
+        breakdown.className = 'apify-pop-data';
+        breakdown.style.cssText = 'margin-top:10px;padding:10px;background:var(--bg);border-radius:6px;border:1px solid rgba(0,229,160,0.2);';
+        breakdown.innerHTML = `
+          <div style="font-size:9px;color:var(--mint);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            ✓ Live PSA Pop via Apify
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+            ${[10,9,8,7,6,5,4,3,2,1].map(g => {
+              const p = getGradeCount(popData, g);
+              return p > 0 ? `<div style="text-align:center;background:var(--bg3);border-radius:4px;padding:5px 3px;">
+                <div style="font-size:9px;color:var(--muted);">PSA ${g}</div>
+                <div style="font-size:12px;font-weight:600;font-family:'DM Mono',monospace;color:${g===10?'var(--mint)':g>=8?'var(--gold)':'var(--text)'};">${p.toLocaleString()}</div>
+              </div>` : '';
+            }).join('')}
+            ${totalPop ? `<div style="text-align:center;background:var(--bg3);border-radius:4px;padding:5px 3px;">
+              <div style="font-size:9px;color:var(--muted);">Total</div>
+              <div style="font-size:12px;font-weight:600;font-family:'DM Mono',monospace;">${totalPop.toLocaleString()}</div>
+            </div>` : ''}
+          </div>`;
+        detailEl.insertBefore(breakdown, detailEl.firstChild);
+
+        // Update the pop metric in card header
+        const popMetric = document.querySelector('#card-' + cardId + ' .metric-val');
+        if (popMetric) {
+          popMetric.textContent = pop10.toLocaleString();
+          popMetric.style.color = pop10 <= 50 ? 'var(--mint)' : pop10 <= 300 ? 'var(--gold)' : '';
+        }
+      }
+    }
+  } catch(e) {
+    console.warn('Apify PSA pop error:', e.message);
+    // Show error in the detail panel so user knows what happened
+    const detailEl2 = document.getElementById('detail-' + cardId);
+    if (detailEl2) {
+      const errDiv = document.createElement('div');
+      errDiv.style.cssText = 'font-size:10px;color:var(--red);padding:6px 8px;background:rgba(255,68,68,0.08);border-radius:5px;margin-top:8px;';
+      errDiv.textContent = '⚠ PSA pop lookup failed: ' + e.message;
+      detailEl2.insertBefore(errDiv, detailEl2.firstChild);
+    }
+  }
+}
+
+function saveEbayKey(val) {
+  const k = val.trim();
+  persist('pg_ebay_key', k);
+  const ok = k.length > 10;
+  const el = document.getElementById('ebayKeyCheck');
+  if (el) { el.textContent = ok ? '&#10003;' : ''; el.style.color = 'var(--mint)'; }
+}
+function getEbayKey() { return retrieve('pg_ebay_key'); }
+
+function savePsaToken(val) {
+  const k = val.trim();
+  persist('pg_psa_token', k);
+  const ok = k.length > 10;
+  const el = document.getElementById('psaTokenCheck');
+  if (el) { el.textContent = ok ? '&#10003;' : ''; el.style.color = 'var(--mint)'; }
+}
+function getPsaToken() { return retrieve('pg_psa_token'); }
+
+function requireKey(container) {
+  const k = getKey();
+  if (!k || !k.startsWith('sk-ant-')) {
+    if (container) container.innerHTML = '<div class="sales-err">&#9888; Anthropic API key needed for AI Expand.<br><a href="https://console.anthropic.com" target="_blank" style="color:var(--mint)">Get one at console.anthropic.com</a></div>';
+    return false;
+  }
+  return true;
+}
+
+async function callClaude(prompt, maxTokens) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': getKey(),
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: maxTokens || 1200,
+      messages: [{ role: 'user', content: prompt }] })
+  });
+  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error((e.error&&e.error.message)||'HTTP '+res.status); }
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return (data.content||[]).map(b => b.type==='text' ? b.text : '').join('').trim();
+}
+
+function extractJSON(text) {
+  try { return JSON.parse(text.trim()); } catch(e) {}
+  let c = text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+  try { return JSON.parse(c); } catch(e) {}
+  const s = c.indexOf('{'), en = c.lastIndexOf('}');
+  if (s !== -1 && en > s) { try { return JSON.parse(c.slice(s,en+1)); } catch(ex) {} }
+  const sa = c.indexOf('['), ea = c.lastIndexOf(']');
+  if (sa !== -1 && ea > sa) { try { return JSON.parse(c.slice(sa,ea+1)); } catch(ex) {} }
+  return null;
+}
+
+// ─── AI Expand Database ───────────────────────────────────────────────────────
+let expandedIds = 100;
+async function expandDatabase() {
+  const btn = document.getElementById('expandBtn');
+  const prog = document.getElementById('expandProgress');
+  const txtEl = document.getElementById('expandBtnTxt');
+
+  if (!requireKey(null)) {
+    prog.textContent = 'Add your API key in the sidebar first.';
+    prog.style.color = 'var(--red)';
+    return;
+  }
+
+  btn.disabled = true;
+  prog.style.color = 'var(--muted)';
+
+  const existing = CARDS.map(c => c.name);
+  const era = activeFilters.era !== 'all' ? activeFilters.era : 'any era';
+  const poke = activeFilters.pokemon !== 'all' ? activeFilters.pokemon : 'any Pokemon';
+  const cat = activeFilters.cat !== 'all' ? activeFilters.cat : 'any category';
+
+  const batches = 4; // 4 batches x 5 cards = 20 new cards per click
+  let added = 0;
+
+  for (let b = 0; b < batches; b++) {
+    txtEl.textContent = `Fetching batch ${b+1}/${batches}...`;
+    prog.textContent = `Added ${added} cards so far...`;
+
+    const prompt = `You are a Pokemon TCG investment database. Generate 5 UNIQUE Pokemon cards NOT in this list: ${existing.slice(-30).join(', ')}.
+
+Focus: ${poke} pokemon, ${era}, ${cat} category.
+Include a mix of: vintage WOTC cards, EX era, DP era, and modern sets. Include Japanese promos, error cards, and obscure low-pop gems.
+
+Return ONLY a valid JSON array, no markdown:
+[
+  {
+    "id": ${expandedIds + b*5 + 1},
+    "name": "Full card name with number and set",
+    "set": "Set name",
+    "year": 2003,
+    "pokemon": "charizard",
+    "era": "ex",
+    "cat": "holo",
+    "japanese": false,
+    "pop10": 145,
+    "popGrowthPerMonth": 2.1,
+    "marketPrice": 380,
+    "psa10Price": 520,
+    "rawPrice": 18,
+    "fanTier": 8,
+    "tags": ["vintage","fan-fave"],
+    "rationale": "2-3 sentence investment thesis.",
+    "detail": { "distribution": "...", "gradeRate": "~5%", "psaSubmit": "~2,000", "note": "..." }
+  }
+]
+
+Rules:
+- pop10 and psa10Price MUST be accurate current market values (March 2026)
+- tags: use only vintage, promo, japanese, shiny, fan-fave, low-pop
+- era: wotc, ex, dp, or modern
+- cat: holo, promo, gold-star, shiny, or japanese
+- pokemon: lowercase single pokemon name
+- Make IDs sequential starting at ${expandedIds + b*5 + 1}`;
+
+    try {
+      const text = await callClaude(prompt, 2000);
+      const parsed = extractJSON(text);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        parsed.forEach(c => {
+          if (!CARDS.find(x => x.name === c.name)) {
+            c.tags = (c.tags || []).concat(['ai']);
+            CARDS.push(c);
+            existing.push(c.name);
+            added++;
+          }
+        });
+        expandedIds += 5;
+        document.getElementById('dbCount').textContent = CARDS.length;
+      }
+    } catch(e) {
+      console.warn('Batch failed:', e.message);
+    }
+  }
+
+  btn.disabled = false;
+  txtEl.textContent = 'AI Expand Database';
+  prog.textContent = added > 0 ? `&#10003; Added ${added} cards. Total: ${CARDS.length}` : 'No new cards added — try again.';
+  prog.style.color = added > 0 ? 'var(--mint)' : 'var(--red)';
+  if (analysisRun) renderCards();
+}
+
+// ─── Scoring ──────────────────────────────────────────────────────────────────
+function scoreCard(card) {
+  const w = weights;
+  const total = w.popScarcity + w.fanDemand + w.priceValue + w.popGrowth + w.vintage;
+
+  // Individual factor scores (0-100)
+  const popScarcity = Math.min(100, (1 / Math.log(card.pop10 + 2)) * 500);
+  const fanDemand = card.fanTier * 10;
+  const priceValue = Math.min(100, Math.max(0, ((card.psa10Price - card.rawPrice * 8) / card.psa10Price) * 60 + 40));
+  const popGrowthScore = Math.min(100, Math.max(0, 100 - (card.popGrowthPerMonth / card.pop10) * 100));
+  const vintageScore = Math.min(100, ((2025 - card.year) / 27) * 100);
+
+  const raw = (
+    popScarcity * w.popScarcity +
+    fanDemand * w.fanDemand +
+    priceValue * w.priceValue +
+    popGrowthScore * w.popGrowth +
+    vintageScore * w.vintage
+  ) / (total || 1);
+
+  const upside = Math.round(((card.psa10Price / (card.rawPrice * 10)) - 1) * 100);
+
+  return {
+    total: Math.round(raw),
+    popScarcity: Math.round(popScarcity),
+    fanDemand: Math.round(fanDemand),
+    priceValue: Math.round(priceValue),
+    popGrowth: Math.round(popGrowthScore),
+    vintage: Math.round(vintageScore),
+    upside
+  };
+}
+
+function getGrade(score) {
+  if (score >= 78) return { letter:'S', cls:'score-s' };
+  if (score >= 62) return { letter:'A', cls:'score-a' };
+  if (score >= 48) return { letter:'B', cls:'score-b' };
+  return { letter:'C', cls:'score-c' };
+}
+
+
+// ─── Filters & Sort ───────────────────────────────────────────────────────────
+function toggleChip(el, group) {
+  document.querySelectorAll(`#${group}Chips .chip`).forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  activeFilters[group] = el.dataset.val;
+  if (analysisRun) renderCards();
+}
+
+function updateWeights() {
+  document.querySelectorAll('.weight-input').forEach(inp => {
+    weights[inp.dataset.key] = parseInt(inp.value);
+    document.getElementById('w-' + inp.dataset.key).textContent = inp.value;
+  });
+  if (analysisRun) renderCards();
+}
+
+function setSort(key, btn) {
+  currentSort = key;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (analysisRun) renderCards();
+}
+
+function fmt(n) {
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(2) + 'M';
+  if (n >= 1000) return '$' + (n/1000).toFixed(1) + 'K';
+  return '$' + n;
+}
+
+
+// ─── Log-scale price slider ───────────────────────────────────────────────────
+function logScalePrice(sliderVal) {
+  const v = parseInt(sliderVal);
+  if (v >= 100) return 10000000;
+  if (v <= 0) return 0;
+  return Math.round(Math.pow(10, (v / 100) * 7));
+}
+
+function getPriceMax() {
+  return logScalePrice(document.getElementById('priceRange').value);
+}
+
+function onPriceSlide(val) {
+  const price = logScalePrice(val);
+  const lbl = parseInt(val) >= 100 ? 'Any'
+    : price >= 1000000 ? '$' + (price / 1000000).toFixed(1) + 'M'
+    : price >= 1000 ? '$' + (price / 1000).toFixed(0) + 'K'
+    : '$' + price;
+  document.getElementById('priceVal').textContent = lbl;
+  if (analysisRun) renderCards();
+}
+
+// Grade multipliers relative to PSA 10 pop (approximate ratios)
+const GRADE_MULTIPLIERS = {
+  '10': 1, '9': 4.2, '8': 2.8, '7': 1.6, '6': 0.9,
+  '5': 0.7, '4': 0.5, '3': 0.4, '2': 0.3, '1': 0.2, 'auth': 0.15
+};
+const GRADE_PRICE_MULTIPLIERS = {
+  '10': 1, '9': 0.35, '8': 0.18, '7': 0.10, '6': 0.06,
+  '5': 0.04, '4': 0.025, '3': 0.015, '2': 0.008, '1': 0.004, 'auth': 0.002
+};
+function getGradePop(card, grade) {
+  const pop = card.pop10 || 0;
+  if (!grade || grade === 'all' || grade === '10') return pop;
+  return Math.round(pop * (GRADE_MULTIPLIERS[grade] || 1));
+}
+function getGradePrice(card, grade) {
+  const price = card.psa10Price || 0;
+  if (!grade || grade === 'all' || grade === '10') return price;
+  return Math.round(price * (GRADE_PRICE_MULTIPLIERS[grade] || 1));
+}
+
+function filterCards() {
+  const q = document.getElementById('cardSearch').value.toLowerCase();
+  const maxPop = parseInt(document.getElementById('popRange').value);
+  const grade = activeFilters.grade || 'all';
+  const hasTcgCards = currentTcgPokemon && currentTcgPokemon !== 'all';
+  return CARDS.filter(c => {
+    // When TCG cards are loaded, TCG cards already match the selected pokemon
+    // Only filter hardcoded cards (id < 1000) by pokemon
+    if (activeFilters.pokemon !== 'all' && c.id < 1000 && c.pokemon !== activeFilters.pokemon) return false;
+    if (activeFilters.era !== 'all' && c.era !== activeFilters.era) return false;
+    if (activeFilters.cat !== 'all' && c.cat !== activeFilters.cat) return false;
+    if (getGradePop(c, grade) > maxPop) return false;
+    const priceMax = getPriceMax(); if (priceMax < 10000000 && getGradePrice(c, grade) > priceMax) return false;
+    if (q && !c.name.toLowerCase().includes(q) && !c.set.toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+// ─── Run Analysis ─────────────────────────────────────────────────────────────
+function runAnalysis() {
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true; btn.textContent = '&#9889; Analyzing...';
+  const grid = document.getElementById('cardsGrid');
+  grid.innerHTML = Array(6).fill(`<div class="skeleton-card"><div class="skel" style="height:16px;width:55%"></div><div class="skel" style="height:10px;width:35%;margin-top:3px"></div><div class="skel" style="height:46px;margin-top:12px;border-radius:6px"></div><div class="skel" style="height:28px;margin-top:8px;border-radius:5px"></div></div>`).join('');
+  setTimeout(() => { btn.disabled=false; btn.textContent='&#9889; Run Analysis'; analysisRun=true; renderCards(); }, 700);
+}
+
+// ─── Render Cards ─────────────────────────────────────────────────────────────
+function renderCards() {
+  const filtered = filterCards();
+  const scored = filtered.map(c => ({...c, scores: scoreCard(c)}));
+  scored.sort((a,b) => {
+    if (currentSort==='score') return b.scores.total - a.scores.total;
+    if (currentSort==='pop') return a.pop10 - b.pop10;
+    if (currentSort==='price') return b.psa10Price - a.psa10Price;
+    if (currentSort==='upside') return b.scores.upside - a.scores.upside;
+    return 0;
+  });
+  displayedCards = scored;
+  document.getElementById('countDisplay').textContent = scored.length;
+  const grid = document.getElementById('cardsGrid');
+  if (!scored.length) {
+    // If TCG search returned nothing, show a helpful message with retry
+    const msg = currentTcgPokemon && currentTcgPokemon !== 'all'
+      ? `<div class="empty"><h3>No cards found for "${currentTcgPokemon}"</h3><p>This Pokémon may not have cards in the TCG database, or the search timed out.<br><button class="sort-btn" onclick="loadTcgCards('${currentTcgPokemon}')" style="margin-top:12px">↺ Retry</button></p></div>`
+      : `<div class="empty"><h3>No cards match</h3><p>Try adjusting your filters.</p></div>`;
+    grid.innerHTML = msg;
+    return;
+  }
+
+  grid.innerHTML = scored.map(card => {
+    const s = card.scores;
+    const g = getGrade(s.total);
+    const sc = g.cls==='score-s'?'#38d9a9':g.cls==='score-a'?'#f0c040':g.cls==='score-b'?'#4a9de0':'#4e4e62';
+    const breakdown = [
+      {name:'Pop scarcity', val:s.popScarcity, color:'#38d9a9'},
+      {name:'Fan demand', val:s.fanDemand, color:'#f0c040'},
+      {name:'Price/value gap', val:s.priceValue, color:'#9b55e0'},
+      {name:'Pop growth', val:s.popGrowth, color:'#4a9de0'},
+      {name:'Vintage premium', val:s.vintage, color:'#e07842'},
+    ];
+    const tagHtml = (card.tags||[]).map(t=>`<div class="tag tag-${t.replace(' ','-')}">${t.replace('-',' ')}</div>`).join('');
+    const isAI = (card.tags||[]).includes('ai');
+    return `<div class="card" id="card-${card.id}" style="--score-color:${sc}" onclick="toggleCard(${card.id})">
+      ${card.tcgImage ? `<img src="${card.tcgImage}" style="float:right;height:60px;border-radius:4px;margin:-4px -4px 4px 8px;opacity:0.9;" onerror="this.style.display='none'">` : ""}
+      <div class="card-top">
+        <div>
+          <div class="card-name">${card.name}</div>
+          <div class="card-set">${card.set} &middot; ${card.year}${card.japanese?' &middot; &#127471;&#127477;':''}</div>
+        </div>
+        <div class="score-pill ${g.cls}">${g.letter} ${s.total}</div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-lbl">${activeFilters.grade==='all'?'PSA 10':'PSA '+activeFilters.grade.toUpperCase()} Pop</div><div class="metric-val ${getGradePop(card,activeFilters.grade||'all')<=50?'v-green':getGradePop(card,activeFilters.grade||'all')<=300?'v-gold':''}">${(()=>{ const p=getGradePop(card,activeFilters.grade||'all'); return p?p.toLocaleString():'—'; })()}</div></div>
+        <div class="metric"><div class="metric-lbl">${activeFilters.grade==='all'?'PSA 10 $':'PSA '+activeFilters.grade.toUpperCase()+' $'}</div><div class="metric-val v-gold">${fmt(getGradePrice(card,activeFilters.grade||'all'))}</div></div>
+        <div class="metric"><div class="metric-lbl">Raw</div><div class="metric-val">${fmt(card.rawPrice)}</div></div>
+        <div class="metric"><div class="metric-lbl">Pop/Mo &#8593;</div><div class="metric-val ${card.popGrowthPerMonth<1?'v-green':card.popGrowthPerMonth<10?'v-gold':'v-red'}">+${card.popGrowthPerMonth}</div></div>
+      </div>
+      <div class="bars">
+        ${breakdown.map(b=>`<div class="brow"><span class="bname">${b.name}</span><div class="btrack"><div class="bfill" style="width:${b.val}%;background:${b.color}"></div></div><span class="bscore">${b.val}</span></div>`).join('')}
+      </div>
+      <div class="tags">${tagHtml}</div>
+      <div class="detail" id="detail-${card.id}">
+        <div class="dgrid">
+          <div class="ditem"><div class="dk">PSA Pop Report</div><div class="dv"><a href="https://www.psacard.com/pop" target="_blank" style="color:var(--mint);font-size:10px;">psacard.com/pop &#8599;</a><div style="font-size:9px;color:var(--red);margin-top:2px;">&#9888; Pop counts on this page are estimates</div></div></div>
+        <div class="ditem"><div class="dk">PSA Pop (estimated)</div><div class="dv" style="color:var(--gold)">&#9888; Verify at <a href="https://www.psacard.com/pop" target="_blank" style="color:var(--mint);text-decoration:none;">psacard.com/pop &#8599;</a></div></div>
+        <div class="ditem"><div class="dk">Distribution</div><div class="dv">${card.detail.distribution}</div></div>
+          <div class="ditem"><div class="dk">Grade rate (10)</div><div class="dv">${card.detail.gradeRate}</div></div>
+          <div class="ditem"><div class="dk">Est. PSA submissions</div><div class="dv">${card.detail.psaSubmit}</div></div>
+          <div class="ditem"><div class="dk">Upside vs raw &times;10</div><div class="dv" style="color:var(--mint)">+${s.upside}%</div></div>
+        </div>
+        <div class="rationale">${card.detail.note?`<strong style="color:var(--gold)">Note:</strong> ${card.detail.note}<br><br>`:''  }${card.rationale}</div>
+        <div class="spark-wrap">
+          <div class="spark-hdr">
+            <span class="spark-title">Price Movement (simulated)</span>
+            <div class="spark-btns" id="spkbtns-${card.id}">
+              <button class="spark-btn active" onclick="event.stopPropagation();drawSpark(${card.id},'3m',this)">3M</button>
+              <button class="spark-btn" onclick="event.stopPropagation();drawSpark(${card.id},'6m',this)">6M</button>
+            </div>
+          </div>
+          <canvas class="spark" id="spark-${card.id}"></canvas>
+          <div class="spark-foot">
+            <div class="spark-stat"><span class="sk">Low</span><span id="spk-lo-${card.id}">—</span></div>
+            <div class="spark-stat" style="text-align:center"><span class="sk">Change</span><span id="spk-ch-${card.id}">—</span></div>
+            <div class="spark-stat" style="text-align:right"><span class="sk">High</span><span id="spk-hi-${card.id}">—</span></div>
+          </div>
+        </div>
+        <div class="sales-wrap">
+          <div class="sales-hdr">
+            <span class="sales-title">Real Comp Sources</span>
+            <button class="fetch-btn" id="fb-${card.id}" onclick="event.stopPropagation();fetchSales(${card.id},this)">
+              <div class="mini-spin" id="fs-${card.id}"></div>
+              <span id="fl-${card.id}">${(isEbayTokenValid()||getEbayRefreshToken())?'⚡ Fetch Live Sales':'🔗 View Comps'}</span>
+            </button>
+          </div>
+          <div id="sd-${card.id}" class="sales-ph">Expand to load real comp links.</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── Toggle card expand ───────────────────────────────────────────────────────
+function toggleCard(id) {
+  const det = document.getElementById('detail-' + id);
+  const crd = document.getElementById('card-' + id);
+  const wasOpen = det.classList.contains('open');
+  document.querySelectorAll('.detail').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
+  if (!wasOpen) {
+    det.classList.add('open');
+    crd.classList.add('open');
+    setTimeout(() => drawSpark(id, '3m', null), 50);
+    setTimeout(() => autoFetchSales(id), 300);
+    setTimeout(() => fetchPsaPop(id), 150);
+    setTimeout(() => fetchApifyPsaPop(id), 500);
+  }
+}
+
+// ─── Sparkline ────────────────────────────────────────────────────────────────
+function generatePriceHistory(card, months) {
+  const base = card.psa10Price;
+  const pts = months * 4;
+  const vol = base > 10000 ? 0.035 : base > 1000 ? 0.055 : 0.08;
+  const bias = card.popGrowthPerMonth > 15 ? -0.003 : card.pop10 < 50 ? 0.004 : 0.001;
+  const prices = [];
+  let price = base * (0.9 + Math.random() * 0.06);
+  for (let i = 0; i < pts; i++) {
+    price = Math.max(base * 0.45, price + (Math.random() - 0.47 + bias) * vol * price);
+    prices.push(Math.round(price));
+  }
+  prices[prices.length - 1] = base;
+  return prices;
+}
+
+function drawSpark(cardId, range, btn) {
+  if (btn) {
+    const wrap = document.getElementById('spkbtns-' + cardId);
+    if (wrap) wrap.querySelectorAll('.spark-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  const card = displayedCards.find(c => c.id === cardId);
+  if (!card) return;
+  const canvas = document.getElementById('spark-' + cardId);
+  if (!canvas) return;
+  const months = range === '3m' ? 3 : 6;
+  const prices = generatePriceHistory(card, months);
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.offsetWidth || 300;
+  const H = 68;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+  const minP = Math.min(...prices), maxP = Math.max(...prices);
+  const pad = {l:3,r:3,t:5,b:3};
+  const cw = W-pad.l-pad.r, ch = H-pad.t-pad.b, rng = maxP-minP||1;
+  const pts = prices.map((p,i) => ({ x: pad.l+(i/(prices.length-1))*cw, y: pad.t+(1-(p-minP)/rng)*ch }));
+  const isUp = prices[prices.length-1] >= prices[0];
+  const lc = isUp ? '#38d9a9' : '#e05555';
+  const g = ctx.createLinearGradient(0,pad.t,0,H);
+  g.addColorStop(0, isUp?'rgba(56,217,169,0.2)':'rgba(224,85,85,0.2)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.beginPath(); ctx.moveTo(pts[0].x,H);
+  pts.forEach(p => ctx.lineTo(p.x,p.y));
+  ctx.lineTo(pts[pts.length-1].x,H); ctx.closePath();
+  ctx.fillStyle=g; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y);
+  for(let i=1;i<pts.length;i++){const pr=pts[i-1],cu=pts[i],mx=(pr.x+cu.x)/2;ctx.bezierCurveTo(mx,pr.y,mx,cu.y,cu.x,cu.y);}
+  ctx.strokeStyle=lc; ctx.lineWidth=1.5; ctx.stroke();
+  const last=pts[pts.length-1];
+  ctx.beginPath();ctx.arc(last.x,last.y,3,0,Math.PI*2);ctx.fillStyle=lc;ctx.fill();
+  const fmtS = v => v>=1000?'$'+(v/1000).toFixed(1)+'K':'$'+v;
+  const lo=Math.min(...prices), hi=Math.max(...prices);
+  const pct=((prices[prices.length-1]-prices[0])/prices[0]*100).toFixed(1);
+  const loEl=document.getElementById('spk-lo-'+cardId), chEl=document.getElementById('spk-ch-'+cardId), hiEl=document.getElementById('spk-hi-'+cardId);
+  if(loEl) loEl.textContent=fmtS(lo);
+  if(chEl){chEl.textContent=(pct>0?'+':'')+pct+'%';chEl.style.color=isUp?'var(--mint)':'var(--red)';}
+  if(hiEl) hiEl.textContent=fmtS(hi);
+}
+
+
+// ─── Apify PSA Pop Lookup ────────────────────────────────────────────────────
+async function fetchPsaPop(cardId) {
+  const token = getApifyToken();
+  if (!token || !token.startsWith('apify_api_')) return;
+
+  const card = displayedCards.find(c => c.id === cardId);
+  if (!card) return;
+
+  // Show loading on pop metric
+  const cardEl = document.getElementById('card-' + cardId);
+  const popEl = cardEl ? cardEl.querySelector('.metric-val') : null;
+  if (popEl) { popEl.textContent = '...'; }
+
+  // Clean card name for search — remove set info, keep core name
+  const searchName = card.name
+    .replace(/#[\d\/]+/g, '')
+    .replace(/\s*(PSA|BGS|SGC)\s*\d+/gi, '')
+    .replace(/[☆★✦]/g, '')
+    .trim();
+
+  try {
+    // Step 1: Start the Apify actor run
+    const runRes = await fetch(
+      'https://api.apify.com/v2/acts/lulzasaur~psa-pop-scraper/run-sync-get-dataset-items?token=' + token + '&timeout=30',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          searchQuery: searchName,
+          maxResults: 1
+        })
+      }
+    );
+
+    if (!runRes.ok) throw new Error('Apify error ' + runRes.status);
+    const results = await runRes.json();
+
+    if (!results || !results.length) throw new Error('No PSA data found');
+
+    const result = results[0];
+    // Extract PSA 10 pop from result
+    const pop10 = result.grade10 || result.pop10 || result.PSA10 || result['10'] || 0;
+    const totalPop = result.total || result.totalPop || 0;
+
+    if (pop10 > 0) {
+      // Update card data
+      const cardObj = CARDS.find(c => c.id === cardId);
+      if (cardObj) cardObj.pop10 = pop10;
+
+      // Update pop display
+      if (popEl) {
+        popEl.textContent = pop10.toLocaleString();
+        popEl.style.color = pop10 <= 50 ? 'var(--mint)' : pop10 <= 300 ? 'var(--gold)' : '';
+      }
+
+      // Show confirmed badge with full grade breakdown in detail panel
+      const detailEl = document.getElementById('detail-' + cardId);
+      if (detailEl) {
+        const existing = detailEl.querySelector('.pop-confirmed');
+        if (existing) existing.remove();
+
+        const grades = ['1','2','3','4','5','6','7','8','9','10'];
+        const gradeRows = grades.map(g => {
+          const val = result['grade'+g] || result[g] || result['PSA'+g] || 0;
+          return val > 0 ? `<span style="color:var(--muted);font-size:9px;">${g}:</span> <strong>${val.toLocaleString()}</strong>` : '';
+        }).filter(Boolean).join(' &nbsp; ');
+
+        const badge = document.createElement('div');
+        badge.className = 'pop-confirmed';
+        badge.style.cssText = 'font-size:10px;padding:8px 10px;background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.2);border-radius:6px;margin-top:10px;line-height:1.8;';
+        badge.innerHTML = '<span style="color:var(--mint);font-weight:600;">✓ Live PSA Pop (via Apify)</span><br>' +
+          (gradeRows || '') +
+          '<br><span style="color:var(--muted);">PSA 10: <strong style="color:var(--mint);">' + pop10.toLocaleString() + '</strong>' +
+          (totalPop ? ' &nbsp;·&nbsp; Total: <strong>' + totalPop.toLocaleString() + '</strong>' : '') + '</span>';
+        detailEl.prepend(badge);
+      }
+    }
+  } catch(e) {
+    console.warn('Apify pop fetch:', e.message);
+    if (popEl) popEl.textContent = '—';
+  }
+}
+
+// ─── eBay Live Comps ──────────────────────────────────────────────────────────
+async function fetchSales(cardId, btn) {
+  const card = displayedCards.find(c => c.id === cardId);
+  if (!card) return;
+  const container = document.getElementById('sd-' + cardId);
+  const spin = document.getElementById('fs-' + cardId);
+  const lbl = document.getElementById('fl-' + cardId);
+
+  function setLoading(loading) {
+    if (btn) btn.disabled = loading;
+    if (spin) spin.style.display = loading ? 'block' : 'none';
+    if (lbl) lbl.textContent = loading ? 'Fetching...' : '↺ Refresh';
+  }
+
+  // ── Real eBay via Vercel (when connected)
+  if (isEbayTokenValid() || getEbayRefreshToken()) {
+    setLoading(true);
+    container.innerHTML = '<div class="sales-ph">Searching eBay sold listings...</div>';
+    const items = await searchEbaySold(card.name);
+    if (items && items.length > 0) {
+      const rows = items.slice(0,6).map(item => {
+        const date = item.soldDate ? item.soldDate.substring(0,10) : '—';
+        const price = item.price ? '$' + parseFloat(item.price).toLocaleString() : '—';
+        return `<a href="${item.itemUrl||'#'}" target="_blank" class="sale-row-link">
+          <span class="sale-date">${date}</span>
+          <span class="sale-plat">eBay</span>
+          <span class="sale-price">${price}</span>
+        </a>`;
+      }).join('');
+      const prices = items.filter(i=>i.price).map(i=>parseFloat(i.price));
+      const avg = prices.length ? Math.round(prices.reduce((a,b)=>a+b,0)/prices.length) : 0;
+      container.innerHTML = `<div style="font-size:9px;color:var(--mint);margin-bottom:7px;">● Live from eBay · ${items.length} sold listings</div>${rows}${avg ? `<div class="trend-row"><span class="trlbl">Average</span><span class="trval">$${avg.toLocaleString()}</span></div>` : ''}`;
+      fetchedCards.add(cardId);
+      setLoading(false);
+      return;
+    }
+    setLoading(false);
+  }
+
+  // ── Fallback: show comp links
+  showCompLinks(card, container);
+  if (btn) btn.style.display = 'none';
+}
+
+
+function showCompLinks(card, container, append) {
+  const q10   = encodeURIComponent(card.name + ' PSA 10');
+  const qRaw  = encodeURIComponent(card.name);
+  const ebayUrl  = `https://www.ebay.com/sch/i.html?_nkw=${q10}&LH_Sold=1&LH_Complete=1`;
+  const ptUrl    = `https://130point.com/sales/?q=${q10}`;
+  const psaUrl   = `https://www.psacard.com/auctionprices/search?q=${qRaw}`;
+  const pcUrl    = `https://www.pricecharting.com/search-products?q=${qRaw}&type=price`;
+
+  const html2 = `
+    <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">${append ? 'Search manually:' : 'Add your eBay App ID in the sidebar for live data. Manual links:'}</div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <a href="${ebayUrl}" target="_blank" class="comp-link"><span class="comp-dot" style="background:#e05555"></span><div style="flex:1"><div style="font-weight:600">eBay Sold</div><div style="font-size:9px;color:var(--muted)">Completed listings · most accurate</div></div><span class="comp-arrow">&#8599;</span></a>
+      <a href="${ptUrl}"   target="_blank" class="comp-link"><span class="comp-dot" style="background:#38d9a9"></span><div style="flex:1"><div style="font-weight:600">130point</div><div style="font-size:9px;color:var(--muted)">Best site for graded card comps</div></div><span class="comp-arrow">&#8599;</span></a>
+      <a href="${psaUrl}"  target="_blank" class="comp-link"><span class="comp-dot" style="background:#4a9de0"></span><div style="flex:1"><div style="font-weight:600">PSA Auction Prices</div><div style="font-size:9px;color:var(--muted)">Official PSA auction history</div></div><span class="comp-arrow">&#8599;</span></a>
+      <a href="${pcUrl}"   target="_blank" class="comp-link"><span class="comp-dot" style="background:#9b55e0"></span><div style="flex:1"><div style="font-weight:600">PriceCharting</div><div style="font-size:9px;color:var(--muted)">Historical price trends</div></div><span class="comp-arrow">&#8599;</span></a>
+    </div>`;
+  if (append) container.innerHTML += html2;
+  else container.innerHTML = html2;
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  // Restore saved keys (localStorage + cookie fallback)
+  const saved = getKey();
+  if (saved) {
+    const el = document.getElementById('apiKey');
+    if (el) el.value = saved;
+    if (saved.startsWith('sk-ant-')) {
+      const ck = document.getElementById('keyCheck');
+      if (ck) { ck.textContent = '&#10003;'; ck.style.color = 'var(--mint)'; }
+    }
+  }
+  const ebSaved = getEbayKey();
+  if (ebSaved) {
+    const el2 = document.getElementById('ebayAppId');
+    if (el2) el2.value = ebSaved;
+    if (ebSaved.length > 10) {
+      const ck2 = document.getElementById('ebayKeyCheck');
+      if (ck2) { ck2.textContent = '&#10003;'; ck2.style.color = 'var(--mint)'; }
+    }
+  }
+  const apifySaved = getApifyToken();
+  if (apifySaved) {
+    const el4 = document.getElementById('apifyToken');
+    if (el4) el4.value = apifySaved;
+    const ck4 = document.getElementById('apifyTokenCheck');
+    if (ck4) { ck4.textContent = '✓'; ck4.style.color = 'var(--mint)'; }
+  }
+  const psaSaved = getPsaToken();
+  if (psaSaved) {
+    const el3 = document.getElementById('psaToken');
+    if (el3) el3.value = psaSaved;
+    if (psaSaved.length > 10) {
+      const ck3 = document.getElementById('psaTokenCheck');
+      if (ck3) { ck3.textContent = '&#10003;'; ck3.style.color = 'var(--mint)'; }
+    }
+  }
+  // Restore pokemon dropdown if saved
+  const savedPokemon = activeFilters.pokemon;
+  if (savedPokemon && savedPokemon !== 'all') {
+    const sel = document.getElementById('pokemonSelect');
+    if (sel) sel.value = savedPokemon;
+  }
+  checkEbayCallback();
+  updateEbayConnectStatus();
+  // Always run analysis on load
+  try {
+    setTimeout(runAnalysis, 300);
+  } catch(e) {
+    console.error('Init error:', e);
+  }
+});
+</script>
+</body>
+</html>

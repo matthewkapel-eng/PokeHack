@@ -273,7 +273,7 @@ canvas.spark{width:100%;height:68px;display:block;}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hbadge on" id="ebayStatusBadge">● Real Comp Links</div>
+    <div class="hbadge on" id="ebayStatusBadge">● eBay Live</div>
     <div class="hbadge"><span id="dbCount">36</span> cards · <span id="tcgStatus" style="color:var(--muted)">TCG ready</span></div>
   </div>
 </header>
@@ -298,15 +298,10 @@ canvas.spark{width:100%;height:68px;display:block;}
         <div style="margin-top:10px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
             <div class="mini-label">eBay <span class="badge-tag">Live Comps</span></div>
-            <span id="ebayConnectStatus" style="font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);">not connected</span>
+            <span id="ebayConnectStatus" style="font-size:9px;font-family:'DM Mono',monospace;color:var(--mint);">✓ always on</span>
           </div>
-          <div style="display:flex;gap:6px;">
-            <button onclick="connectEbay()" id="ebayConnectBtn" style="flex:1;padding:7px;background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.25);color:var(--mint);border-radius:6px;font-size:11px;font-family:inherit;cursor:pointer;transition:all 0.2s;">
-              Connect eBay Account
-            </button>
-            <button onclick="disconnectEbay()" id="ebayDisconnectBtn" style="padding:7px 10px;background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.25);color:var(--red);border-radius:6px;font-size:11px;font-family:inherit;cursor:pointer;">
-              ✕ Disconnect
-            </button>
+          <div style="font-size:10px;color:var(--muted);line-height:1.5;padding:6px 8px;background:var(--bg3);border-radius:5px;border:1px solid var(--border);">
+            eBay live comps are fetched automatically via the backend — no login required.
           </div>
         </div>
         <div style="margin-top:10px">
@@ -1139,161 +1134,67 @@ function onPokemonSelect(val) {
 
 
 function updateEbayConnectStatus() {
-  const statusEl = document.getElementById('ebayConnectStatus');
-  const btnEl = document.getElementById('ebayConnectBtn');
-  if (getEbayAccessToken() || getEbayRefreshToken()) {
-    if (statusEl) { statusEl.textContent = '✓ connected'; statusEl.style.color = 'var(--mint)'; }
-    if (btnEl) { btnEl.textContent = '✓ eBay Connected'; btnEl.style.background = 'rgba(0,229,160,0.12)'; }
-    updateEbayStatus(true);
-  }
+  // No-op: eBay now uses app tokens server-side, no user login needed.
 }
 
-
 function disconnectEbay() {
+  // No-op: kept for backward compat in case old tokens are in localStorage.
   persist('ebay_access_token', '');
   persist('ebay_refresh_token', '');
   persist('ebay_token_expiry', '0');
-  const statusEl = document.getElementById('ebayConnectStatus');
-  const btnEl = document.getElementById('ebayConnectBtn');
-  const discBtn = document.getElementById('ebayDisconnectBtn');
-  if (statusEl) { statusEl.textContent = 'not connected'; statusEl.style.color = 'var(--muted)'; }
-  if (btnEl) { btnEl.textContent = 'Connect eBay Account'; btnEl.style.background = 'rgba(0,229,160,0.08)'; }
-  if (discBtn) discBtn.style.display = 'none';
-  updateEbayStatus(false);
 }
 
 async function connectEbay() {
-  // Get the auth URL from Vercel (so client ID stays server-side)
-  try {
-    const res = await fetch(VERCEL_API + '?action=auth_url');
-    const data = await res.json();
-    if (data.auth_url) {
-      window.location.href = data.auth_url;
-    } else {
-      alert('Could not get eBay auth URL. Check Vercel deployment.');
-    }
-  } catch(e) {
-    alert('Could not connect to Vercel backend: ' + e.message);
-  }
+  // No-op: eBay OAuth user login is no longer required.
+  // The Vercel backend fetches an app token automatically on each search.
+  console.info('PokeGrade: eBay connection is handled server-side automatically.');
 }
 
 
 // ─── Auto fetch sales when card expands ──────────────────────────────────────
 function autoFetchSales(cardId) {
-  // Auto-fetch if any eBay token exists
-  const hasToken = getEbayAccessToken() || getEbayRefreshToken();
-  if (hasToken) {
-    fetchSales(cardId, null);
-  } else {
-    // No eBay token - show comp links immediately
-    const card = displayedCards.find(c => c.id === cardId);
-    const container = document.getElementById('sd-' + cardId);
-    if (card && container) showCompLinks(card, container);
-  }
+  // Always fetch — app token is handled server-side, no user login needed.
+  fetchSales(cardId, null);
 }
 
-// ─── eBay OAuth ───────────────────────────────────────────────────────────────
-function saveEbayTokens(accessToken, refreshToken, expiresIn) {
-  persist('ebay_access_token', accessToken);
-  persist('ebay_refresh_token', refreshToken);
-  const expiry = Date.now() + (expiresIn * 1000);
-  persist('ebay_token_expiry', expiry.toString());
-}
-
+// ─── eBay token helpers (legacy stubs — app token is now server-side) ─────────
 function getEbayAccessToken() { return retrieve('ebay_access_token'); }
 function getEbayRefreshToken() { return retrieve('ebay_refresh_token'); }
-function getEbayTokenExpiry() { return parseInt(retrieve('ebay_token_expiry') || '0'); }
-
-function isEbayTokenValid() {
-  const token = getEbayAccessToken();
-  const expiry = getEbayTokenExpiry();
-  return token && expiry > Date.now() + 60000; // valid if >1min remaining
-}
-
-async function refreshEbayToken() {
-  const refreshToken = getEbayRefreshToken();
-  if (!refreshToken) return null;
-  try {
-    const res = await fetch(VERCEL_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'refresh', refresh_token: refreshToken })
-    });
-    const data = await res.json();
-    if (data.access_token) {
-      persist('ebay_access_token', data.access_token);
-      const expiry = Date.now() + (data.expires_in * 1000);
-      persist('ebay_token_expiry', expiry.toString());
-      return data.access_token;
-    }
-  } catch(e) { console.warn('Token refresh failed:', e.message); }
-  return null;
-}
-
-async function getValidEbayToken() {
-  if (isEbayTokenValid()) return getEbayAccessToken();
-  return await refreshEbayToken();
-}
-
-async function exchangeEbayCode(code) {
-  try {
-    const res = await fetch(VERCEL_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'exchange', code: code })
-    });
-    const data = await res.json();
-    if (data.access_token) {
-      saveEbayTokens(data.access_token, data.refresh_token, data.expires_in);
-      updateEbayStatus(true);
-      updateEbayConnectStatus();
-      return true;
-    }
-  } catch(e) { console.warn('Code exchange failed:', e.message); }
-  return false;
-}
+function isEbayTokenValid() { return false; } // always use server-side app token
 
 function updateEbayStatus(connected) {
   const badge = document.getElementById('ebayStatusBadge');
   if (badge) {
-    badge.textContent = connected ? '● eBay Connected' : '● Real Comp Links';
-    badge.style.color = connected ? 'var(--mint)' : '';
-    badge.style.borderColor = connected ? 'rgba(0,229,160,0.3)' : '';
+    badge.textContent = '● eBay Live';
+    badge.style.color = 'var(--mint)';
+    badge.style.borderColor = 'rgba(0,229,160,0.3)';
   }
 }
 
-// Check URL for eBay auth code on page load
+// No-op: OAuth callback is no longer used
 async function checkEbayCallback() {
+  // Clean up any stale OAuth params that may be in the URL
   const params = new URLSearchParams(window.location.search);
-  const code = params.get('code');
-  if (code) {
-    // Clean the URL
+  if (params.get('code') || params.get('error')) {
     window.history.replaceState({}, document.title, window.location.pathname);
-    // Show connecting status
-    const badge = document.getElementById('ebayStatusBadge');
-    if (badge) badge.textContent = '⟳ Connecting eBay...';
-    const success = await exchangeEbayCode(code);
-    if (success) {
-      console.log('eBay connected successfully!');
-    }
-  } else if (isEbayTokenValid()) {
-    updateEbayStatus(true);
   }
+  updateEbayStatus(true);
 }
 
-// eBay sold listings search via Vercel proxy
+// eBay sold listings search via Vercel proxy (no client-side token needed)
 async function searchEbaySold(cardName) {
-  const token = await getValidEbayToken();
-  if (!token) return null;
-
   try {
     const query = cardName.replace(/[☆★#\/]/g, '').trim() + ' PSA 10';
     const res = await fetch(VERCEL_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'search', access_token: token, query: query })
+      body: JSON.stringify({ action: 'search', query: query })
     });
     const data = await res.json();
+    if (data.error) {
+      console.warn('eBay search error:', data.error, data.details || '');
+      return null;
+    }
     return data.items || null;
   } catch(e) {
     console.warn('eBay search failed:', e.message);
@@ -1851,7 +1752,7 @@ function renderCards() {
             <span class="sales-title">Real Comp Sources</span>
             <button class="fetch-btn" id="fb-${card.id}" onclick="event.stopPropagation();fetchSales(${card.id},this)">
               <div class="mini-spin" id="fs-${card.id}"></div>
-              <span id="fl-${card.id}">${(isEbayTokenValid()||getEbayRefreshToken())?'⚡ Fetch Live Sales':'🔗 View Comps'}</span>
+              <span id="fl-${card.id}">⚡ Fetch Live Sales</span>
             </button>
           </div>
           <div id="sd-${card.id}" class="sales-ph">Expand to load real comp links.</div>
@@ -2038,34 +1939,32 @@ async function fetchSales(cardId, btn) {
     if (lbl) lbl.textContent = loading ? 'Fetching...' : '↺ Refresh';
   }
 
-  // ── Real eBay via Vercel (when connected)
-  if (isEbayTokenValid() || getEbayRefreshToken()) {
-    setLoading(true);
-    container.innerHTML = '<div class="sales-ph">Searching eBay sold listings...</div>';
-    const items = await searchEbaySold(card.name);
-    if (items && items.length > 0) {
-      const rows = items.slice(0,6).map(item => {
-        const date = item.soldDate ? item.soldDate.substring(0,10) : '—';
-        const price = item.price ? '$' + parseFloat(item.price).toLocaleString() : '—';
-        return `<a href="${item.itemUrl||'#'}" target="_blank" class="sale-row-link">
-          <span class="sale-date">${date}</span>
-          <span class="sale-plat">eBay</span>
-          <span class="sale-price">${price}</span>
-        </a>`;
-      }).join('');
-      const prices = items.filter(i=>i.price).map(i=>parseFloat(i.price));
-      const avg = prices.length ? Math.round(prices.reduce((a,b)=>a+b,0)/prices.length) : 0;
-      container.innerHTML = `<div style="font-size:9px;color:var(--mint);margin-bottom:7px;">● Live from eBay · ${items.length} sold listings</div>${rows}${avg ? `<div class="trend-row"><span class="trlbl">Average</span><span class="trval">$${avg.toLocaleString()}</span></div>` : ''}`;
-      fetchedCards.add(cardId);
-      setLoading(false);
-      return;
-    }
+  // ── Real eBay via Vercel backend (app token handled server-side)
+  setLoading(true);
+  container.innerHTML = '<div class="sales-ph">Searching eBay sold listings...</div>';
+  const items = await searchEbaySold(card.name);
+  if (items && items.length > 0) {
+    const rows = items.slice(0,6).map(item => {
+      const date = item.soldDate ? item.soldDate.substring(0,10) : '—';
+      const price = item.price ? '$' + parseFloat(item.price).toLocaleString() : '—';
+      return `<a href="${item.itemUrl||'#'}" target="_blank" class="sale-row-link">
+        <span class="sale-date">${date}</span>
+        <span class="sale-plat">eBay</span>
+        <span class="sale-price">${price}</span>
+      </a>`;
+    }).join('');
+    const prices = items.filter(i=>i.price).map(i=>parseFloat(i.price));
+    const avg = prices.length ? Math.round(prices.reduce((a,b)=>a+b,0)/prices.length) : 0;
+    container.innerHTML = `<div style="font-size:9px;color:var(--mint);margin-bottom:7px;">● Live from eBay · ${items.length} sold listings</div>${rows}${avg ? `<div class="trend-row"><span class="trlbl">Average</span><span class="trval">$${avg.toLocaleString()}</span></div>` : ''}`;
+    fetchedCards.add(cardId);
     setLoading(false);
+    return;
   }
+  setLoading(false);
 
-  // ── Fallback: show comp links
+  // ── Fallback: show comp links if eBay returned nothing
   showCompLinks(card, container);
-  if (btn) btn.style.display = 'none';
+  if (btn) { btn.disabled = false; if (lbl) lbl.textContent = '↺ Retry'; }
 }
 
 
@@ -2101,15 +2000,6 @@ window.addEventListener('DOMContentLoaded', () => {
       if (ck) { ck.textContent = '&#10003;'; ck.style.color = 'var(--mint)'; }
     }
   }
-  const ebSaved = getEbayKey();
-  if (ebSaved) {
-    const el2 = document.getElementById('ebayAppId');
-    if (el2) el2.value = ebSaved;
-    if (ebSaved.length > 10) {
-      const ck2 = document.getElementById('ebayKeyCheck');
-      if (ck2) { ck2.textContent = '&#10003;'; ck2.style.color = 'var(--mint)'; }
-    }
-  }
   const apifySaved = getApifyToken();
   if (apifySaved) {
     const el4 = document.getElementById('apifyToken');
@@ -2133,7 +2023,6 @@ window.addEventListener('DOMContentLoaded', () => {
     if (sel) sel.value = savedPokemon;
   }
   checkEbayCallback();
-  updateEbayConnectStatus();
   // Always run analysis on load
   try {
     setTimeout(runAnalysis, 300);

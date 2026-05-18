@@ -1,8 +1,16 @@
-// Vercel serverless function - handles eBay OAuth token exchange and refresh
-// Deploy this to Vercel alongside your index.html
+// Vercel serverless function — eBay Browse API proxy for PokeGrade
+//
+// Architecture fix: The Browse API (buy/browse/v1/item_summary/search) requires
+// an APPLICATION token (client credentials grant), NOT a user token.
+// The previous authorization-code-grant flow was the root cause of invalid_request.
+//
+// This handler:
+//   GET  ?action=search&query=...   → fetches a fresh app token, then proxies the search
+//   POST { action:'search', query } → same, POST variant
+//   GET  ?action=health             → sanity check endpoint
 
 export default async function handler(req, res) {
-  // Allow requests from your GitHub Pages site
+  // CORS — allow requests from GitHub Pages site
   res.setHeader('Access-Control-Allow-Origin', 'https://matthewkapel-eng.github.io');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -11,122 +19,125 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const { EBAY_CLIENT_ID, EBAY_CLIENT_SECRET, EBAY_REDIRECT_URI } = process.env;
+  const { EBAY_CLIENT_ID, EBAY_CLIENT_SECRET } = process.env;
 
   if (!EBAY_CLIENT_ID || !EBAY_CLIENT_SECRET) {
-    return res.status(500).json({ error: 'Missing eBay credentials in environment variables' });
+    return res.status(500).json({
+      error: 'Missing EBAY_CLIENT_ID or EBAY_CLIENT_SECRET in Vercel environment variables'
+    });
   }
 
-  const credentials = Buffer.from(`${EBAY_CLIENT_ID}:${EBAY_CLIENT_SECRET}`).toString('base64');
-  const { action, code, refresh_token } = req.method === 'POST' ? req.body : req.query;
+  const params = req.method === 'POST' ? req.body : req.query;
+  const { action, query } = params;
 
-  try {
-    // ── Return eBay OAuth authorization URL
-    if (action === 'auth_url') {
-      // redirect_uri must be the RuName exactly as registered on eBay developer portal
-      const ruName = process.env.EBAY_RUNAME || 'Mathew_Kapelush-MathewKa-POKEGR-nytmgu';
-      const scopes = encodeURIComponent([
-        'https://api.ebay.com/oauth/api_scope',
-        'https://api.ebay.com/oauth/api_scope/buy.browse'
-      ].join(' '));
-      const authUrl = `https://auth.ebay.com/oauth2/authorize?client_id=${EBAY_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(ruName)}&scope=${scopes}&prompt=login`;
-      return res.status(200).json({ auth_url: authUrl });
+  // ── Health check ──────────────────────────────────────────────────────────────
+  if (action === 'health') {
+    return res.status(200).json({
+      ok: true,
+      has_client_id: !!EBAY_CLIENT_ID,
+      has_client_secret: !!EBAY_CLIENT_SECRET
+    });
+  }
+
+  // ── Search sold listings ──────────────────────────────────────────────────────
+  if (action === 'search') {
+    if (!query) {
+      return res.status(400).json({ error: 'Missing required parameter: query' });
     }
 
-    // ── Exchange authorization code for access + refresh token
-    if (action === 'exchange') {
-      if (!code) return res.status(400).json({ error: 'Missing authorization code' });
+    try {
+      // Step 1: Get a fresh application token via client credentials grant.
+      // App tokens are valid for 2 hours; for production you should cache them
+      // in a KV store (e.g. Vercel KV / Upstash Redis) to avoid an extra round-trip.
+      const credentials = Buffer.from(`${EBAY_CLIENT_ID}:${EBAY_CLIENT_SECRET}`).toString('base64');
 
-      const response = await fetch('https://api.ebay.com/identity/v1/oauth2/token', {
+      const tokenRes = await fetch('https://api.ebay.com/identity/v1/oauth2/token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': `Basic ${credentials}`
         },
         body: new URLSearchParams({
-          grant_type: 'authorization_code',
-          code: code,
-          redirect_uri: process.env.EBAY_RUNAME || 'Mathew_Kapelush-MathewKa-POKEGR-nytmgu'
-        })
-      });
-
-      const data = await response.json();
-      if (!response.ok) return res.status(response.status).json(data);
-
-      return res.status(200).json({
-        access_token: data.access_token,
-        refresh_token: data.refresh_token,
-        expires_in: data.expires_in
-      });
-    }
-
-    // ── Refresh access token using refresh token
-    if (action === 'refresh') {
-      if (!refresh_token) return res.status(400).json({ error: 'Missing refresh_token' });
-
-      const response = await fetch('https://api.ebay.com/identity/v1/oauth2/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Basic ${credentials}`
-        },
-        body: new URLSearchParams({
-          grant_type: 'refresh_token',
-          refresh_token: refresh_token,
+          grant_type: 'client_credentials',
           scope: 'https://api.ebay.com/oauth/api_scope'
         })
       });
 
-      const data = await response.json();
-      if (!response.ok) return res.status(response.status).json(data);
+      const tokenData = await tokenRes.json();
 
-      return res.status(200).json({
-        access_token: data.access_token,
-        expires_in: data.expires_in
-      });
-    }
+      if (!tokenRes.ok || !tokenData.access_token) {
+        console.error('eBay token error:', JSON.stringify(tokenData));
+        return res.status(tokenRes.status).json({
+          error: 'Failed to obtain eBay application token',
+          details: tokenData
+        });
+      }
 
-    // ── Search eBay completed sold listings (proxy to avoid CORS)
-    if (action === 'search') {
-      const { access_token, query } = req.method === 'POST' ? req.body : req.query;
-      if (!access_token || !query) return res.status(400).json({ error: 'Missing access_token or query' });
+      const appToken = tokenData.access_token;
 
-      const searchUrl = `https://api.ebay.com/buy/browse/v1/item_summary/search?` +
-        `q=${encodeURIComponent(query)}&` +
-        `filter=buyingOptions:{AUCTION|FIXED_PRICE},conditionIds:{3000},` +
-        `soldItemsOnly:true&` +
-        `sort=endDateRecent&` +
-        `limit=10&` +
-        `fieldgroups=EXTENDED`;
+      // Step 2: Search eBay sold / completed listings via Browse API.
+      // Note: soldItemsOnly is a filter available on the Browse API.
+      // conditionIds:3000 = Used, which covers graded cards.
+      // We use EXTENDED fieldgroups to get itemEndDate (sold date).
+      const searchUrl = new URL('https://api.ebay.com/buy/browse/v1/item_summary/search');
+      searchUrl.searchParams.set('q', query);
+      searchUrl.searchParams.set('filter', 'buyingOptions:{FIXED_PRICE|AUCTION},soldItemsOnly:true');
+      searchUrl.searchParams.set('sort', 'endDateRecent');
+      searchUrl.searchParams.set('limit', '10');
+      searchUrl.searchParams.set('fieldgroups', 'EXTENDED');
 
-      const response = await fetch(searchUrl, {
+      const searchRes = await fetch(searchUrl.toString(), {
         headers: {
-          'Authorization': `Bearer ${access_token}`,
+          'Authorization': `Bearer ${appToken}`,
           'X-EBAY-C-MARKETPLACE-ID': 'EBAY_US',
           'Content-Type': 'application/json'
         }
       });
 
-      const data = await response.json();
-      if (!response.ok) return res.status(response.status).json(data);
+      const searchData = await searchRes.json();
 
-      // Format the results cleanly
-      const items = (data.itemSummaries || []).map(item => ({
+      if (!searchRes.ok) {
+        console.error('eBay search error:', JSON.stringify(searchData));
+        return res.status(searchRes.status).json({
+          error: 'eBay Browse API error',
+          details: searchData
+        });
+      }
+
+      // Step 3: Shape the response for the frontend
+      const items = (searchData.itemSummaries || []).map(item => ({
         title: item.title,
         price: item.price?.value,
-        currency: item.price?.currency,
-        soldDate: item.itemEndDate,
+        currency: item.price?.currency || 'USD',
+        soldDate: item.itemEndDate || null,
         itemUrl: item.itemWebUrl,
         condition: item.condition,
-        image: item.image?.imageUrl
+        image: item.image?.imageUrl || null
       }));
 
-      return res.status(200).json({ items, total: data.total || 0 });
+      return res.status(200).json({
+        items,
+        total: searchData.total || 0
+      });
+
+    } catch (err) {
+      console.error('Handler error:', err);
+      return res.status(500).json({ error: err.message });
     }
-
-    return res.status(400).json({ error: 'Invalid action. Use: exchange, refresh, or search' });
-
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
   }
+
+  // ── Legacy: auth_url / exchange / refresh ─────────────────────────────────────
+  // These endpoints are no longer needed because Browse API uses app tokens.
+  // Returning a clear explanation instead of silently failing.
+  if (action === 'auth_url' || action === 'exchange' || action === 'refresh') {
+    return res.status(410).json({
+      error: 'This OAuth flow is no longer used.',
+      message: 'The eBay Browse API requires an application token (client credentials grant), not a user token. Use action=search directly — the backend handles token acquisition automatically.'
+    });
+  }
+
+  return res.status(400).json({
+    error: 'Invalid action.',
+    valid_actions: ['search', 'health']
+  });
 }

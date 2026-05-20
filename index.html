@@ -322,6 +322,16 @@ canvas.spark{width:100%;height:68px;display:block;}
             <span class="key-check" id="psaTokenCheck"></span>
           </div>
         </div>
+        <div style="margin-top:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div class="mini-label">PriceCharting <span class="badge-tag">Grade Prices</span></div>
+            <span id="pcStatus" style="font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);">not set</span>
+          </div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.5;padding:6px 8px;background:var(--bg3);border-radius:5px;border:1px solid var(--border);">
+            Token set in Vercel env as <code style="color:var(--mint);font-size:9px;">PRICECHARTING_TOKEN</code>.<br>
+            Get yours at <a href="https://www.pricecharting.com/subscriptions" target="_blank" style="color:var(--mint);">pricecharting.com/subscriptions</a> (Pro plan).
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1258,8 +1268,9 @@ function getKey() { return retrieve('pg_api_key'); }
 
 
 
-// ─── Vercel Backend URL ───────────────────────────────────────────────────────
+// ─── Vercel Backend URLs ─────────────────────────────────────────────────────
 const VERCEL_API = 'https://poke-hack.vercel.app/api/ebay-token';
+const PC_API     = 'https://poke-hack.vercel.app/api/pricecharting';
 
 // ─── Apify Token ──────────────────────────────────────────────────────────────
 function saveApifyToken(val) {
@@ -1270,6 +1281,49 @@ function saveApifyToken(val) {
   if (el) { el.textContent = ok ? '✓' : ''; el.style.color = 'var(--mint)'; }
 }
 function getApifyToken() { return retrieve('pg_apify_token'); }
+
+// ─── PriceCharting API ───────────────────────────────────────────────────────
+async function fetchPriceCharting(cardName) {
+  try {
+    // Build a clean query: card name + set hint if possible
+    const query = cardName.replace(/[☆★#\/]/g, '').trim();
+    const res = await fetch(`${PC_API}?action=product&q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+    if (data.error || !data.prices) return null;
+    return data;
+  } catch(e) {
+    console.warn('PriceCharting fetch failed:', e.message);
+    return null;
+  }
+}
+
+function renderPcPrices(pcData) {
+  const p = pcData.prices;
+  const rows = [
+    { label: 'PSA 10',   val: p.psa10 },
+    { label: 'PSA 9.5',  val: p.psa9_5 },
+    { label: 'PSA 9',    val: p.psa9 },
+    { label: 'PSA 8',    val: p.psa8 },
+    { label: 'BGS 10',   val: p.bgs10 },
+    { label: 'CGC 10',   val: p.cgc10 },
+    { label: 'Ungraded', val: p.ungraded },
+  ].filter(r => r.val && parseFloat(r.val) > 0);
+
+  if (!rows.length) return '';
+
+  const rowsHtml = rows.map(r =>
+    `<div class="trend-row">
+      <span class="trlbl">${r.label}</span>
+      <span class="trval">$${parseFloat(r.val).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+    </div>`
+  ).join('');
+
+  return `<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">
+    <div style="font-size:9px;color:var(--gold);margin-bottom:6px;">◆ PriceCharting · ${pcData.name || ''}</div>
+    ${rowsHtml}
+    <a href="${pcData.pcUrl}" target="_blank" style="font-size:9px;color:var(--muted);text-decoration:none;display:block;margin-top:5px;">View full history ↗</a>
+  </div>`;
+}
 
 // ─── Apify PSA Pop Scraper ────────────────────────────────────────────────────
 async function fetchApifyPsaPop(cardId) {
@@ -1939,10 +1993,17 @@ async function fetchSales(cardId, btn) {
     if (lbl) lbl.textContent = loading ? 'Fetching...' : '↺ Refresh';
   }
 
-  // ── Real eBay via Vercel backend (app token handled server-side)
+  // ── Fetch eBay + PriceCharting in parallel
   setLoading(true);
-  container.innerHTML = '<div class="sales-ph">Searching eBay sold listings...</div>';
-  const items = await searchEbaySold(card.name);
+  container.innerHTML = '<div class="sales-ph">Fetching live prices...</div>';
+
+  const [items, pcData] = await Promise.all([
+    searchEbaySold(card.name),
+    fetchPriceCharting(card.name)
+  ]);
+
+  let html = '';
+
   if (items && items.length > 0) {
     const rows = items.slice(0,6).map(item => {
       const date = item.soldDate ? item.soldDate.substring(0,10) : '—';
@@ -1955,14 +2016,24 @@ async function fetchSales(cardId, btn) {
     }).join('');
     const prices = items.filter(i=>i.price).map(i=>parseFloat(i.price));
     const avg = prices.length ? Math.round(prices.reduce((a,b)=>a+b,0)/prices.length) : 0;
-    container.innerHTML = `<div style="font-size:9px;color:var(--mint);margin-bottom:7px;">● Live from eBay · ${items.length} sold listings</div>${rows}${avg ? `<div class="trend-row"><span class="trlbl">Average</span><span class="trval">$${avg.toLocaleString()}</span></div>` : ''}`;
+    html += `<div style="font-size:9px;color:var(--mint);margin-bottom:7px;">● Live from eBay · ${items.length} sold listings</div>${rows}${avg ? `<div class="trend-row"><span class="trlbl">eBay Avg</span><span class="trval">$${avg.toLocaleString()}</span></div>` : ''}`;
     fetchedCards.add(cardId);
+  }
+
+  if (pcData) {
+    html += renderPcPrices(pcData);
+    fetchedCards.add(cardId);
+  }
+
+  if (html) {
+    container.innerHTML = html;
     setLoading(false);
     return;
   }
+
   setLoading(false);
 
-  // ── Fallback: show comp links if eBay returned nothing
+  // ── Fallback: show comp links if both sources returned nothing
   showCompLinks(card, container);
   if (btn) { btn.disabled = false; if (lbl) lbl.textContent = '↺ Retry'; }
 }

@@ -11,7 +11,6 @@
 // PriceCharting API docs: https://www.pricecharting.com/api-documentation
 //
 // Key price fields for Pokémon cards:
-//   loose-price       → Ungraded
 //   graded-price      → PSA 9
 //   manual-only-price → PSA 10
 //   box-only-price    → PSA 9.5
@@ -101,7 +100,6 @@ export default async function handler(req, res) {
         set: data['console-name'],
         releaseDate: data['release-date'] || null,
         prices: {
-          ungraded:  cents('loose-price'),
           psa8:      cents('new-price'),
           psa9:      cents('graded-price'),
           psa9_5:    cents('box-only-price'),

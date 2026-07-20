@@ -520,7 +520,6 @@ canvas.spark{width:100%;height:68px;display:block;}
           <div class="wrow"><span class="wname">Fan Demand</span><input type="range" min="0" max="10" value="7" class="weight-input" data-key="fanDemand" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-fanDemand">7</span></div>
           <div class="wrow"><span class="wname">Price / Value</span><input type="range" min="0" max="10" value="6" class="weight-input" data-key="priceValue" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-priceValue">6</span></div>
           <div class="wrow"><span class="wname">Pop Growth</span><input type="range" min="0" max="10" value="5" class="weight-input" data-key="popGrowth" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-popGrowth">5</span></div>
-          <div class="wrow"><span class="wname">Vintage Age</span><input type="range" min="0" max="10" value="4" class="weight-input" data-key="vintage" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-vintage">4</span></div>
         </div>
       </div>
     </div>
@@ -571,7 +570,7 @@ const CARDS = [
     id:1, name:"Mew ☆ #101 EX Dragon Frontiers", set:"EX Dragon Frontiers #101/101", year:2006,
     pokemon:"mew", era:"ex", cat:"gold-star", japanese:false,
     pop10:57, popGrowthPerMonth:0.3, marketPrice:12000, psa10Price:14500,
-    rawPrice:800, fanTier:10,
+    fanTier:10,
     tags:["vintage","fan-fave","low-pop"],
     rationale:"Mew Gold Star sits at only 57 PSA 10 copies — one of the lowest genuine populations of any Gold Star. Foil wear kills grades. Fan demand is elite tier, Charizard Gold Star commands 3x more despite Mew being rarer in PSA 10.",
     detail:{ distribution:"EX Dragon Frontiers boosters", gradeRate:"~3%", psaSubmit:"~1,900", note:"Japanese version even scarcer" }
@@ -580,7 +579,7 @@ const CARDS = [
     id:2, name:"Shining Mew CoroCoro Promo (JP)", set:"CoroCoro Magazine (JP)", year:2001,
     pokemon:"mew", era:"wotc", cat:"promo", japanese:true,
     pop10:18, popGrowthPerMonth:0.1, marketPrice:9500, psa10Price:10800,
-    rawPrice:600, fanTier:10,
+    fanTier:10,
     tags:["vintage","promo","japanese","fan-fave","low-pop"],
     rationale:"Magazine peel damage destroyed most copies. Pop 10 of just 18 is extraordinary for a 2001 promo. English collectors are just starting to notice Japanese promos — pricing hasn't caught up.",
     detail:{ distribution:"CoroCoro May 2001 insert", gradeRate:"<2%", psaSubmit:"~950", note:"Must be peeled from cardboard backing" }
@@ -589,7 +588,7 @@ const CARDS = [
     id:3, name:"Mew — Southern Islands Holo", set:"Southern Islands (2001)", year:2001,
     pokemon:"mew", era:"wotc", cat:"holo", japanese:false,
     pop10:8, popGrowthPerMonth:0.05, marketPrice:22000, psa10Price:24500,
-    rawPrice:800, fanTier:10,
+    fanTier:10,
     tags:["vintage","fan-fave","low-pop"],
     rationale:"Single-digit PSA 10 pop. Cards were folded in booklets — centering and print lines are endemic. This is arguably the rarest English Mew in PSA 10 that most collectors don't know about.",
     detail:{ distribution:"Mail-in promotion 2001", gradeRate:"<1%", psaSubmit:"~780", note:"Booklet fold causes centering issues" }
@@ -598,7 +597,7 @@ const CARDS = [
     id:4, name:"Mew #29/124 XY Fates Collide Holo", set:"XY Fates Collide", year:2016,
     pokemon:"mew", era:"ex", cat:"holo", japanese:false,
     pop10:33, popGrowthPerMonth:0.8, marketPrice:280, psa10Price:420,
-    rawPrice:8, fanTier:10,
+    fanTier:10,
     tags:["low-pop","fan-fave"],
     rationale:"Pop of 33 PSA 10s is shockingly low for a 2016 English holo. XY era is completely overlooked right now — priced at $220 but has 10x upside if XY nostalgia follows the Base Set trajectory.",
     detail:{ distribution:"XY Fates Collide booster packs", gradeRate:"~12%", psaSubmit:"~275", note:"Low submission rate — most copies are ungraded" }
@@ -607,7 +606,7 @@ const CARDS = [
     id:5, name:"Mew #32/68 Hidden Fates Rev. Holo", set:"Hidden Fates", year:2019,
     pokemon:"mew", era:"modern", cat:"holo", japanese:false,
     pop10:23, popGrowthPerMonth:1.2, marketPrice:180, psa10Price:280,
-    rawPrice:6, fanTier:10,
+    fanTier:10,
     tags:["low-pop","shiny","fan-fave"],
     rationale:"Sub-25 PSA 10 pop on a modern reverse holo from a beloved set is remarkable. Reverse holos are dismissed vs Shiny Vaults — but this artifact of inattention is the opportunity.",
     detail:{ distribution:"Hidden Fates booster packs", gradeRate:"~8%", psaSubmit:"~290", note:"Shiny Vault cards capture all attention" }
@@ -616,7 +615,7 @@ const CARDS = [
     id:6, name:"Mew #40/73 Shining Legends Shining Holo", set:"SM Shining Legends", year:2017,
     pokemon:"mew", era:"modern", cat:"shiny", japanese:false,
     pop10:145, popGrowthPerMonth:2.1, marketPrice:380, psa10Price:480,
-    rawPrice:20, fanTier:10,
+    fanTier:10,
     tags:["shiny","fan-fave"],
     rationale:"Beautiful alt-art shiny Mew from 2017. Most copies were played, not collected. Pop is still manageable for a shiny card of this quality and the artwork is one of the best modern Mews.",
     detail:{ distribution:"SM Shining Legends booster packs", gradeRate:"~15%", psaSubmit:"~965", note:"Shining mechanic = silver foil edges" }
@@ -625,7 +624,7 @@ const CARDS = [
     id:7, name:"Charizard #4/102 Base Set Unlimited Holo", set:"Base Set Unlimited", year:1999,
     pokemon:"charizard", era:"wotc", cat:"holo", japanese:false,
     pop10:4200, popGrowthPerMonth:85, marketPrice:420000, psa10Price:450000,
-    rawPrice:12000, fanTier:10,
+    fanTier:10,
     tags:["vintage","fan-fave"],
     rationale:"The most famous card in existence. Pop is enormous but demand is equally massive. The benchmark for all investment comparisons — but growth rate is slowing as the pop climbs.",
     detail:{ distribution:"Base Set Unlimited boosters", gradeRate:"~3.5%", psaSubmit:"~120,000", note:"Never truly 'undervalued' — market is efficient" }
@@ -634,7 +633,7 @@ const CARDS = [
     id:8, name:"Lugia #9/111 Neo Genesis 1st Edition Holo", set:"Neo Genesis 1st Ed.", year:2000,
     pokemon:"lugia", era:"wotc", cat:"holo", japanese:false,
     pop10:342, popGrowthPerMonth:4.2, marketPrice:48000, psa10Price:52000,
-    rawPrice:2000, fanTier:9,
+    fanTier:9,
     tags:["vintage","fan-fave","low-pop"],
     rationale:"Lugia 1st Ed PSA 10 is far more rare than Charizard 1st Ed but commands less than half the price. The fan base is massive post-Gen-2 nostalgia and the card is genuinely hard to find in gem mint.",
     detail:{ distribution:"Neo Genesis 1st Ed. boosters", gradeRate:"~2.8%", psaSubmit:"~12,200", note:"Print lines are endemic in Neo era" }
@@ -643,7 +642,7 @@ const CARDS = [
     id:9, name:"Pikachu Illustrator (JP Promo)", set:"CoroCoro Illustration Contest", year:1998,
     pokemon:"pikachu", era:"wotc", cat:"promo", japanese:true,
     pop10:9, popGrowthPerMonth:0.02, marketPrice:5500000, psa10Price:6000000,
-    rawPrice:200000, fanTier:10,
+    fanTier:10,
     tags:["vintage","promo","japanese","fan-fave","low-pop"],
     rationale:"9 PSA 10 copies in existence. The most valuable Pokémon card period. Not 'undervalued' per se — but one of the clearest examples of pop scarcity driving value to absurd levels.",
     detail:{ distribution:"Illustration contest prize (39 copies total)", gradeRate:"23%", psaSubmit:"~39", note:"Most famous individual card ever" }
@@ -652,7 +651,7 @@ const CARDS = [
     id:10, name:"Umbreon Gold Star (JP)", set:"PCG-P Promo (JP)", year:2006,
     pokemon:"umbreon", era:"ex", cat:"gold-star", japanese:true,
     pop10:12, popGrowthPerMonth:0.1, marketPrice:18000, psa10Price:22000,
-    rawPrice:1200, fanTier:9,
+    fanTier:9,
     tags:["vintage","japanese","fan-fave","low-pop"],
     rationale:"Japanese Umbreon Gold Star has one of the lowest PSA 10 pops of any Gold Star. English version commands more but JP version is rarer. The gap is closing fast as collectors wise up.",
     detail:{ distribution:"PCG-P Lottery/promotional event", gradeRate:"~2%", psaSubmit:"~600", note:"Different artwork from English version" }
@@ -661,7 +660,7 @@ const CARDS = [
     id:11, name:"Mew ex SIR #205/091 Paldean Fates", set:"Paldean Fates", year:2024,
     pokemon:"mew", era:"modern", cat:"shiny", japanese:false,
     pop10:380, popGrowthPerMonth:42, marketPrice:1400, psa10Price:2000,
-    rawPrice:120, fanTier:10,
+    fanTier:10,
     tags:["shiny","fan-fave"],
     rationale:"Shiny Illustration Rare Mew from the Mew-themed anniversary set. 30th anniversary positioning will boost demand significantly. Pop is growing but 35% price upside vs raw still visible.",
     detail:{ distribution:"Paldean Fates booster packs", gradeRate:"~22%", psaSubmit:"~1,725", note:"SIR treatment = gold border + art extension" }
@@ -670,7 +669,7 @@ const CARDS = [
     id:12, name:"Gengar #5/102 1st Edition Base Set Holo", set:"Base Set 1st Edition", year:1999,
     pokemon:"gengar", era:"wotc", cat:"holo", japanese:false,
     pop10:189, popGrowthPerMonth:3.1, marketPrice:4200, psa10Price:5800,
-    rawPrice:300, fanTier:8,
+    fanTier:8,
     tags:["vintage","fan-fave"],
     rationale:"Gengar is a top-3 fan favorite but trades at 5-10% of Charizard 1st Ed price. The shadow box art on Base Set Gengar is iconic. Pop is modest — 189 PSA 10s is low for a card this beloved.",
     detail:{ distribution:"Base Set 1st Edition boosters", gradeRate:"~3.2%", psaSubmit:"~5,900", note:"Shadow box art variant is distinct" }
@@ -679,7 +678,7 @@ const CARDS = [
     id:13, name:"Mew Ancient Mew JP Error (Nintedo)", set:"Pokémon Movie Promo (JP)", year:2000,
     pokemon:"mew", era:"wotc", cat:"promo", japanese:true,
     pop10:41, popGrowthPerMonth:0.2, marketPrice:420, psa10Price:580,
-    rawPrice:18, fanTier:9,
+    fanTier:9,
     tags:["vintage","promo","japanese","low-pop"],
     rationale:"First print has 'Nintedo' misprinted instead of 'Nintendo'. Error + promo + Japanese = triple collector premium that the current price doesn't reflect. Pop is tiny at 41 PSA 10 copies.",
     detail:{ distribution:"Pokémon 2000 movie promos (JP)", gradeRate:"~6%", psaSubmit:"~685", note:"Error on copyright line: 'Nintedo'" }
@@ -688,7 +687,7 @@ const CARDS = [
     id:14, name:"Pikachu VMAX Rainbow #188/185 Vivid Voltage", set:"Vivid Voltage", year:2020,
     pokemon:"pikachu", era:"modern", cat:"shiny", japanese:false,
     pop10:1820, popGrowthPerMonth:95, marketPrice:240, psa10Price:320,
-    rawPrice:22, fanTier:10,
+    fanTier:10,
     tags:["shiny","fan-fave"],
     rationale:"Rainbow VMAX Pikachu with huge fan demand. Pop is growing fast but price premium over raw is minimal. Likely fully valued in short term — long hold only if you believe in sustained Pikachu demand.",
     detail:{ distribution:"Vivid Voltage booster packs", gradeRate:"~25%", psaSubmit:"~7,280", note:"Textured rainbow foil grading surface" }
@@ -697,7 +696,7 @@ const CARDS = [
     id:15, name:"Mew #4/17 POP Series 4", set:"POP Series 4 (Prize Card)", year:2007,
     pokemon:"mew", era:"dp", cat:"promo", japanese:false,
     pop10:29, popGrowthPerMonth:0.15, marketPrice:380, psa10Price:520,
-    rawPrice:15, fanTier:9,
+    fanTier:9,
     tags:["promo","low-pop","vintage"],
     rationale:"Tournament prize card — only distributed to competitive players who won. Most were played into the ground. 29 PSA 10s is a legitimately low number for a card with this distribution method.",
     detail:{ distribution:"Organized play prize / league reward", gradeRate:"~5%", psaSubmit:"~580", note:"POP era is completely forgotten by market" }
@@ -706,7 +705,7 @@ const CARDS = [
     id:16, name:"Charizard #4/102 1st Edition Base Set Holo", set:"Base Set 1st Edition", year:1999,
     pokemon:"charizard", era:"wotc", cat:"holo", japanese:false,
     pop10:3031, popGrowthPerMonth:52, marketPrice:420000, psa10Price:480000,
-    rawPrice:15000, fanTier:10,
+    fanTier:10,
     tags:["vintage","fan-fave"],
     rationale:"The holy grail alongside Illustrator. Pop is growing but demand keeps up. PSA 10 has massive premium over PSA 9. Entry price is extreme but liquidity is unmatched.",
     detail:{ distribution:"Base Set 1st Edition boosters", gradeRate:"~2.5%", psaSubmit:"~121,000", note:"Shadow distinguishes 1st Ed from Unlimited" }
@@ -715,7 +714,7 @@ const CARDS = [
     id:17, name:"Charizard ex SIR #228/193 Paldea Evolved", set:"Paldea Evolved", year:2023,
     pokemon:"charizard", era:"modern", cat:"shiny", japanese:false,
     pop10:2840, popGrowthPerMonth:120, marketPrice:180, psa10Price:260,
-    rawPrice:28, fanTier:10,
+    fanTier:10,
     tags:["shiny","fan-fave"],
     rationale:"Modern Charizard SIR with relentless demand. Pop growing but Charizard brand sustains price floor. Best short-term modern Charizard hold.",
     detail:{ distribution:"Paldea Evolved booster packs", gradeRate:"~24%", psaSubmit:"~11,800", note:"SIR gold border + full-art" }
@@ -724,7 +723,7 @@ const CARDS = [
     id:18, name:"Umbreon VMAX Alt Art #215/203 Evolving Skies", set:"Evolving Skies", year:2021,
     pokemon:"umbreon", era:"modern", cat:"shiny", japanese:false,
     pop10:1640, popGrowthPerMonth:38, marketPrice:820, psa10Price:980,
-    rawPrice:120, fanTier:10,
+    fanTier:10,
     tags:["fan-fave","shiny"],
     rationale:"The most beloved modern alt art. Brutal pull rate + iconic artwork. Arguably undervalued vs cultural impact. Strong hold for Umbreon fans.",
     detail:{ distribution:"Evolving Skies booster packs", gradeRate:"~20%", psaSubmit:"~8,200", note:"One of the hardest modern pulls" }
@@ -733,7 +732,7 @@ const CARDS = [
     id:19, name:"Gengar & Mimikyu GX #247/181 Team Up Alt Art", set:"SM Team Up", year:2019,
     pokemon:"gengar", era:"modern", cat:"holo", japanese:false,
     pop10:312, popGrowthPerMonth:4.8, marketPrice:480, psa10Price:620,
-    rawPrice:30, fanTier:9,
+    fanTier:9,
     tags:["fan-fave","low-pop"],
     rationale:"Tag Team GX era is overlooked. Alt Art Gengar/Mimikyu has double fan appeal. SM era cards grade well — sub-400 PSA 10s is an opportunity.",
     detail:{ distribution:"SM Team Up booster packs", gradeRate:"~18%", psaSubmit:"~1,735", note:"Tag Team mechanic is now vintage nostalgia" }
@@ -742,7 +741,7 @@ const CARDS = [
     id:20, name:"Lugia V Alt Art #138/195 Silver Tempest", set:"Silver Tempest", year:2022,
     pokemon:"lugia", era:"modern", cat:"holo", japanese:false,
     pop10:4200, popGrowthPerMonth:180, marketPrice:65, psa10Price:100,
-    rawPrice:8, fanTier:9,
+    fanTier:9,
     tags:["fan-fave"],
     rationale:"First premium Lugia V alt art. Pop manageable and price/raw premium reasonable. Strong long-term hold for Gen 2 collectors.",
     detail:{ distribution:"Silver Tempest booster packs", gradeRate:"~21%", psaSubmit:"~4,380", note:"First premium Lugia V alt art" }
@@ -751,7 +750,7 @@ const CARDS = [
     id:21, name:"Pikachu No.25 Topsun Blue Back (JP)", set:"Topsun (1994)", year:1994,
     pokemon:"pikachu", era:"wotc", cat:"promo", japanese:true,
     pop10:14, popGrowthPerMonth:0.05, marketPrice:18000, psa10Price:22000,
-    rawPrice:1500, fanTier:10,
+    fanTier:10,
     tags:["vintage","japanese","promo","low-pop","fan-fave"],
     rationale:"Pre-dates the official TCG. Earliest mass-market Pikachu card — 1994, full year before Base Set. Only 14 PSA 10s. Most collectors don't know it exists.",
     detail:{ distribution:"Topsun vending machine packs (Japan)", gradeRate:"~1%", psaSubmit:"~1,400", note:"Blue back variant scarcer than green back" }
@@ -760,7 +759,7 @@ const CARDS = [
     id:22, name:"Rayquaza ☆ #107/107 EX Deoxys", set:"EX Deoxys", year:2005,
     pokemon:"gengar", era:"ex", cat:"gold-star", japanese:false,
     pop10:220, popGrowthPerMonth:1.8, marketPrice:8200, psa10Price:10500,
-    rawPrice:600, fanTier:9,
+    fanTier:9,
     tags:["vintage","fan-fave"],
     rationale:"Most iconic Gold Star after Charizard. 220 PSA 10s reasonable for era. Demand rising sharply with Rayquaza cultural resurgence in modern sets.",
     detail:{ distribution:"EX Deoxys boosters", gradeRate:"~3.5%", psaSubmit:"~6,285", note:"Gold foil star in name = Gold Star designation" }
@@ -769,7 +768,7 @@ const CARDS = [
     id:23, name:"Charizard V Alt Art #079/073 Champion's Path", set:"Champion's Path", year:2020,
     pokemon:"charizard", era:"modern", cat:"holo", japanese:false,
     pop10:2100, popGrowthPerMonth:65, marketPrice:480, psa10Price:650,
-    rawPrice:30, fanTier:10,
+    fanTier:10,
     tags:["fan-fave"],
     rationale:"Walmart exclusive with limited initial supply. Among the most visually stunning Charizard cards ever printed. Pop growing but Charizard demand is bottomless.",
     detail:{ distribution:"Champion's Path ETB (Walmart exclusive)", gradeRate:"~22%", psaSubmit:"~9,545", note:"Extremely limited box availability at launch" }
@@ -778,7 +777,7 @@ const CARDS = [
     id:24, name:"Pikachu Holo WOTC Black Star Promo #27", set:"WOTC Black Star Promos", year:1999,
     pokemon:"pikachu", era:"wotc", cat:"promo", japanese:false,
     pop10:42, popGrowthPerMonth:0.3, marketPrice:2800, psa10Price:3600,
-    rawPrice:120, fanTier:10,
+    fanTier:10,
     tags:["vintage","promo","fan-fave","low-pop"],
     rationale:"One of the most condition-sensitive promos in the hobby. Pack-fresh copies rarely survive. 42 PSA 10s for a holo Pikachu promo from 1999 is genuinely rare.",
     detail:{ distribution:"Nintendo Power magazine / promotions", gradeRate:"~4%", psaSubmit:"~1,050", note:"Holo variant — non-holo far more common" }
@@ -787,7 +786,7 @@ const CARDS = [
     id:25, name:"Lugia #9/111 Neo Genesis Shadowless 1st Ed", set:"Neo Genesis (Shadowless)", year:2000,
     pokemon:"lugia", era:"wotc", cat:"holo", japanese:false,
     pop10:18, popGrowthPerMonth:0.08, marketPrice:65000, psa10Price:72000,
-    rawPrice:2500, fanTier:9,
+    fanTier:9,
     tags:["vintage","fan-fave","low-pop"],
     rationale:"One of the hobby's best-kept secrets. Only 18 PSA 10s. Shadowless distinction adds enormous value the market has been slow to price in.",
     detail:{ distribution:"Neo Genesis early print run", gradeRate:"~1.5%", psaSubmit:"~1,200", note:"No drop shadow under card image = shadowless" }
@@ -796,7 +795,7 @@ const CARDS = [
     id:26, name:"Gengar Prime #94/123 HS Triumphant", set:"HeartGold SoulSilver", year:2010,
     pokemon:"gengar", era:"dp", cat:"holo", japanese:false,
     pop10:134, popGrowthPerMonth:1.2, marketPrice:680, psa10Price:880,
-    rawPrice:40, fanTier:8,
+    fanTier:8,
     tags:["vintage","fan-fave"],
     rationale:"HGSS Prime cards are criminally underrated. Gengar Prime artwork is iconic. 134 PSA 10s at under $1K is a clear value gap for a fan-favorite in a beloved era.",
     detail:{ distribution:"HeartGold SoulSilver booster packs", gradeRate:"~12%", psaSubmit:"~1,115", note:"Prime = ancient-style card border" }
@@ -805,7 +804,7 @@ const CARDS = [
     id:27, name:"Umbreon Star PCG Mirage Crystal (JP)", set:"PCG Mirage Crystal (JP)", year:2006,
     pokemon:"umbreon", era:"ex", cat:"gold-star", japanese:true,
     pop10:8, popGrowthPerMonth:0.04, marketPrice:28000, psa10Price:34000,
-    rawPrice:2200, fanTier:9,
+    fanTier:9,
     tags:["vintage","japanese","fan-fave","low-pop"],
     rationale:"Only 8 PSA 10s worldwide. English version gets all attention but this JP-exclusive is objectively rarer and trades at a discount to true scarcity.",
     detail:{ distribution:"PCG Mirage Crystal booster packs (JP only)", gradeRate:"~1.2%", psaSubmit:"~665", note:"Never released in English" }
@@ -814,7 +813,7 @@ const CARDS = [
     id:28, name:"Mewtwo ex Full Art #54/113 BW Legendary Treasures", set:"BW Legendary Treasures", year:2013,
     pokemon:"mew", era:"dp", cat:"holo", japanese:false,
     pop10:62, popGrowthPerMonth:0.5, marketPrice:1200, psa10Price:1600,
-    rawPrice:55, fanTier:9,
+    fanTier:9,
     tags:["vintage","fan-fave","low-pop"],
     rationale:"BW Full Art era is the forgotten frontier. 62 PSA 10 copies is shockingly low. Silver full-art treatment aged beautifully and Mewtwo demand never wavers.",
     detail:{ distribution:"BW Legendary Treasures booster packs", gradeRate:"~9%", psaSubmit:"~690", note:"BW Full Art silver border is distinctive" }
@@ -823,7 +822,7 @@ const CARDS = [
     id:29, name:"Pikachu VMAX #044 Pokemon Center Promo (JP)", set:"Pokemon Center Promo", year:2021,
     pokemon:"pikachu", era:"modern", cat:"promo", japanese:true,
     pop10:31, popGrowthPerMonth:0.4, marketPrice:420, psa10Price:580,
-    rawPrice:22, fanTier:10,
+    fanTier:10,
     tags:["promo","japanese","fan-fave","low-pop"],
     rationale:"Japan Pokemon Center exclusive with clean art and 31 PSA 10s. Pokemon Center exclusives historically appreciate well as they age out of the market.",
     detail:{ distribution:"Pokemon Center Japan exclusive", gradeRate:"~14%", psaSubmit:"~220", note:"Japan-only distribution" }
@@ -832,7 +831,7 @@ const CARDS = [
     id:30, name:"Eevee #25/25 McDonald's 25th Anniversary Holo", set:"McDonald's 2021 Promo", year:2021,
     pokemon:"pikachu", era:"modern", cat:"promo", japanese:false,
     pop10:88, popGrowthPerMonth:1.9, marketPrice:220, psa10Price:280,
-    rawPrice:12, fanTier:8,
+    fanTier:8,
     tags:["promo","low-pop"],
     rationale:"McDonald's 25th Anniversary Eevee holo has a shockingly low pop for a mass-distributed promo. Kids played them. Sub-100 PSA 10s is genuinely rare for this distribution.",
     detail:{ distribution:"McDonald's Happy Meal (2021)", gradeRate:"~8%", psaSubmit:"~1,100", note:"Holo set of 25 — Eevee most sought" }
@@ -841,7 +840,7 @@ const CARDS = [
     id:31, name:"Gyarados #6/102 1st Edition Base Set Holo", set:"Base Set 1st Edition", year:1999,
     pokemon:"gyarados", era:"wotc", cat:"holo", japanese:false,
     pop10:312, popGrowthPerMonth:6.2, marketPrice:3200, psa10Price:4800,
-    rawPrice:180, fanTier:9,
+    fanTier:9,
     tags:["vintage","fan-fave"],
     rationale:"Gyarados 1st Ed is one of the most undervalued WOTC holos. 312 PSA 10s is genuinely scarce for a card with this name recognition. Trades at roughly 5% of Charizard 1st Ed despite comparable difficulty to grade.",
     detail:{ distribution:"Base Set 1st Edition boosters", gradeRate:"~3.1%", psaSubmit:"~10,065", note:"Holo wave pattern is extremely condition sensitive" }
@@ -850,7 +849,7 @@ const CARDS = [
     id:32, name:"Gyarados ex #114/116 EX FireRed LeafGreen", set:"EX FireRed LeafGreen", year:2004,
     pokemon:"gyarados", era:"ex", cat:"holo", japanese:false,
     pop10:44, popGrowthPerMonth:0.4, marketPrice:580, psa10Price:820,
-    rawPrice:28, fanTier:8,
+    fanTier:8,
     tags:["vintage","low-pop"],
     rationale:"EX era Gyarados ex sits at only 44 PSA 10s — a pop that reflects how few collectors were grading EX era cards. FireRed LeafGreen is a nostalgia set gaining traction fast.",
     detail:{ distribution:"EX FireRed LeafGreen boosters", gradeRate:"~5%", psaSubmit:"~880", note:"EX era is the current undervalued frontier" }
@@ -859,7 +858,7 @@ const CARDS = [
     id:33, name:"Gyarados ☆ #102/113 EX Delta Species", set:"EX Delta Species", year:2005,
     pokemon:"gyarados", era:"ex", cat:"gold-star", japanese:false,
     pop10:68, popGrowthPerMonth:0.5, marketPrice:1800, psa10Price:2600,
-    rawPrice:120, fanTier:9,
+    fanTier:9,
     tags:["vintage","fan-fave","low-pop"],
     rationale:"Gyarados Gold Star is one of the most visually stunning Gold Stars printed. 68 PSA 10s is low for a card with Gyarados's popularity. The red color variant is iconic and demand is quietly building.",
     detail:{ distribution:"EX Delta Species boosters", gradeRate:"~4%", psaSubmit:"~1,700", note:"Gold Star = gold foil star in the card name" }
@@ -868,7 +867,7 @@ const CARDS = [
     id:34, name:"Dragonite #4/62 Fossil 1st Edition Holo", set:"Fossil 1st Edition", year:1999,
     pokemon:"dragonite", era:"wotc", cat:"holo", japanese:false,
     pop10:178, popGrowthPerMonth:3.4, marketPrice:1400, psa10Price:2100,
-    rawPrice:80, fanTier:8,
+    fanTier:8,
     tags:["vintage","fan-fave"],
     rationale:"Dragonite Fossil 1st Ed is the definitive Dragonite card and it's still priced like a footnote. 178 PSA 10s is reasonable but demand is rising as Gen 1 collecting broadens beyond Charizard.",
     detail:{ distribution:"Fossil 1st Edition boosters", gradeRate:"~3.8%", psaSubmit:"~4,685", note:"Fossil set print quality is inconsistent" }
@@ -877,7 +876,7 @@ const CARDS = [
     id:35, name:"Dragonite ex #86/97 EX Dragon", set:"EX Dragon", year:2003,
     pokemon:"dragonite", era:"ex", cat:"holo", japanese:false,
     pop10:52, popGrowthPerMonth:0.5, marketPrice:420, psa10Price:680,
-    rawPrice:22, fanTier:8,
+    fanTier:8,
     tags:["vintage","low-pop"],
     rationale:"EX Dragon is the most on-theme set for Dragonite. Only 52 PSA 10s for a Dragonite ex from the Dragon-themed set. EX era is heating up and this is a prime sleeper.",
     detail:{ distribution:"EX Dragon booster packs", gradeRate:"~5.5%", psaSubmit:"~945", note:"EX Dragon set focused on dragon-type Pokemon" }
@@ -886,7 +885,7 @@ const CARDS = [
     id:36, name:"Dragonite VSTAR #191/202 Pokemon GO", set:"Pokemon GO", year:2022,
     pokemon:"dragonite", era:"modern", cat:"shiny", japanese:false,
     pop10:620, popGrowthPerMonth:18, marketPrice:95, psa10Price:140,
-    rawPrice:9, fanTier:8,
+    fanTier:8,
     tags:["fan-fave","shiny"],
     rationale:"Pokemon GO set is slept on as a modern collector set. Dragonite VSTAR full art has clean artwork and a growing pop that hasn't caught up to demand. Entry-level price makes it accessible.",
     detail:{ distribution:"Pokemon GO booster packs", gradeRate:"~20%", psaSubmit:"~3,100", note:"Pokemon GO set tied to app anniversary" }
@@ -895,7 +894,7 @@ const CARDS = [
     id:37, name:"Vaporeon ★ #102 EX Power Keepers", set:"EX Power Keepers", year:2007,
     pokemon:"vaporeon", era:"ex", cat:"gold-star", japanese:false,
     pop10:null, popGrowthPerMonth:0.5, marketPrice:1400, psa10Price:1800,
-    rawPrice:120, fanTier:8,
+    fanTier:8,
     psaCert:"28274873",
     tags:["vintage","fan-fave","low-pop"],
     rationale:"Vaporeon Gold Star from EX Power Keepers. One of the more affordable Gold Stars with strong Eeveelution collector demand. Pop is low and the foil star treatment makes gem mint copies genuinely rare.",
@@ -903,7 +902,7 @@ const CARDS = [
   },
 ];
 
-let weights = { popScarcity:8, fanDemand:7, priceValue:6, popGrowth:5, vintage:4 };
+let weights = { popScarcity:8, fanDemand:7, priceValue:6, popGrowth:5 };
 let activeFilters = { pokemon:'all', era:'all', cat:'all', grade:'all' };
 let currentSort = 'score';
 let analysisRun = false;
@@ -1017,7 +1016,6 @@ function tcgCardToLocal(card) {
     popGrowthPerMonth: pop10 > 2000 ? 25 : pop10 > 500 ? 5 : 1,
     marketPrice: Math.round(psa10Price * 0.75),
     psa10Price: psa10Price,
-    rawPrice: Math.round(psa10Price * 0.08),
     fanTier: fanTier,
     tags: getTags(card),
     rationale: 'Fetched from Pokemon TCG API. ' + (card.rarity || '') + ' · ' + (card.set ? card.set.name : '') + '. Prices are estimates — use Fetch Comps for real data.',
@@ -1306,7 +1304,6 @@ function renderPcPrices(pcData) {
     { label: 'PSA 8',    val: p.psa8 },
     { label: 'BGS 10',   val: p.bgs10 },
     { label: 'CGC 10',   val: p.cgc10 },
-    { label: 'Ungraded', val: p.ungraded },
   ].filter(r => r.val && parseFloat(r.val) > 0);
 
   if (!rows.length) return '';
@@ -1538,7 +1535,6 @@ Return ONLY a valid JSON array, no markdown:
     "popGrowthPerMonth": 2.1,
     "marketPrice": 380,
     "psa10Price": 520,
-    "rawPrice": 18,
     "fanTier": 8,
     "tags": ["vintage","fan-fave"],
     "rationale": "2-3 sentence investment thesis.",
@@ -1584,24 +1580,22 @@ Rules:
 // ─── Scoring ──────────────────────────────────────────────────────────────────
 function scoreCard(card) {
   const w = weights;
-  const total = w.popScarcity + w.fanDemand + w.priceValue + w.popGrowth + w.vintage;
+  const total = w.popScarcity + w.fanDemand + w.priceValue + w.popGrowth;
 
   // Individual factor scores (0-100)
   const popScarcity = Math.min(100, (1 / Math.log(card.pop10 + 2)) * 500);
   const fanDemand = card.fanTier * 10;
-  const priceValue = Math.min(100, Math.max(0, ((card.psa10Price - card.rawPrice * 8) / card.psa10Price) * 60 + 40));
+  const priceValue = Math.min(100, Math.max(0, ((card.psa10Price - card.marketPrice) / card.psa10Price) * 300 + 20));
   const popGrowthScore = Math.min(100, Math.max(0, 100 - (card.popGrowthPerMonth / card.pop10) * 100));
-  const vintageScore = Math.min(100, ((2025 - card.year) / 27) * 100);
 
   const raw = (
     popScarcity * w.popScarcity +
     fanDemand * w.fanDemand +
     priceValue * w.priceValue +
-    popGrowthScore * w.popGrowth +
-    vintageScore * w.vintage
+    popGrowthScore * w.popGrowth
   ) / (total || 1);
 
-  const upside = Math.round(((card.psa10Price / (card.rawPrice * 10)) - 1) * 100);
+  const upside = Math.round(((card.psa10Price / (card.marketPrice || card.psa10Price)) - 1) * 100);
 
   return {
     total: Math.round(raw),
@@ -1609,7 +1603,6 @@ function scoreCard(card) {
     fanDemand: Math.round(fanDemand),
     priceValue: Math.round(priceValue),
     popGrowth: Math.round(popGrowthScore),
-    vintage: Math.round(vintageScore),
     upside
   };
 }
@@ -1753,7 +1746,6 @@ function renderCards() {
       {name:'Fan demand', val:s.fanDemand, color:'#f0c040'},
       {name:'Price/value gap', val:s.priceValue, color:'#9b55e0'},
       {name:'Pop growth', val:s.popGrowth, color:'#4a9de0'},
-      {name:'Vintage premium', val:s.vintage, color:'#e07842'},
     ];
     const tagHtml = (card.tags||[]).map(t=>`<div class="tag tag-${t.replace(' ','-')}">${t.replace('-',' ')}</div>`).join('');
     const isAI = (card.tags||[]).includes('ai');
@@ -1769,7 +1761,7 @@ function renderCards() {
       <div class="metrics">
         <div class="metric"><div class="metric-lbl">${activeFilters.grade==='all'?'PSA 10':'PSA '+activeFilters.grade.toUpperCase()} Pop</div><div class="metric-val ${getGradePop(card,activeFilters.grade||'all')<=50?'v-green':getGradePop(card,activeFilters.grade||'all')<=300?'v-gold':''}">${(()=>{ const p=getGradePop(card,activeFilters.grade||'all'); return p?p.toLocaleString():'—'; })()}</div></div>
         <div class="metric"><div class="metric-lbl">${activeFilters.grade==='all'?'PSA 10 $':'PSA '+activeFilters.grade.toUpperCase()+' $'}</div><div class="metric-val v-gold">${fmt(getGradePrice(card,activeFilters.grade||'all'))}</div></div>
-        <div class="metric"><div class="metric-lbl">Raw</div><div class="metric-val">${fmt(card.rawPrice)}</div></div>
+        <div class="metric"><div class="metric-lbl">Upside %</div><div class="metric-val ${s.upside>0?'v-green':'v-red'}">${s.upside>0?'+':''}${s.upside}%</div></div>
         <div class="metric"><div class="metric-lbl">Pop/Mo &#8593;</div><div class="metric-val ${card.popGrowthPerMonth<1?'v-green':card.popGrowthPerMonth<10?'v-gold':'v-red'}">+${card.popGrowthPerMonth}</div></div>
       </div>
       <div class="bars">

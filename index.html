@@ -2003,9 +2003,9 @@ async function prefetchMarketData() {
   showTcgLoader('Fetching real eBay sold data...');
   let merged = 0;
   // two halves to stay inside the batch size limit
-  for (let i = 0; i < queries.length; i += 90) {
+  for (let i = 0; i < queries.length; i += 80) {
     const chunk = queries.slice(i, i + 80);
-    setTcgProgress(10 + Math.round((i / queries.length) * 80), 'Sold listings ' + Math.min(i + 90, queries.length) + '/' + queries.length + '...');
+    setTcgProgress(10 + Math.round((i / queries.length) * 80), 'Sold listings ' + Math.min(i + 80, queries.length) + '/' + queries.length + '...');
     const results = await ebayBatch(chunk);
     targets.forEach(c => {
       const d = {

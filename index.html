@@ -274,7 +274,7 @@ canvas.spark{width:100%;height:68px;display:block;}
   </div>
   <div class="hdr-right">
     <div class="hbadge on" id="ebayStatusBadge">● eBay Live</div>
-    <div class="hbadge"><span id="dbCount">36</span> cards · <span id="tcgStatus" style="color:var(--muted)">TCG ready</span></div>
+    <div class="hbadge"><span id="dbCount">37</span> cards · <span id="tcgStatus" style="color:var(--muted)">TCG ready</span></div>
   </div>
 </header>
 
@@ -289,37 +289,18 @@ canvas.spark{width:100%;height:68px;display:block;}
       </div>
       <div class="collapsible-body open" id="settingsBody">
         <div style="margin-top:12px">
-          <div class="mini-label">Anthropic Key <span class="badge-tag">AI Expand</span></div>
-          <div class="key-wrap">
-            <input class="key-input" type="password" id="apiKey" placeholder="sk-ant-..." oninput="saveKey(this.value)">
-            <span class="key-check" id="keyCheck"></span>
-          </div>
-        </div>
-        <div style="margin-top:10px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-            <div class="mini-label">eBay <span class="badge-tag">Live Comps</span></div>
+            <div class="mini-label">eBay <span class="badge-tag">Real Sold Comps</span></div>
             <span id="ebayConnectStatus" style="font-size:9px;font-family:'DM Mono',monospace;color:var(--mint);">✓ always on</span>
           </div>
           <div style="font-size:10px;color:var(--muted);line-height:1.5;padding:6px 8px;background:var(--bg3);border-radius:5px;border:1px solid var(--border);">
-            eBay live comps are fetched automatically via the backend — no login required.
+            Real eBay sold listings (last ~90 days) are fetched automatically via the backend — no login required.
           </div>
         </div>
         <div style="margin-top:10px">
-          <div class="mini-label">Apify Token <span class="badge-tag">PSA Pop Counts</span></div>
-          <div class="key-wrap">
-            <input class="key-input" type="password" id="apifyToken" placeholder="apify_api_..." oninput="saveApifyToken(this.value)" style="font-size:10px;">
-            <span class="key-check" id="apifyTokenCheck"></span>
-          </div>
-          <div class="key-hint" style="margin-top:6px">
-            Free at <a href="https://apify.com" target="_blank">apify.com</a> → Settings → Integrations → API Token<br>
-            Saves locally. Never share this key.
-          </div>
-        </div>
-        <div style="margin-top:10px">
-          <div class="mini-label">PSA Token <span class="badge-tag">Legacy</span></div>
-          <div class="key-wrap">
-            <input class="key-input" type="password" id="psaToken" placeholder="PSA access token..." oninput="savePsaToken(this.value)" style="font-size:10px;">
-            <span class="key-check" id="psaTokenCheck"></span>
+          <div class="mini-label">Pop Counts <span class="badge-tag">GemRate</span></div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.5;padding:6px 8px;background:var(--bg3);border-radius:5px;border:1px solid var(--border);">
+            Gem-mint populations from the <a href="https://www.gemrate.com" target="_blank" style="color:var(--mint);">GemRate</a> universal pop report (PSA/BGS/SGC/CGC), snapshot Sep 7, 2026. PSA's own pop report now requires a login.
           </div>
         </div>
         <div style="margin-top:10px">
@@ -328,10 +309,10 @@ canvas.spark{width:100%;height:68px;display:block;}
             <span id="pcStatus" style="font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);">not set</span>
           </div>
           <div style="font-size:10px;color:var(--muted);line-height:1.5;padding:6px 8px;background:var(--bg3);border-radius:5px;border:1px solid var(--border);">
-            Token set in Vercel env as <code style="color:var(--mint);font-size:9px;">PRICECHARTING_TOKEN</code>.<br>
-            Get yours at <a href="https://www.pricecharting.com/subscriptions" target="_blank" style="color:var(--mint);">pricecharting.com/subscriptions</a> (Pro plan).
+            Optional. Token goes in Vercel env as <code style="color:var(--mint);font-size:9px;">PRICECHARTING_TOKEN</code> (<a href="https://www.pricecharting.com/subscriptions" target="_blank" style="color:var(--mint);">Pro plan</a>). Adds multi-grader price history.
           </div>
         </div>
+      </div>
       </div>
     </div>
 
@@ -478,23 +459,6 @@ canvas.spark{width:100%;height:68px;display:block;}
             <div class="chip" onclick="toggleChip(this,'cat')" data-val="japanese">Japanese</div>
           </div>
         </div>
-        <div style="margin-top:12px">
-          <span class="mini-label">PSA Grade</span>
-          <div class="chip-row" id="gradeChips" style="margin-top:5px">
-            <div class="chip active" onclick="toggleChip(this,'grade')" data-val="all">All</div>
-            <div class="chip" onclick="toggleChip(this,'grade')" data-val="10">10</div>
-            <div class="chip" onclick="toggleChip(this,'grade')" data-val="9">9</div>
-            <div class="chip" onclick="toggleChip(this,'grade')" data-val="8">8</div>
-            <div class="chip" onclick="toggleChip(this,'grade')" data-val="7">7</div>
-            <div class="chip" onclick="toggleChip(this,'grade')" data-val="6">6</div>
-            <div class="chip" onclick="toggleChip(this,'grade')" data-val="5">5</div>
-            <div class="chip" onclick="toggleChip(this,'grade')" data-val="4">4</div>
-            <div class="chip" onclick="toggleChip(this,'grade')" data-val="3">3</div>
-            <div class="chip" onclick="toggleChip(this,'grade')" data-val="2">2</div>
-            <div class="chip" onclick="toggleChip(this,'grade')" data-val="1">1</div>
-            <div class="chip" onclick="toggleChip(this,'grade')" data-val="auth">Auth</div>
-          </div>
-        </div>
         <div style="margin-top:14px">
           <div class="range-top"><span class="mini-label">Max Pop</span><span class="range-val" id="popVal">Any</span></div>
           <input type="range" id="popRange" min="0" max="10000" value="10000" step="100" oninput="document.getElementById('popVal').textContent=parseInt(this.value)>=10000?'Any':'≤ '+parseInt(this.value).toLocaleString();if(analysisRun)renderCards()">
@@ -517,26 +481,24 @@ canvas.spark{width:100%;height:68px;display:block;}
       <div class="collapsible-body" id="weightsBody">
         <div style="margin-top:12px" id="weightSliders">
           <div class="wrow"><span class="wname">Pop Scarcity</span><input type="range" min="0" max="10" value="8" class="weight-input" data-key="popScarcity" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-popScarcity">8</span></div>
-          <div class="wrow"><span class="wname">Fan Demand</span><input type="range" min="0" max="10" value="7" class="weight-input" data-key="fanDemand" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-fanDemand">7</span></div>
-          <div class="wrow"><span class="wname">Price / Value</span><input type="range" min="0" max="10" value="6" class="weight-input" data-key="priceValue" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-priceValue">6</span></div>
-          <div class="wrow"><span class="wname">Pop Growth</span><input type="range" min="0" max="10" value="5" class="weight-input" data-key="popGrowth" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-popGrowth">5</span></div>
+          <div class="wrow"><span class="wname">90d Momentum</span><input type="range" min="0" max="10" value="7" class="weight-input" data-key="momentum" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-momentum">7</span></div>
+          <div class="wrow"><span class="wname">Raw/Graded Gap</span><input type="range" min="0" max="10" value="6" class="weight-input" data-key="priceValue" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-priceValue">6</span></div>
+          <div class="wrow"><span class="wname">10/9 Compression</span><input type="range" min="0" max="10" value="6" class="weight-input" data-key="compression" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-compression">6</span></div>
+          <div class="wrow"><span class="wname">Sales Velocity</span><input type="range" min="0" max="10" value="6" class="weight-input" data-key="velocity" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-velocity">6</span></div>
+          <div class="wrow"><span class="wname">Fan Demand</span><input type="range" min="0" max="10" value="4" class="weight-input" data-key="fanDemand" style="flex:1;height:3px" oninput="updateWeights()"><span class="wval" id="w-fanDemand">4</span></div>
         </div>
       </div>
     </div>
 
     <button class="run-btn" id="runBtn" onclick="runAnalysis()">&#9889; Run Analysis</button>
-    <button class="expand-btn" id="expandBtn" onclick="expandDatabase()">
-      <span>&#10024;</span><span id="expandBtnTxt">AI Expand Database</span>
-    </button>
-    <div class="expand-progress" id="expandProgress"></div>
 
   </aside>
 
   <main class="main">
 
     <div class="notice">
-      <span>&#9888;</span>
-      <span>Prices &amp; pops are estimates — verify on <a href="https://www.psacard.com/pop" target="_blank">PSA Pop Report</a> &amp; <a href="https://www.ebay.com/sh/research" target="_blank">eBay Sold</a>. Use &#9889; Fetch Live Sales on each card for real comps.</span>
+      <span>&#9889;</span>
+      <span>Real data only: gem-mint pops from <a href="https://www.gemrate.com" target="_blank">GemRate</a> (snapshot Sep 7, 2026), prices &amp; sales from real eBay sold listings (last ~90 days), raw TCG prices from TCGplayer. Verify any card: <a href="https://www.psacard.com/pop" target="_blank">PSA Pop Report</a> (login) · <a href="https://www.ebay.com/sh/research" target="_blank">eBay Sold</a>.</span>
     </div>
     <div id="tcgLoadBar" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
@@ -567,352 +529,1223 @@ canvas.spark{width:100%;height:68px;display:block;}
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const CARDS = [
   {
-    id:1, name:"Mew ☆ #101 EX Dragon Frontiers", set:"EX Dragon Frontiers #101/101", year:2006,
-    pokemon:"mew", era:"ex", cat:"gold-star", japanese:false,
-    pop10:57, popGrowthPerMonth:0.3, marketPrice:12000, psa10Price:14500,
-    fanTier:10,
-    tags:["vintage","fan-fave","low-pop"],
-    rationale:"Mew Gold Star sits at only 57 PSA 10 copies — one of the lowest genuine populations of any Gold Star. Foil wear kills grades. Fan demand is elite tier, Charizard Gold Star commands 3x more despite Mew being rarer in PSA 10.",
-    detail:{ distribution:"EX Dragon Frontiers boosters", gradeRate:"~3%", psaSubmit:"~1,900", note:"Japanese version even scarcer" }
+    "id": 1,
+    "name": "Mew ☆ #101 EX Dragon Frontiers",
+    "set": "EX Dragon Frontiers #101/101",
+    "year": 2006,
+    "pokemon": "mew",
+    "era": "ex",
+    "cat": "gold-star",
+    "japanese": false,
+    "fanTier": 10,
+    "tags": [
+      "vintage",
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Mew Gold Star Dragon Frontiers 101 PSA 10",
+    "q9": "Mew Gold Star Dragon Frontiers 101 PSA 9",
+    "qRaw": "Mew Gold Star Dragon Frontiers 101 -PSA -BGS -CGC -SGC",
+    "pop10": 102,
+    "popTotal": 4546,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Mew Gold Star: 102 gem-mint copies across all graders (GemRate, Sep 2026) - one of the lowest genuine populations of any Gold Star. Foil wear kills grades. Fan demand is elite tier; Charizard Gold Star commands more despite a larger gem pop.",
+    "detail": {
+      "distribution": "EX Dragon Frontiers boosters",
+      "note": "Japanese version even scarcer"
+    },
+    "popLabel": "2006 Pokemon EX Dragon Frontiers Mew-Holo Gold Star 101",
+    "popUrl": "https://www.gemrate.com/card/2951fc180da501abf2d7edb2b171e9b10050f332"
   },
   {
-    id:2, name:"Shining Mew CoroCoro Promo (JP)", set:"CoroCoro Magazine (JP)", year:2001,
-    pokemon:"mew", era:"wotc", cat:"promo", japanese:true,
-    pop10:18, popGrowthPerMonth:0.1, marketPrice:9500, psa10Price:10800,
-    fanTier:10,
-    tags:["vintage","promo","japanese","fan-fave","low-pop"],
-    rationale:"Magazine peel damage destroyed most copies. Pop 10 of just 18 is extraordinary for a 2001 promo. English collectors are just starting to notice Japanese promos — pricing hasn't caught up.",
-    detail:{ distribution:"CoroCoro May 2001 insert", gradeRate:"<2%", psaSubmit:"~950", note:"Must be peeled from cardboard backing" }
+    "id": 2,
+    "name": "Shining Mew CoroCoro Promo (JP)",
+    "set": "CoroCoro Magazine (JP)",
+    "year": 2001,
+    "pokemon": "mew",
+    "era": "wotc",
+    "cat": "promo",
+    "japanese": true,
+    "fanTier": 10,
+    "tags": [
+      "vintage",
+      "promo",
+      "japanese",
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Shining Mew CoroCoro promo PSA 10",
+    "q9": "Shining Mew CoroCoro promo PSA 9",
+    "qRaw": "Shining Mew CoroCoro promo -PSA -BGS -CGC -SGC",
+    "pop10": 704,
+    "popTotal": 21178,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Magazine peel damage destroyed most copies. 704 gem-mint copies across graders out of 21k+ graded (GemRate, Sep 2026) - a 3.3% gem rate for a 2001 promo. English collectors are just starting to notice Japanese promos.",
+    "detail": {
+      "distribution": "CoroCoro May 2001 insert",
+      "note": "Must be peeled from cardboard backing"
+    },
+    "popLabel": "2001 Pokemon Japanese Promo Corocoro Comics Shining Mew Holofoil 151",
+    "popUrl": "https://www.gemrate.com/card/6385030fcb0bedc6b10ad7978883d030395332ae"
   },
   {
-    id:3, name:"Mew — Southern Islands Holo", set:"Southern Islands (2001)", year:2001,
-    pokemon:"mew", era:"wotc", cat:"holo", japanese:false,
-    pop10:8, popGrowthPerMonth:0.05, marketPrice:22000, psa10Price:24500,
-    fanTier:10,
-    tags:["vintage","fan-fave","low-pop"],
-    rationale:"Single-digit PSA 10 pop. Cards were folded in booklets — centering and print lines are endemic. This is arguably the rarest English Mew in PSA 10 that most collectors don't know about.",
-    detail:{ distribution:"Mail-in promotion 2001", gradeRate:"<1%", psaSubmit:"~780", note:"Booklet fold causes centering issues" }
+    "id": 3,
+    "name": "Mew — Southern Islands Holo",
+    "set": "Southern Islands (2001)",
+    "year": 2001,
+    "pokemon": "mew",
+    "era": "wotc",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 10,
+    "tags": [
+      "vintage",
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Mew Southern Islands PSA 10",
+    "q9": "Mew Southern Islands PSA 9",
+    "qRaw": "Mew Southern Islands -PSA -BGS -CGC -SGC",
+    "pop10": 20,
+    "popTotal": 5290,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Only 20 gem-mint copies across all graders out of 5,290 graded (GemRate, Sep 2026). Cards were folded in booklets - centering and print lines are endemic. Arguably the rarest English Mew at gem grade.",
+    "detail": {
+      "distribution": "Mail-in promotion 2001",
+      "note": "Booklet fold causes centering issues"
+    },
+    "popLabel": "2001 Pokemon Southern Islands Promo Mew-Holo Base 1",
+    "popUrl": "https://www.gemrate.com/card/c3fa26539b35cd8332399858928a87231f08d5de"
   },
   {
-    id:4, name:"Mew #29/124 XY Fates Collide Holo", set:"XY Fates Collide", year:2016,
-    pokemon:"mew", era:"ex", cat:"holo", japanese:false,
-    pop10:33, popGrowthPerMonth:0.8, marketPrice:280, psa10Price:420,
-    fanTier:10,
-    tags:["low-pop","fan-fave"],
-    rationale:"Pop of 33 PSA 10s is shockingly low for a 2016 English holo. XY era is completely overlooked right now — priced at $220 but has 10x upside if XY nostalgia follows the Base Set trajectory.",
-    detail:{ distribution:"XY Fates Collide booster packs", gradeRate:"~12%", psaSubmit:"~275", note:"Low submission rate — most copies are ungraded" }
+    "id": 4,
+    "name": "Mew #29/124 XY Fates Collide Holo",
+    "set": "XY Fates Collide",
+    "year": 2016,
+    "pokemon": "mew",
+    "era": "ex",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 10,
+    "tags": [
+      "low-pop",
+      "fan-fave"
+    ],
+    "q10": "Mew Fates Collide 29 PSA 10",
+    "q9": "Mew Fates Collide 29 PSA 9",
+    "qRaw": "Mew Fates Collide 29 -PSA -BGS -CGC -SGC",
+    "pop10": 248,
+    "popTotal": 1636,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Pop of 33 PSA 10s is shockingly low for a 2016 English holo. XY era is completely overlooked right now — priced at $220 but has 10x upside if XY nostalgia follows the Base Set trajectory.",
+    "detail": {
+      "distribution": "XY Fates Collide booster packs",
+      "note": "Low submission rate — most copies are ungraded"
+    },
+    "popLabel": "2016 Pokemon XY Fates Collide Mew-Holo Base 29",
+    "popUrl": "https://www.gemrate.com/card/d8720ae8aa08caae673f99e321f775b25109146f"
   },
   {
-    id:5, name:"Mew #32/68 Hidden Fates Rev. Holo", set:"Hidden Fates", year:2019,
-    pokemon:"mew", era:"modern", cat:"holo", japanese:false,
-    pop10:23, popGrowthPerMonth:1.2, marketPrice:180, psa10Price:280,
-    fanTier:10,
-    tags:["low-pop","shiny","fan-fave"],
-    rationale:"Sub-25 PSA 10 pop on a modern reverse holo from a beloved set is remarkable. Reverse holos are dismissed vs Shiny Vaults — but this artifact of inattention is the opportunity.",
-    detail:{ distribution:"Hidden Fates booster packs", gradeRate:"~8%", psaSubmit:"~290", note:"Shiny Vault cards capture all attention" }
+    "id": 5,
+    "name": "Mew #32/68 Hidden Fates Rev. Holo",
+    "set": "Hidden Fates",
+    "year": 2019,
+    "pokemon": "mew",
+    "era": "modern",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 10,
+    "tags": [
+      "low-pop",
+      "shiny",
+      "fan-fave"
+    ],
+    "q10": "Mew Hidden Fates 32 reverse PSA 10",
+    "q9": "Mew Hidden Fates 32 reverse PSA 9",
+    "qRaw": "Mew Hidden Fates 32 reverse -PSA -BGS -CGC -SGC",
+    "pop10": 396,
+    "popTotal": 1281,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "396 gem-mint copies out of 1,281 graded (GemRate, Sep 2026) - a 31% gem rate, so scarcity is not the story here. Reverse holos are dismissed vs Shiny Vaults; the case is value, not pop.",
+    "detail": {
+      "distribution": "Hidden Fates booster packs",
+      "note": "Shiny Vault cards capture all attention"
+    },
+    "popLabel": "2019 Pokemon Sun & Moon Hidden Fates Mew-Reverse Foil Base 32",
+    "popUrl": "https://www.gemrate.com/card/535927ef2e467d910f94bd9ab151458ccc412249"
   },
   {
-    id:6, name:"Mew #40/73 Shining Legends Shining Holo", set:"SM Shining Legends", year:2017,
-    pokemon:"mew", era:"modern", cat:"shiny", japanese:false,
-    pop10:145, popGrowthPerMonth:2.1, marketPrice:380, psa10Price:480,
-    fanTier:10,
-    tags:["shiny","fan-fave"],
-    rationale:"Beautiful alt-art shiny Mew from 2017. Most copies were played, not collected. Pop is still manageable for a shiny card of this quality and the artwork is one of the best modern Mews.",
-    detail:{ distribution:"SM Shining Legends booster packs", gradeRate:"~15%", psaSubmit:"~965", note:"Shining mechanic = silver foil edges" }
+    "id": 6,
+    "name": "Mew #40/73 Shining Legends Shining Holo",
+    "set": "SM Shining Legends",
+    "year": 2017,
+    "pokemon": "mew",
+    "era": "modern",
+    "cat": "shiny",
+    "japanese": false,
+    "fanTier": 10,
+    "tags": [
+      "shiny",
+      "fan-fave"
+    ],
+    "q10": "Shining Mew Shining Legends 40 PSA 10",
+    "q9": "Shining Mew Shining Legends 40 PSA 9",
+    "qRaw": "Shining Mew Shining Legends 40 -PSA -BGS -CGC -SGC",
+    "pop10": 3691,
+    "popTotal": 13818,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Beautiful shiny Mew from 2017. Note the real numbers: 3,691 gem-mint copies out of 13,818 graded (GemRate, Sep 2026) - not a low-pop card. Treat it as a demand play, not a scarcity play.",
+    "detail": {
+      "distribution": "SM Shining Legends booster packs",
+      "note": "Shining mechanic = silver foil edges"
+    },
+    "popLabel": "2017 Pokemon Sun & Moon Shining Legends Shining Mew-Holo Base 40",
+    "popUrl": "https://www.gemrate.com/card/6c51d633b025ed66d43357a474db38581310b7dc"
   },
   {
-    id:7, name:"Charizard #4/102 Base Set Unlimited Holo", set:"Base Set Unlimited", year:1999,
-    pokemon:"charizard", era:"wotc", cat:"holo", japanese:false,
-    pop10:4200, popGrowthPerMonth:85, marketPrice:420000, psa10Price:450000,
-    fanTier:10,
-    tags:["vintage","fan-fave"],
-    rationale:"The most famous card in existence. Pop is enormous but demand is equally massive. The benchmark for all investment comparisons — but growth rate is slowing as the pop climbs.",
-    detail:{ distribution:"Base Set Unlimited boosters", gradeRate:"~3.5%", psaSubmit:"~120,000", note:"Never truly 'undervalued' — market is efficient" }
+    "id": 7,
+    "name": "Charizard #4/102 Base Set Unlimited Holo",
+    "set": "Base Set Unlimited",
+    "year": 1999,
+    "pokemon": "charizard",
+    "era": "wotc",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 10,
+    "tags": [
+      "vintage",
+      "fan-fave"
+    ],
+    "q10": "Charizard Base Set 4 PSA 10 -1st -shadowless -celebrations",
+    "q9": "Charizard Base Set 4 PSA 9 -1st -shadowless -celebrations",
+    "qRaw": "Charizard Base Set 4 unlimited -1st -shadowless -PSA -BGS -CGC -SGC -celebrations",
+    "pop10": 1037,
+    "popTotal": 130720,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "The most famous card in existence. 1,037 gem-mint copies out of 130,720 graded (GemRate, Sep 2026) - a 0.8% gem rate. The benchmark for all comparisons; the market here is efficient.",
+    "detail": {
+      "distribution": "Base Set Unlimited boosters",
+      "note": "Never truly 'undervalued' — market is efficient"
+    },
+    "popLabel": "1999 Pokemon Game Charizard-Holo Base 4",
+    "popUrl": "https://www.gemrate.com/card/ffb8699bb7f435eff4e9761f8e29358e351d777e"
   },
   {
-    id:8, name:"Lugia #9/111 Neo Genesis 1st Edition Holo", set:"Neo Genesis 1st Ed.", year:2000,
-    pokemon:"lugia", era:"wotc", cat:"holo", japanese:false,
-    pop10:342, popGrowthPerMonth:4.2, marketPrice:48000, psa10Price:52000,
-    fanTier:9,
-    tags:["vintage","fan-fave","low-pop"],
-    rationale:"Lugia 1st Ed PSA 10 is far more rare than Charizard 1st Ed but commands less than half the price. The fan base is massive post-Gen-2 nostalgia and the card is genuinely hard to find in gem mint.",
-    detail:{ distribution:"Neo Genesis 1st Ed. boosters", gradeRate:"~2.8%", psaSubmit:"~12,200", note:"Print lines are endemic in Neo era" }
+    "id": 8,
+    "name": "Lugia #9/111 Neo Genesis 1st Edition Holo",
+    "set": "Neo Genesis 1st Ed.",
+    "year": 2000,
+    "pokemon": "lugia",
+    "era": "wotc",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 9,
+    "tags": [
+      "vintage",
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Lugia Neo Genesis 9 1st edition PSA 10",
+    "q9": "Lugia Neo Genesis 9 1st edition PSA 9",
+    "qRaw": "Lugia Neo Genesis 9 1st edition -PSA -BGS -CGC -SGC",
+    "pop10": 305,
+    "popTotal": 10654,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Lugia 1st Ed PSA 10 is far more rare than Charizard 1st Ed but commands less than half the price. The fan base is massive post-Gen-2 nostalgia and the card is genuinely hard to find in gem mint.",
+    "detail": {
+      "distribution": "Neo Genesis 1st Ed. boosters",
+      "note": "Print lines are endemic in Neo era"
+    },
+    "popLabel": "2000 Pokemon Neo Genesis 1st Edition Lugia-Holo Base 9",
+    "popUrl": "https://www.gemrate.com/card/61c881c144e5410a902ee4f4c34fbff2bf4393a5"
   },
   {
-    id:9, name:"Pikachu Illustrator (JP Promo)", set:"CoroCoro Illustration Contest", year:1998,
-    pokemon:"pikachu", era:"wotc", cat:"promo", japanese:true,
-    pop10:9, popGrowthPerMonth:0.02, marketPrice:5500000, psa10Price:6000000,
-    fanTier:10,
-    tags:["vintage","promo","japanese","fan-fave","low-pop"],
-    rationale:"9 PSA 10 copies in existence. The most valuable Pokémon card period. Not 'undervalued' per se — but one of the clearest examples of pop scarcity driving value to absurd levels.",
-    detail:{ distribution:"Illustration contest prize (39 copies total)", gradeRate:"23%", psaSubmit:"~39", note:"Most famous individual card ever" }
+    "id": 9,
+    "name": "Pikachu Illustrator (JP Promo)",
+    "set": "CoroCoro Illustration Contest",
+    "year": 1998,
+    "pokemon": "pikachu",
+    "era": "wotc",
+    "cat": "promo",
+    "japanese": true,
+    "fanTier": 10,
+    "tags": [
+      "vintage",
+      "promo",
+      "japanese",
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Pikachu Illustrator PSA 10",
+    "q9": "Pikachu Illustrator PSA 9",
+    "qRaw": "Pikachu Illustrator promo -PSA -BGS -CGC -SGC",
+    "pop10": 7,
+    "popTotal": 79,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "7 gem-mint copies across all graders, 79 total graded (GemRate, Sep 2026). The most valuable Pokemon card period - the clearest example of pop scarcity driving value.",
+    "detail": {
+      "distribution": "Illustration contest prize (39 copies total)",
+      "note": "Most famous individual card ever"
+    },
+    "popLabel": "1998 Pokemon Japanese Promo Pikachu-Holo Illustrator ",
+    "popUrl": "https://www.gemrate.com/card/a0e52bcabc2d03c0e600187996c9ce671b20522f"
   },
   {
-    id:10, name:"Umbreon Gold Star (JP)", set:"PCG-P Promo (JP)", year:2006,
-    pokemon:"umbreon", era:"ex", cat:"gold-star", japanese:true,
-    pop10:12, popGrowthPerMonth:0.1, marketPrice:18000, psa10Price:22000,
-    fanTier:9,
-    tags:["vintage","japanese","fan-fave","low-pop"],
-    rationale:"Japanese Umbreon Gold Star has one of the lowest PSA 10 pops of any Gold Star. English version commands more but JP version is rarer. The gap is closing fast as collectors wise up.",
-    detail:{ distribution:"PCG-P Lottery/promotional event", gradeRate:"~2%", psaSubmit:"~600", note:"Different artwork from English version" }
+    "id": 10,
+    "name": "Umbreon Gold Star (JP)",
+    "set": "PCG-P Promo (JP)",
+    "year": 2006,
+    "pokemon": "umbreon",
+    "era": "ex",
+    "cat": "gold-star",
+    "japanese": true,
+    "fanTier": 9,
+    "tags": [
+      "vintage",
+      "japanese",
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Umbreon Gold Star Japanese PLAY promo PSA 10",
+    "q9": "Umbreon Gold Star Japanese PLAY promo PSA 9",
+    "qRaw": "Umbreon Gold Star Japanese PLAY promo -PSA -BGS -CGC -SGC",
+    "pop10": 27,
+    "popTotal": 58,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "The Japanese Umbreon Gold Star (PLAY 70,000 pts promo): 27 gem-mint copies out of just 58 graded (GemRate, Sep 2026) - one of the scarcest Gold Stars at gem grade.",
+    "detail": {
+      "distribution": "PCG-P Lottery/promotional event",
+      "note": "Different artwork from English version"
+    },
+    "popLabel": "2005 Pokemon Japanese Play Promo Umbreon-Holo 70,000 Pts. 026",
+    "popUrl": "https://www.gemrate.com/card/39ea985cb3a2ed2dd32b5a42c4c49198b5905eb0"
   },
   {
-    id:11, name:"Mew ex SIR #205/091 Paldean Fates", set:"Paldean Fates", year:2024,
-    pokemon:"mew", era:"modern", cat:"shiny", japanese:false,
-    pop10:380, popGrowthPerMonth:42, marketPrice:1400, psa10Price:2000,
-    fanTier:10,
-    tags:["shiny","fan-fave"],
-    rationale:"Shiny Illustration Rare Mew from the Mew-themed anniversary set. 30th anniversary positioning will boost demand significantly. Pop is growing but 35% price upside vs raw still visible.",
-    detail:{ distribution:"Paldean Fates booster packs", gradeRate:"~22%", psaSubmit:"~1,725", note:"SIR treatment = gold border + art extension" }
+    "id": 11,
+    "name": "Mew ex SIR #232/091 Paldean Fates",
+    "set": "Paldean Fates",
+    "year": 2024,
+    "pokemon": "mew",
+    "era": "modern",
+    "cat": "shiny",
+    "japanese": false,
+    "fanTier": 10,
+    "tags": [
+      "shiny",
+      "fan-fave"
+    ],
+    "q10": "Mew ex Paldean Fates 232 PSA 10",
+    "q9": "Mew ex Paldean Fates 232 PSA 9",
+    "qRaw": "Mew ex Paldean Fates 232 -PSA -BGS -CGC -SGC",
+    "pop10": 19076,
+    "popTotal": 55280,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Shiny Illustration Rare Mew from the Mew-themed anniversary set. 30th anniversary positioning will boost demand significantly. Pop is growing but 35% price upside vs raw still visible.",
+    "detail": {
+      "distribution": "Paldean Fates booster packs",
+      "note": "SIR treatment = gold border + art extension"
+    },
+    "popLabel": "2024 Paldean Fates - PAF EN - English Mew ex  232/091",
+    "popUrl": "https://www.gemrate.com/card/6eeea13927f8b7be973a8d7e96104e11e5dbcfab"
   },
   {
-    id:12, name:"Gengar #5/102 1st Edition Base Set Holo", set:"Base Set 1st Edition", year:1999,
-    pokemon:"gengar", era:"wotc", cat:"holo", japanese:false,
-    pop10:189, popGrowthPerMonth:3.1, marketPrice:4200, psa10Price:5800,
-    fanTier:8,
-    tags:["vintage","fan-fave"],
-    rationale:"Gengar is a top-3 fan favorite but trades at 5-10% of Charizard 1st Ed price. The shadow box art on Base Set Gengar is iconic. Pop is modest — 189 PSA 10s is low for a card this beloved.",
-    detail:{ distribution:"Base Set 1st Edition boosters", gradeRate:"~3.2%", psaSubmit:"~5,900", note:"Shadow box art variant is distinct" }
+    "id": 12,
+    "name": "Gengar #5/62 1st Edition Fossil Holo",
+    "set": "Fossil 1st Edition",
+    "year": 1999,
+    "pokemon": "gengar",
+    "era": "wotc",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 8,
+    "tags": [
+      "vintage",
+      "fan-fave"
+    ],
+    "q10": "Gengar Fossil 5 1st edition PSA 10",
+    "q9": "Gengar Fossil 5 1st edition PSA 9",
+    "qRaw": "Gengar Fossil 5 1st edition -PSA -BGS -CGC -SGC",
+    "pop10": 378,
+    "popTotal": 9738,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Gengar is a top-3 fan favorite but trades far below Charizard 1st Ed. Note: this card is Fossil 1st Edition #5/62 (not Base Set). 378 gem-mint copies out of 9,738 graded (GemRate, Sep 2026).",
+    "detail": {
+      "distribution": "Base Set 1st Edition boosters",
+      "note": "Shadow box art variant is distinct"
+    },
+    "popLabel": "1999 Pokemon Fossil Gengar-Holo 1st Edition 5",
+    "popUrl": "https://www.gemrate.com/card/f2899de4f6a9ca97f22db697b81652ef1d2ca2bf"
   },
   {
-    id:13, name:"Mew Ancient Mew JP Error (Nintedo)", set:"Pokémon Movie Promo (JP)", year:2000,
-    pokemon:"mew", era:"wotc", cat:"promo", japanese:true,
-    pop10:41, popGrowthPerMonth:0.2, marketPrice:420, psa10Price:580,
-    fanTier:9,
-    tags:["vintage","promo","japanese","low-pop"],
-    rationale:"First print has 'Nintedo' misprinted instead of 'Nintendo'. Error + promo + Japanese = triple collector premium that the current price doesn't reflect. Pop is tiny at 41 PSA 10 copies.",
-    detail:{ distribution:"Pokémon 2000 movie promos (JP)", gradeRate:"~6%", psaSubmit:"~685", note:"Error on copyright line: 'Nintedo'" }
+    "id": 13,
+    "name": "Mew Ancient Mew JP Error (Nintedo)",
+    "set": "Pokémon Movie Promo (JP)",
+    "year": 2000,
+    "pokemon": "mew",
+    "era": "wotc",
+    "cat": "promo",
+    "japanese": true,
+    "fanTier": 9,
+    "tags": [
+      "vintage",
+      "promo",
+      "japanese",
+      "low-pop"
+    ],
+    "q10": "Ancient Mew Nintedo PSA 10",
+    "q9": "Ancient Mew Nintedo PSA 9",
+    "qRaw": "Ancient Mew Nintedo -PSA -BGS -CGC -SGC",
+    "pop10": 790,
+    "popTotal": 6414,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "First print has 'Nintedo' misprinted instead of 'Nintendo'. 790 gem-mint copies out of 6,414 graded (GemRate, Sep 2026) - error + promo + Japanese = collector premium with moderate scarcity.",
+    "detail": {
+      "distribution": "Pokémon 2000 movie promos (JP)",
+      "note": "Error on copyright line: 'Nintedo'"
+    },
+    "popLabel": "1998-99 Pokemon Japanese Pokemon Japanese Promo Ancient Mew I \"Nintedo\" Error ",
+    "popUrl": "https://www.gemrate.com/card/ce2cf683380e3cd59589d53968737d0483031538"
   },
   {
-    id:14, name:"Pikachu VMAX Rainbow #188/185 Vivid Voltage", set:"Vivid Voltage", year:2020,
-    pokemon:"pikachu", era:"modern", cat:"shiny", japanese:false,
-    pop10:1820, popGrowthPerMonth:95, marketPrice:240, psa10Price:320,
-    fanTier:10,
-    tags:["shiny","fan-fave"],
-    rationale:"Rainbow VMAX Pikachu with huge fan demand. Pop is growing fast but price premium over raw is minimal. Likely fully valued in short term — long hold only if you believe in sustained Pikachu demand.",
-    detail:{ distribution:"Vivid Voltage booster packs", gradeRate:"~25%", psaSubmit:"~7,280", note:"Textured rainbow foil grading surface" }
+    "id": 14,
+    "name": "Pikachu VMAX Rainbow #188/185 Vivid Voltage",
+    "set": "Vivid Voltage",
+    "year": 2020,
+    "pokemon": "pikachu",
+    "era": "modern",
+    "cat": "shiny",
+    "japanese": false,
+    "fanTier": 10,
+    "tags": [
+      "shiny",
+      "fan-fave"
+    ],
+    "q10": "Pikachu VMAX Vivid Voltage 188 PSA 10",
+    "q9": "Pikachu VMAX Vivid Voltage 188 PSA 9",
+    "qRaw": "Pikachu VMAX Vivid Voltage 188 -PSA -BGS -CGC -SGC",
+    "pop10": 14312,
+    "popTotal": 24679,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Rainbow VMAX Pikachu with huge fan demand. Pop is growing fast but price premium over raw is minimal. Likely fully valued in short term — long hold only if you believe in sustained Pikachu demand.",
+    "detail": {
+      "distribution": "Vivid Voltage booster packs",
+      "note": "Textured rainbow foil grading surface"
+    },
+    "popLabel": "2020 Pokemon Sword & Shield Vivid Voltage Full Art/Pikachu Vmax Secret 188",
+    "popUrl": "https://www.gemrate.com/card/3e21af29085b3846ae3f963a7b5bcefea1488a9b"
   },
   {
-    id:15, name:"Mew #4/17 POP Series 4", set:"POP Series 4 (Prize Card)", year:2007,
-    pokemon:"mew", era:"dp", cat:"promo", japanese:false,
-    pop10:29, popGrowthPerMonth:0.15, marketPrice:380, psa10Price:520,
-    fanTier:9,
-    tags:["promo","low-pop","vintage"],
-    rationale:"Tournament prize card — only distributed to competitive players who won. Most were played into the ground. 29 PSA 10s is a legitimately low number for a card with this distribution method.",
-    detail:{ distribution:"Organized play prize / league reward", gradeRate:"~5%", psaSubmit:"~580", note:"POP era is completely forgotten by market" }
+    "id": 15,
+    "name": "Mew #4/17 POP Series 4",
+    "set": "POP Series 4 (Prize Card)",
+    "year": 2006,
+    "pokemon": "mew",
+    "era": "dp",
+    "cat": "promo",
+    "japanese": false,
+    "fanTier": 9,
+    "tags": [
+      "promo",
+      "low-pop",
+      "vintage"
+    ],
+    "q10": "Mew POP Series 4 PSA 10",
+    "q9": "Mew POP Series 4 PSA 9",
+    "qRaw": "Mew POP Series 4 -PSA -BGS -CGC -SGC",
+    "pop10": 9,
+    "popTotal": 1093,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Tournament prize card — only distributed to competitive players who won. Most were played into the ground. 29 PSA 10s is a legitimately low number for a card with this distribution method.",
+    "detail": {
+      "distribution": "Organized play prize / league reward",
+      "note": "POP era is completely forgotten by market"
+    },
+    "popLabel": "2006 Pokemon Pop Series 4 Mew-Holo Base 4",
+    "popUrl": "https://www.gemrate.com/card/674433740e129b80203919751df68322fb90ed7e"
   },
   {
-    id:16, name:"Charizard #4/102 1st Edition Base Set Holo", set:"Base Set 1st Edition", year:1999,
-    pokemon:"charizard", era:"wotc", cat:"holo", japanese:false,
-    pop10:3031, popGrowthPerMonth:52, marketPrice:420000, psa10Price:480000,
-    fanTier:10,
-    tags:["vintage","fan-fave"],
-    rationale:"The holy grail alongside Illustrator. Pop is growing but demand keeps up. PSA 10 has massive premium over PSA 9. Entry price is extreme but liquidity is unmatched.",
-    detail:{ distribution:"Base Set 1st Edition boosters", gradeRate:"~2.5%", psaSubmit:"~121,000", note:"Shadow distinguishes 1st Ed from Unlimited" }
+    "id": 16,
+    "name": "Charizard #4/102 1st Edition Base Set Holo",
+    "set": "Base Set 1st Edition",
+    "year": 1999,
+    "pokemon": "charizard",
+    "era": "wotc",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 10,
+    "tags": [
+      "vintage",
+      "fan-fave"
+    ],
+    "q10": "Charizard Base Set 4 1st edition PSA 10",
+    "q9": "Charizard Base Set 4 1st edition PSA 9",
+    "qRaw": "Charizard Base Set 4 1st edition -PSA -BGS -CGC -SGC",
+    "pop10": 222,
+    "popTotal": 7382,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "The holy grail alongside Illustrator. 222 gem-mint copies out of 7,382 graded (GemRate, Sep 2026). PSA 10 commands a massive premium over PSA 9 - check the compression factor: a low premium multiple would signal value.",
+    "detail": {
+      "distribution": "Base Set 1st Edition boosters",
+      "note": "Shadow distinguishes 1st Ed from Unlimited"
+    },
+    "popLabel": "1999 Pokemon Game Charizard-Holo 1st Edition 4",
+    "popUrl": "https://www.gemrate.com/card/a3cf76ffaa7591d06cd352245a28019de2110cb9"
   },
   {
-    id:17, name:"Charizard ex SIR #228/193 Paldea Evolved", set:"Paldea Evolved", year:2023,
-    pokemon:"charizard", era:"modern", cat:"shiny", japanese:false,
-    pop10:2840, popGrowthPerMonth:120, marketPrice:180, psa10Price:260,
-    fanTier:10,
-    tags:["shiny","fan-fave"],
-    rationale:"Modern Charizard SIR with relentless demand. Pop growing but Charizard brand sustains price floor. Best short-term modern Charizard hold.",
-    detail:{ distribution:"Paldea Evolved booster packs", gradeRate:"~24%", psaSubmit:"~11,800", note:"SIR gold border + full-art" }
+    "id": 17,
+    "name": "Charizard ex SIR #223/197 Obsidian Flames",
+    "set": "Obsidian Flames",
+    "year": 2023,
+    "pokemon": "charizard",
+    "era": "modern",
+    "cat": "shiny",
+    "japanese": false,
+    "fanTier": 10,
+    "tags": [
+      "shiny",
+      "fan-fave"
+    ],
+    "q10": "Charizard ex Obsidian Flames 223 PSA 10",
+    "q9": "Charizard ex Obsidian Flames 223 PSA 9",
+    "qRaw": "Charizard ex Obsidian Flames 223 -PSA -BGS -CGC -SGC",
+    "pop10": 14717,
+    "popTotal": 65091,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Modern Charizard SIR with relentless demand. Pop growing but Charizard brand sustains price floor. Best short-term modern Charizard hold.",
+    "detail": {
+      "distribution": "Paldea Evolved booster packs",
+      "note": "SIR gold border + full-art"
+    },
+    "popLabel": "2023 Pokemon Obf EN-Obsidian Flames Charizard EX Special Illustration Rare 223",
+    "popUrl": "https://www.gemrate.com/card/c248186538ef018d472a5feb1fb793eb9243e6e6"
   },
   {
-    id:18, name:"Umbreon VMAX Alt Art #215/203 Evolving Skies", set:"Evolving Skies", year:2021,
-    pokemon:"umbreon", era:"modern", cat:"shiny", japanese:false,
-    pop10:1640, popGrowthPerMonth:38, marketPrice:820, psa10Price:980,
-    fanTier:10,
-    tags:["fan-fave","shiny"],
-    rationale:"The most beloved modern alt art. Brutal pull rate + iconic artwork. Arguably undervalued vs cultural impact. Strong hold for Umbreon fans.",
-    detail:{ distribution:"Evolving Skies booster packs", gradeRate:"~20%", psaSubmit:"~8,200", note:"One of the hardest modern pulls" }
+    "id": 18,
+    "name": "Umbreon VMAX Alt Art #215/203 Evolving Skies",
+    "set": "Evolving Skies",
+    "year": 2021,
+    "pokemon": "umbreon",
+    "era": "modern",
+    "cat": "shiny",
+    "japanese": false,
+    "fanTier": 10,
+    "tags": [
+      "fan-fave",
+      "shiny"
+    ],
+    "q10": "Umbreon VMAX Evolving Skies 215 PSA 10",
+    "q9": "Umbreon VMAX Evolving Skies 215 PSA 9",
+    "qRaw": "Umbreon VMAX Evolving Skies 215 -PSA -BGS -CGC -SGC",
+    "pop10": 27079,
+    "popTotal": 39187,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "The most beloved modern alt art. Brutal pull rate + iconic artwork. Arguably undervalued vs cultural impact. Strong hold for Umbreon fans.",
+    "detail": {
+      "distribution": "Evolving Skies booster packs",
+      "note": "One of the hardest modern pulls"
+    },
+    "popLabel": "2021 Pokemon Sword & Shield Evolving Skies Full Art/Umbreon Vmax Secret 215",
+    "popUrl": "https://www.gemrate.com/card/60d9b1225b4dd9aa7322320e3da719967aaeacfa"
   },
   {
-    id:19, name:"Gengar & Mimikyu GX #247/181 Team Up Alt Art", set:"SM Team Up", year:2019,
-    pokemon:"gengar", era:"modern", cat:"holo", japanese:false,
-    pop10:312, popGrowthPerMonth:4.8, marketPrice:480, psa10Price:620,
-    fanTier:9,
-    tags:["fan-fave","low-pop"],
-    rationale:"Tag Team GX era is overlooked. Alt Art Gengar/Mimikyu has double fan appeal. SM era cards grade well — sub-400 PSA 10s is an opportunity.",
-    detail:{ distribution:"SM Team Up booster packs", gradeRate:"~18%", psaSubmit:"~1,735", note:"Tag Team mechanic is now vintage nostalgia" }
+    "id": 19,
+    "name": "Gengar & Mimikyu GX #186/181 Team Up Alt Art",
+    "set": "SM Team Up",
+    "year": 2019,
+    "pokemon": "gengar",
+    "era": "modern",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 9,
+    "tags": [
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Gengar Mimikyu GX 186 Team Up PSA 10",
+    "q9": "Gengar Mimikyu GX 186 Team Up PSA 9",
+    "qRaw": "Gengar Mimikyu GX 186 Team Up -PSA -BGS -CGC -SGC",
+    "pop10": 1016,
+    "popTotal": 2962,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Tag Team GX era is overlooked. Alt Art Gengar/Mimikyu has double fan appeal. SM era cards grade well — sub-400 PSA 10s is an opportunity.",
+    "detail": {
+      "distribution": "SM Team Up booster packs",
+      "note": "Tag Team mechanic is now vintage nostalgia"
+    },
+    "popLabel": "2019 Pokemon Sun & Moon Team Up Full Art/Gengar & Mimikyu GX Secret 186",
+    "popUrl": "https://www.gemrate.com/card/a1163ac25784ebd3832e9075454f0681ccb028dc"
   },
   {
-    id:20, name:"Lugia V Alt Art #138/195 Silver Tempest", set:"Silver Tempest", year:2022,
-    pokemon:"lugia", era:"modern", cat:"holo", japanese:false,
-    pop10:4200, popGrowthPerMonth:180, marketPrice:65, psa10Price:100,
-    fanTier:9,
-    tags:["fan-fave"],
-    rationale:"First premium Lugia V alt art. Pop manageable and price/raw premium reasonable. Strong long-term hold for Gen 2 collectors.",
-    detail:{ distribution:"Silver Tempest booster packs", gradeRate:"~21%", psaSubmit:"~4,380", note:"First premium Lugia V alt art" }
+    "id": 20,
+    "name": "Lugia V Alt Art #138/195 Silver Tempest",
+    "set": "Silver Tempest",
+    "year": 2022,
+    "pokemon": "lugia",
+    "era": "modern",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 9,
+    "tags": [
+      "fan-fave"
+    ],
+    "q10": "Lugia V Silver Tempest 138 PSA 10",
+    "q9": "Lugia V Silver Tempest 138 PSA 9",
+    "qRaw": "Lugia V Silver Tempest 138 -PSA -BGS -CGC -SGC",
+    "pop10": 6137,
+    "popTotal": 13040,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "First premium Lugia V alt art. Pop manageable and price/raw premium reasonable. Strong long-term hold for Gen 2 collectors.",
+    "detail": {
+      "distribution": "Silver Tempest booster packs",
+      "note": "First premium Lugia V alt art"
+    },
+    "popLabel": "2022 Pokemon Sword & Shield Silver Tempest Lugia V Base 138",
+    "popUrl": "https://www.gemrate.com/card/996937ad12c6c48762b4aa18ee42bedb123c541a"
   },
   {
-    id:21, name:"Pikachu No.25 Topsun Blue Back (JP)", set:"Topsun (1994)", year:1994,
-    pokemon:"pikachu", era:"wotc", cat:"promo", japanese:true,
-    pop10:14, popGrowthPerMonth:0.05, marketPrice:18000, psa10Price:22000,
-    fanTier:10,
-    tags:["vintage","japanese","promo","low-pop","fan-fave"],
-    rationale:"Pre-dates the official TCG. Earliest mass-market Pikachu card — 1994, full year before Base Set. Only 14 PSA 10s. Most collectors don't know it exists.",
-    detail:{ distribution:"Topsun vending machine packs (Japan)", gradeRate:"~1%", psaSubmit:"~1,400", note:"Blue back variant scarcer than green back" }
+    "id": 21,
+    "name": "Pikachu No.25 Topsun Blue Back (JP)",
+    "set": "Topsun (1994)",
+    "year": 1997,
+    "pokemon": "pikachu",
+    "era": "wotc",
+    "cat": "promo",
+    "japanese": true,
+    "fanTier": 10,
+    "tags": [
+      "vintage",
+      "japanese",
+      "promo",
+      "low-pop",
+      "fan-fave"
+    ],
+    "q10": "Pikachu Topsun blue back PSA 10",
+    "q9": "Pikachu Topsun blue back PSA 9",
+    "qRaw": "Pikachu Topsun blue back -PSA -BGS -CGC -SGC",
+    "pop10": 35,
+    "popTotal": 528,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Pre-dates the official TCG. Earliest mass-market Pikachu card — 1994, full year before Base Set. Only 14 PSA 10s. Most collectors don't know it exists.",
+    "detail": {
+      "distribution": "Topsun vending machine packs (Japan)",
+      "note": "Blue back variant scarcer than green back"
+    },
+    "popLabel": "1997 Pokemon Japanese Topsun Pikachu Blue Back 25",
+    "popUrl": "https://www.gemrate.com/card/7edb3adf6a0b6a98599aac7c9c32276587aa5c02"
   },
   {
-    id:22, name:"Rayquaza ☆ #107/107 EX Deoxys", set:"EX Deoxys", year:2005,
-    pokemon:"gengar", era:"ex", cat:"gold-star", japanese:false,
-    pop10:220, popGrowthPerMonth:1.8, marketPrice:8200, psa10Price:10500,
-    fanTier:9,
-    tags:["vintage","fan-fave"],
-    rationale:"Most iconic Gold Star after Charizard. 220 PSA 10s reasonable for era. Demand rising sharply with Rayquaza cultural resurgence in modern sets.",
-    detail:{ distribution:"EX Deoxys boosters", gradeRate:"~3.5%", psaSubmit:"~6,285", note:"Gold foil star in name = Gold Star designation" }
+    "id": 22,
+    "name": "Rayquaza ☆ #107/107 EX Deoxys",
+    "set": "EX Deoxys",
+    "year": 2005,
+    "pokemon": "gengar",
+    "era": "ex",
+    "cat": "gold-star",
+    "japanese": false,
+    "fanTier": 9,
+    "tags": [
+      "vintage",
+      "fan-fave"
+    ],
+    "q10": "Rayquaza Gold Star Deoxys 107 PSA 10",
+    "q9": "Rayquaza Gold Star Deoxys 107 PSA 9",
+    "qRaw": "Rayquaza Gold Star Deoxys 107 -PSA -BGS -CGC -SGC",
+    "pop10": 71,
+    "popTotal": 2641,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Most iconic Gold Star after Charizard. 220 PSA 10s reasonable for era. Demand rising sharply with Rayquaza cultural resurgence in modern sets.",
+    "detail": {
+      "distribution": "EX Deoxys boosters",
+      "note": "Gold foil star in name = Gold Star designation"
+    },
+    "popLabel": "2005 Pokemon EX Deoxys Rayquaza-Holo Gold Star 107",
+    "popUrl": "https://www.gemrate.com/card/0a01ef60b2b1f75720a2e828a27c71be80f4d078"
   },
   {
-    id:23, name:"Charizard V Alt Art #079/073 Champion's Path", set:"Champion's Path", year:2020,
-    pokemon:"charizard", era:"modern", cat:"holo", japanese:false,
-    pop10:2100, popGrowthPerMonth:65, marketPrice:480, psa10Price:650,
-    fanTier:10,
-    tags:["fan-fave"],
-    rationale:"Walmart exclusive with limited initial supply. Among the most visually stunning Charizard cards ever printed. Pop growing but Charizard demand is bottomless.",
-    detail:{ distribution:"Champion's Path ETB (Walmart exclusive)", gradeRate:"~22%", psaSubmit:"~9,545", note:"Extremely limited box availability at launch" }
+    "id": 23,
+    "name": "Charizard V Alt Art #079/073 Champion's Path",
+    "set": "Champion's Path",
+    "year": 2020,
+    "pokemon": "charizard",
+    "era": "modern",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 10,
+    "tags": [
+      "fan-fave"
+    ],
+    "q10": "Charizard V Champions Path 079 PSA 10",
+    "q9": "Charizard V Champions Path 079 PSA 9",
+    "qRaw": "Charizard V Champions Path 079 -PSA -BGS -CGC -SGC",
+    "pop10": 23907,
+    "popTotal": 38140,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Walmart exclusive with limited initial supply. Among the most visually stunning Charizard cards ever printed. Pop growing but Charizard demand is bottomless.",
+    "detail": {
+      "distribution": "Champion's Path ETB (Walmart exclusive)",
+      "note": "Extremely limited box availability at launch"
+    },
+    "popLabel": "2020 Pokemon Sword & Shield Champion's Path Full Art/Charizard V Secret 079",
+    "popUrl": "https://www.gemrate.com/card/cba1c68db8ebcb6a025114ee99fba5035f210268"
   },
   {
-    id:24, name:"Pikachu Holo WOTC Black Star Promo #27", set:"WOTC Black Star Promos", year:1999,
-    pokemon:"pikachu", era:"wotc", cat:"promo", japanese:false,
-    pop10:42, popGrowthPerMonth:0.3, marketPrice:2800, psa10Price:3600,
-    fanTier:10,
-    tags:["vintage","promo","fan-fave","low-pop"],
-    rationale:"One of the most condition-sensitive promos in the hobby. Pack-fresh copies rarely survive. 42 PSA 10s for a holo Pikachu promo from 1999 is genuinely rare.",
-    detail:{ distribution:"Nintendo Power magazine / promotions", gradeRate:"~4%", psaSubmit:"~1,050", note:"Holo variant — non-holo far more common" }
+    "id": 24,
+    "name": "Pikachu Holo WOTC Black Star Promo #27",
+    "set": "WOTC Black Star Promos",
+    "year": 1999,
+    "pokemon": "pikachu",
+    "era": "wotc",
+    "cat": "promo",
+    "japanese": false,
+    "fanTier": 10,
+    "tags": [
+      "vintage",
+      "promo",
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Pikachu black star promo 27 PSA 10",
+    "q9": "Pikachu black star promo 27 PSA 9",
+    "qRaw": "Pikachu black star promo 27 -PSA -BGS -CGC -SGC",
+    "pop10": 8161,
+    "popTotal": 13766,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "One of the most condition-sensitive promos in the hobby. Pack-fresh copies rarely survive. 42 PSA 10s for a holo Pikachu promo from 1999 is genuinely rare.",
+    "detail": {
+      "distribution": "Nintendo Power magazine / promotions",
+      "note": "Holo variant — non-holo far more common"
+    },
+    "popLabel": "2000 Pokemon Promo Black Star Pikachu Base 27",
+    "popUrl": "https://www.gemrate.com/card/6b112873c1f8002378f8c98ce16cd11dc3374500"
   },
   {
-    id:25, name:"Lugia #9/111 Neo Genesis Shadowless 1st Ed", set:"Neo Genesis (Shadowless)", year:2000,
-    pokemon:"lugia", era:"wotc", cat:"holo", japanese:false,
-    pop10:18, popGrowthPerMonth:0.08, marketPrice:65000, psa10Price:72000,
-    fanTier:9,
-    tags:["vintage","fan-fave","low-pop"],
-    rationale:"One of the hobby's best-kept secrets. Only 18 PSA 10s. Shadowless distinction adds enormous value the market has been slow to price in.",
-    detail:{ distribution:"Neo Genesis early print run", gradeRate:"~1.5%", psaSubmit:"~1,200", note:"No drop shadow under card image = shadowless" }
+    "id": 25,
+    "name": "Lugia #9/111 Neo Genesis Shadowless 1st Ed",
+    "set": "Neo Genesis (Shadowless)",
+    "year": 2000,
+    "pokemon": "lugia",
+    "era": "wotc",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 9,
+    "tags": [
+      "vintage",
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Lugia Neo Genesis 9 1st edition shadowless PSA 10",
+    "q9": "Lugia Neo Genesis 9 1st edition shadowless PSA 9",
+    "qRaw": "Lugia Neo Genesis 9 1st edition shadowless -PSA -BGS -CGC -SGC",
+    "pop10": 305,
+    "popTotal": 10654,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "One of the hobby's best-kept secrets. Only 18 PSA 10s. Shadowless distinction adds enormous value the market has been slow to price in.",
+    "detail": {
+      "distribution": "Neo Genesis early print run",
+      "note": "No drop shadow under card image = shadowless"
+    },
+    "popLabel": "2000 Pokemon Neo Genesis 1st Edition Lugia-Holo Base 9",
+    "popUrl": "https://www.gemrate.com/card/61c881c144e5410a902ee4f4c34fbff2bf4393a5"
   },
   {
-    id:26, name:"Gengar Prime #94/123 HS Triumphant", set:"HeartGold SoulSilver", year:2010,
-    pokemon:"gengar", era:"dp", cat:"holo", japanese:false,
-    pop10:134, popGrowthPerMonth:1.2, marketPrice:680, psa10Price:880,
-    fanTier:8,
-    tags:["vintage","fan-fave"],
-    rationale:"HGSS Prime cards are criminally underrated. Gengar Prime artwork is iconic. 134 PSA 10s at under $1K is a clear value gap for a fan-favorite in a beloved era.",
-    detail:{ distribution:"HeartGold SoulSilver booster packs", gradeRate:"~12%", psaSubmit:"~1,115", note:"Prime = ancient-style card border" }
+    "id": 26,
+    "name": "Gengar Prime #94/123 HS Triumphant",
+    "set": "HeartGold SoulSilver",
+    "year": 2010,
+    "pokemon": "gengar",
+    "era": "dp",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 8,
+    "tags": [
+      "vintage",
+      "fan-fave"
+    ],
+    "q10": "Gengar Prime Triumphant 94 PSA 10",
+    "q9": "Gengar Prime Triumphant 94 PSA 9",
+    "qRaw": "Gengar Prime Triumphant 94 -PSA -BGS -CGC -SGC",
+    "pop10": 227,
+    "popTotal": 4295,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "HGSS Prime cards are criminally underrated. Gengar Prime artwork is iconic. 134 PSA 10s at under $1K is a clear value gap for a fan-favorite in a beloved era.",
+    "detail": {
+      "distribution": "HeartGold SoulSilver booster packs",
+      "note": "Prime = ancient-style card border"
+    },
+    "popLabel": "2010 Pokemon Heartgold & Soulsilver Triumphant Gengar-Holo Base 94",
+    "popUrl": "https://www.gemrate.com/card/14b10a70e5b360502e271ff79ca3ea33a0ebfe49"
   },
   {
-    id:27, name:"Umbreon Star PCG Mirage Crystal (JP)", set:"PCG Mirage Crystal (JP)", year:2006,
-    pokemon:"umbreon", era:"ex", cat:"gold-star", japanese:true,
-    pop10:8, popGrowthPerMonth:0.04, marketPrice:28000, psa10Price:34000,
-    fanTier:9,
-    tags:["vintage","japanese","fan-fave","low-pop"],
-    rationale:"Only 8 PSA 10s worldwide. English version gets all attention but this JP-exclusive is objectively rarer and trades at a discount to true scarcity.",
-    detail:{ distribution:"PCG Mirage Crystal booster packs (JP only)", gradeRate:"~1.2%", psaSubmit:"~665", note:"Never released in English" }
+    "id": 27,
+    "name": "Umbreon Star PCG Mirage Crystal (JP)",
+    "set": "PCG Mirage Crystal (JP)",
+    "year": 2006,
+    "pokemon": "umbreon",
+    "era": "ex",
+    "cat": "gold-star",
+    "japanese": true,
+    "fanTier": 9,
+    "tags": [
+      "vintage",
+      "japanese",
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Umbreon Gold Star Japanese PLAY promo PSA 10",
+    "q9": "Umbreon Gold Star Japanese PLAY promo PSA 9",
+    "qRaw": "Umbreon Gold Star Japanese PLAY promo -PSA -BGS -CGC -SGC",
+    "pop10": null,
+    "popTotal": null,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "No 'Umbreon Star' from a Mirage/Miracle Crystal set exists in pop-report catalogs - likely the same card as the PLAY promo Umbreon Gold Star (see entry above). Pop data unavailable pending verification.",
+    "detail": {
+      "distribution": "PCG Mirage Crystal booster packs (JP only)",
+      "note": "Never released in English"
+    }
   },
   {
-    id:28, name:"Mewtwo ex Full Art #54/113 BW Legendary Treasures", set:"BW Legendary Treasures", year:2013,
-    pokemon:"mew", era:"dp", cat:"holo", japanese:false,
-    pop10:62, popGrowthPerMonth:0.5, marketPrice:1200, psa10Price:1600,
-    fanTier:9,
-    tags:["vintage","fan-fave","low-pop"],
-    rationale:"BW Full Art era is the forgotten frontier. 62 PSA 10 copies is shockingly low. Silver full-art treatment aged beautifully and Mewtwo demand never wavers.",
-    detail:{ distribution:"BW Legendary Treasures booster packs", gradeRate:"~9%", psaSubmit:"~690", note:"BW Full Art silver border is distinctive" }
+    "id": 28,
+    "name": "Mewtwo ex Full Art #54/113 BW Legendary Treasures",
+    "set": "BW Legendary Treasures",
+    "year": 2013,
+    "pokemon": "mew",
+    "era": "dp",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 9,
+    "tags": [
+      "vintage",
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Mewtwo ex Legendary Treasures 54 PSA 10",
+    "q9": "Mewtwo ex Legendary Treasures 54 PSA 9",
+    "qRaw": "Mewtwo ex Legendary Treasures 54 -PSA -BGS -CGC -SGC",
+    "pop10": 24,
+    "popTotal": 510,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "BW Full Art era is the forgotten frontier. 62 PSA 10 copies is shockingly low. Silver full-art treatment aged beautifully and Mewtwo demand never wavers.",
+    "detail": {
+      "distribution": "BW Legendary Treasures booster packs",
+      "note": "BW Full Art silver border is distinctive"
+    },
+    "popLabel": "2013 Pokemon Black & White Legendary Treasures Mewtwo EX Base 54",
+    "popUrl": "https://www.gemrate.com/card/654bb185b16d8f947d012cecb4a4dfcd368dbc82"
   },
   {
-    id:29, name:"Pikachu VMAX #044 Pokemon Center Promo (JP)", set:"Pokemon Center Promo", year:2021,
-    pokemon:"pikachu", era:"modern", cat:"promo", japanese:true,
-    pop10:31, popGrowthPerMonth:0.4, marketPrice:420, psa10Price:580,
-    fanTier:10,
-    tags:["promo","japanese","fan-fave","low-pop"],
-    rationale:"Japan Pokemon Center exclusive with clean art and 31 PSA 10s. Pokemon Center exclusives historically appreciate well as they age out of the market.",
-    detail:{ distribution:"Pokemon Center Japan exclusive", gradeRate:"~14%", psaSubmit:"~220", note:"Japan-only distribution" }
+    "id": 29,
+    "name": "Pikachu VMAX #044 Pokemon Center Promo (JP)",
+    "set": "Pokemon Center Promo",
+    "year": 2021,
+    "pokemon": "pikachu",
+    "era": "modern",
+    "cat": "promo",
+    "japanese": true,
+    "fanTier": 10,
+    "tags": [
+      "promo",
+      "japanese",
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Pikachu VMAX Vivid Voltage 044 PSA 10",
+    "q9": "Pikachu VMAX Vivid Voltage 044 PSA 9",
+    "qRaw": "Pikachu VMAX Vivid Voltage 044 -PSA -BGS -CGC -SGC",
+    "pop10": null,
+    "popTotal": null,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "No 'Pikachu VMAX #044 Pokemon Center Promo' exists in pop-report catalogs - #044 is the Vivid Voltage full-art Pikachu VMAX. Pop data unavailable; verify the card identity.",
+    "detail": {
+      "distribution": "Pokemon Center Japan exclusive",
+      "note": "Japan-only distribution"
+    }
   },
   {
-    id:30, name:"Eevee #25/25 McDonald's 25th Anniversary Holo", set:"McDonald's 2021 Promo", year:2021,
-    pokemon:"pikachu", era:"modern", cat:"promo", japanese:false,
-    pop10:88, popGrowthPerMonth:1.9, marketPrice:220, psa10Price:280,
-    fanTier:8,
-    tags:["promo","low-pop"],
-    rationale:"McDonald's 25th Anniversary Eevee holo has a shockingly low pop for a mass-distributed promo. Kids played them. Sub-100 PSA 10s is genuinely rare for this distribution.",
-    detail:{ distribution:"McDonald's Happy Meal (2021)", gradeRate:"~8%", psaSubmit:"~1,100", note:"Holo set of 25 — Eevee most sought" }
+    "id": 30,
+    "name": "Eevee #25/25 McDonald's 25th Anniversary Holo",
+    "set": "McDonald's 2021 Promo",
+    "year": 2021,
+    "pokemon": "pikachu",
+    "era": "modern",
+    "cat": "promo",
+    "japanese": false,
+    "fanTier": 8,
+    "tags": [
+      "promo",
+      "low-pop"
+    ],
+    "q10": "Eevee McDonalds 25th anniversary PSA 10",
+    "q9": "Eevee McDonalds 25th anniversary PSA 9",
+    "qRaw": "Eevee McDonalds 25th anniversary -PSA -BGS -CGC -SGC",
+    "pop10": null,
+    "popTotal": null,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "No Eevee card exists in the 2021 McDonald's 25th Anniversary set (#25 is Pikachu) - this entry appears mislabeled. Pop data unavailable; verify the card identity before treating any numbers here as real.",
+    "detail": {
+      "distribution": "McDonald's Happy Meal (2021)",
+      "note": "Holo set of 25 — Eevee most sought"
+    }
   },
   {
-    id:31, name:"Gyarados #6/102 1st Edition Base Set Holo", set:"Base Set 1st Edition", year:1999,
-    pokemon:"gyarados", era:"wotc", cat:"holo", japanese:false,
-    pop10:312, popGrowthPerMonth:6.2, marketPrice:3200, psa10Price:4800,
-    fanTier:9,
-    tags:["vintage","fan-fave"],
-    rationale:"Gyarados 1st Ed is one of the most undervalued WOTC holos. 312 PSA 10s is genuinely scarce for a card with this name recognition. Trades at roughly 5% of Charizard 1st Ed despite comparable difficulty to grade.",
-    detail:{ distribution:"Base Set 1st Edition boosters", gradeRate:"~3.1%", psaSubmit:"~10,065", note:"Holo wave pattern is extremely condition sensitive" }
+    "id": 31,
+    "name": "Gyarados #6/102 1st Edition Base Set Holo",
+    "set": "Base Set 1st Edition",
+    "year": 1999,
+    "pokemon": "gyarados",
+    "era": "wotc",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 9,
+    "tags": [
+      "vintage",
+      "fan-fave"
+    ],
+    "q10": "Gyarados Base Set 6 1st edition PSA 10",
+    "q9": "Gyarados Base Set 6 1st edition PSA 9",
+    "qRaw": "Gyarados Base Set 6 1st edition -PSA -BGS -CGC -SGC",
+    "pop10": 114,
+    "popTotal": 3205,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Gyarados 1st Ed is one of the most undervalued WOTC holos. 312 PSA 10s is genuinely scarce for a card with this name recognition. Trades at roughly 5% of Charizard 1st Ed despite comparable difficulty to grade.",
+    "detail": {
+      "distribution": "Base Set 1st Edition boosters",
+      "note": "Holo wave pattern is extremely condition sensitive"
+    },
+    "popLabel": "1999 Pokemon Game Gyarados-Holo 1st Edition 6",
+    "popUrl": "https://www.gemrate.com/card/f67ecfaec4e70c64bf2edeb26499dc65bc21b96c"
   },
   {
-    id:32, name:"Gyarados ex #114/116 EX FireRed LeafGreen", set:"EX FireRed LeafGreen", year:2004,
-    pokemon:"gyarados", era:"ex", cat:"holo", japanese:false,
-    pop10:44, popGrowthPerMonth:0.4, marketPrice:580, psa10Price:820,
-    fanTier:8,
-    tags:["vintage","low-pop"],
-    rationale:"EX era Gyarados ex sits at only 44 PSA 10s — a pop that reflects how few collectors were grading EX era cards. FireRed LeafGreen is a nostalgia set gaining traction fast.",
-    detail:{ distribution:"EX FireRed LeafGreen boosters", gradeRate:"~5%", psaSubmit:"~880", note:"EX era is the current undervalued frontier" }
+    "id": 32,
+    "name": "Gyarados ex #109/112 EX FireRed LeafGreen",
+    "set": "EX FireRed LeafGreen",
+    "year": 2004,
+    "pokemon": "gyarados",
+    "era": "ex",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 8,
+    "tags": [
+      "vintage",
+      "low-pop"
+    ],
+    "q10": "Gyarados ex FireRed LeafGreen 109 PSA 10",
+    "q9": "Gyarados ex FireRed LeafGreen 109 PSA 9",
+    "qRaw": "Gyarados ex FireRed LeafGreen 109 -PSA -BGS -CGC -SGC",
+    "pop10": 216,
+    "popTotal": 1952,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "EX era Gyarados ex (#109/112): 216 gem-mint copies out of 1,952 graded (GemRate, Sep 2026). Few collectors graded EX era cards; FireRed LeafGreen is a nostalgia set gaining traction.",
+    "detail": {
+      "distribution": "EX FireRed LeafGreen boosters",
+      "note": "EX era is the current undervalued frontier"
+    },
+    "popLabel": "2004 Pokemon EX Fire Red & Leaf Green Gyarados EX-Holo Base 109",
+    "popUrl": "https://www.gemrate.com/card/70c1ae329d47c75e21e42394dfd846877e246313"
   },
   {
-    id:33, name:"Gyarados ☆ #102/113 EX Delta Species", set:"EX Delta Species", year:2005,
-    pokemon:"gyarados", era:"ex", cat:"gold-star", japanese:false,
-    pop10:68, popGrowthPerMonth:0.5, marketPrice:1800, psa10Price:2600,
-    fanTier:9,
-    tags:["vintage","fan-fave","low-pop"],
-    rationale:"Gyarados Gold Star is one of the most visually stunning Gold Stars printed. 68 PSA 10s is low for a card with Gyarados's popularity. The red color variant is iconic and demand is quietly building.",
-    detail:{ distribution:"EX Delta Species boosters", gradeRate:"~4%", psaSubmit:"~1,700", note:"Gold Star = gold foil star in the card name" }
+    "id": 33,
+    "name": "Gyarados ☆ #102/110 EX Holon Phantoms",
+    "set": "EX Holon Phantoms",
+    "year": 2006,
+    "pokemon": "gyarados",
+    "era": "ex",
+    "cat": "gold-star",
+    "japanese": false,
+    "fanTier": 9,
+    "tags": [
+      "vintage",
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Gyarados Gold Star Holon Phantoms 102 PSA 10",
+    "q9": "Gyarados Gold Star Holon Phantoms 102 PSA 9",
+    "qRaw": "Gyarados Gold Star Holon Phantoms 102 -PSA -BGS -CGC -SGC",
+    "pop10": 46,
+    "popTotal": 2780,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Gyarados Gold Star (EX Holon Phantoms #102/110, not Delta Species): 46 gem-mint copies out of 2,780 graded (GemRate, Sep 2026) - a 1.7% gem rate for one of the most popular Pokemon.",
+    "detail": {
+      "distribution": "EX Delta Species boosters",
+      "note": "Gold Star = gold foil star in the card name"
+    },
+    "popLabel": "2006 Pokemon EX Holon Phantoms Gyarados-Holo Gold Star 102",
+    "popUrl": "https://www.gemrate.com/card/683613acbc37d558667e67399de8fe662c67d9f5"
   },
   {
-    id:34, name:"Dragonite #4/62 Fossil 1st Edition Holo", set:"Fossil 1st Edition", year:1999,
-    pokemon:"dragonite", era:"wotc", cat:"holo", japanese:false,
-    pop10:178, popGrowthPerMonth:3.4, marketPrice:1400, psa10Price:2100,
-    fanTier:8,
-    tags:["vintage","fan-fave"],
-    rationale:"Dragonite Fossil 1st Ed is the definitive Dragonite card and it's still priced like a footnote. 178 PSA 10s is reasonable but demand is rising as Gen 1 collecting broadens beyond Charizard.",
-    detail:{ distribution:"Fossil 1st Edition boosters", gradeRate:"~3.8%", psaSubmit:"~4,685", note:"Fossil set print quality is inconsistent" }
+    "id": 34,
+    "name": "Dragonite #4/62 Fossil 1st Edition Holo",
+    "set": "Fossil 1st Edition",
+    "year": 1999,
+    "pokemon": "dragonite",
+    "era": "wotc",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 8,
+    "tags": [
+      "vintage",
+      "fan-fave"
+    ],
+    "q10": "Dragonite Fossil 4 1st edition PSA 10",
+    "q9": "Dragonite Fossil 4 1st edition PSA 9",
+    "qRaw": "Dragonite Fossil 4 1st edition -PSA -BGS -CGC -SGC",
+    "pop10": 404,
+    "popTotal": 10937,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Dragonite Fossil 1st Ed is the definitive Dragonite card and it's still priced like a footnote. 178 PSA 10s is reasonable but demand is rising as Gen 1 collecting broadens beyond Charizard.",
+    "detail": {
+      "distribution": "Fossil 1st Edition boosters",
+      "note": "Fossil set print quality is inconsistent"
+    },
+    "popLabel": "1999 Pokemon Fossil Dragonite-Holo 1st Edition 4",
+    "popUrl": "https://www.gemrate.com/card/4aad0ab56f182e1adfcc9e1504f8f4d411f6c811"
   },
   {
-    id:35, name:"Dragonite ex #86/97 EX Dragon", set:"EX Dragon", year:2003,
-    pokemon:"dragonite", era:"ex", cat:"holo", japanese:false,
-    pop10:52, popGrowthPerMonth:0.5, marketPrice:420, psa10Price:680,
-    fanTier:8,
-    tags:["vintage","low-pop"],
-    rationale:"EX Dragon is the most on-theme set for Dragonite. Only 52 PSA 10s for a Dragonite ex from the Dragon-themed set. EX era is heating up and this is a prime sleeper.",
-    detail:{ distribution:"EX Dragon booster packs", gradeRate:"~5.5%", psaSubmit:"~945", note:"EX Dragon set focused on dragon-type Pokemon" }
+    "id": 35,
+    "name": "Dragonite ex #90/97 EX Dragon",
+    "set": "EX Dragon",
+    "year": 2003,
+    "pokemon": "dragonite",
+    "era": "ex",
+    "cat": "holo",
+    "japanese": false,
+    "fanTier": 8,
+    "tags": [
+      "vintage",
+      "low-pop"
+    ],
+    "q10": "Dragonite ex EX Dragon 90 PSA 10",
+    "q9": "Dragonite ex EX Dragon 90 PSA 9",
+    "qRaw": "Dragonite ex EX Dragon 90 -PSA -BGS -CGC -SGC",
+    "pop10": 214,
+    "popTotal": 3768,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "EX Dragon is the most on-theme set for Dragonite. Only 52 PSA 10s for a Dragonite ex from the Dragon-themed set. EX era is heating up and this is a prime sleeper.",
+    "detail": {
+      "distribution": "EX Dragon booster packs",
+      "note": "EX Dragon set focused on dragon-type Pokemon"
+    },
+    "popLabel": "2003 Pokemon EX Dragon Dragonite EX-Holo Base 90",
+    "popUrl": "https://www.gemrate.com/card/4931d6cb5c4cdf583e6a5909615f76bcaf1e44eb"
   },
   {
-    id:36, name:"Dragonite VSTAR #191/202 Pokemon GO", set:"Pokemon GO", year:2022,
-    pokemon:"dragonite", era:"modern", cat:"shiny", japanese:false,
-    pop10:620, popGrowthPerMonth:18, marketPrice:95, psa10Price:140,
-    fanTier:8,
-    tags:["fan-fave","shiny"],
-    rationale:"Pokemon GO set is slept on as a modern collector set. Dragonite VSTAR full art has clean artwork and a growing pop that hasn't caught up to demand. Entry-level price makes it accessible.",
-    detail:{ distribution:"Pokemon GO booster packs", gradeRate:"~20%", psaSubmit:"~3,100", note:"Pokemon GO set tied to app anniversary" }
+    "id": 36,
+    "name": "Dragonite VSTAR #081/078 Pokemon GO Alt Art",
+    "set": "Pokemon GO",
+    "year": 2022,
+    "pokemon": "dragonite",
+    "era": "modern",
+    "cat": "shiny",
+    "japanese": false,
+    "fanTier": 8,
+    "tags": [
+      "fan-fave",
+      "shiny"
+    ],
+    "q10": "Dragonite VSTAR Pokemon GO 081 PSA 10",
+    "q9": "Dragonite VSTAR Pokemon GO 081 PSA 9",
+    "qRaw": "Dragonite VSTAR Pokemon GO 081 -PSA -BGS -CGC -SGC",
+    "pop10": 2684,
+    "popTotal": 5000,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Pokemon GO set is slept on as a modern collector set. Dragonite VSTAR full art has clean artwork and a growing pop that hasn't caught up to demand. Entry-level price makes it accessible.",
+    "detail": {
+      "distribution": "Pokemon GO booster packs",
+      "note": "Pokemon GO set tied to app anniversary"
+    },
+    "popLabel": "2022 Pokemon Go Full Art/Dragonite Vstar Secret 081",
+    "popUrl": "https://www.gemrate.com/card/de2ea1bf83320c5a7be9dd66a2eb21064768691c"
   },
   {
-    id:37, name:"Vaporeon ★ #102 EX Power Keepers", set:"EX Power Keepers", year:2007,
-    pokemon:"vaporeon", era:"ex", cat:"gold-star", japanese:false,
-    pop10:null, popGrowthPerMonth:0.5, marketPrice:1400, psa10Price:1800,
-    fanTier:8,
-    psaCert:"28274873",
-    tags:["vintage","fan-fave","low-pop"],
-    rationale:"Vaporeon Gold Star from EX Power Keepers. One of the more affordable Gold Stars with strong Eeveelution collector demand. Pop is low and the foil star treatment makes gem mint copies genuinely rare.",
-    detail:{ distribution:"EX Power Keepers boosters", gradeRate:"~4%", psaSubmit:"~1,000", note:"Gold Star = gold foil star in card name" }
-  },
+    "id": 37,
+    "name": "Vaporeon ★ #102 EX Power Keepers",
+    "set": "EX Power Keepers",
+    "year": 2007,
+    "pokemon": "vaporeon",
+    "era": "ex",
+    "cat": "gold-star",
+    "japanese": false,
+    "fanTier": 8,
+    "tags": [
+      "vintage",
+      "fan-fave",
+      "low-pop"
+    ],
+    "q10": "Vaporeon Gold Star Power Keepers 102 PSA 10",
+    "q9": "Vaporeon Gold Star Power Keepers 102 PSA 9",
+    "qRaw": "Vaporeon Gold Star Power Keepers 102 -PSA -BGS -CGC -SGC",
+    "pop10": 145,
+    "popTotal": 3619,
+    "marketPrice": null,
+    "psa9Price": null,
+    "psa10Price": null,
+    "trend90d": null,
+    "soldCount": null,
+    "rationale": "Vaporeon Gold Star from EX Power Keepers: 145 gem-mint copies out of 3,619 graded (GemRate, Sep 2026). One of the more affordable Gold Stars with strong Eeveelution demand.",
+    "detail": {
+      "distribution": "EX Power Keepers boosters",
+      "note": "Gold Star = gold foil star in card name"
+    },
+    "popLabel": "2007 Pokemon EX Power Keepers Vaporeon-Holo Gold Star 102",
+    "popUrl": "https://www.gemrate.com/card/0d786144985cf7fa6adad0126ec8ee7ade4bdf59"
+  }
 ];
 
-let weights = { popScarcity:8, fanDemand:7, priceValue:6, popGrowth:5 };
-let activeFilters = { pokemon:'all', era:'all', cat:'all', grade:'all' };
+// ─── Real-data snapshot: gem-mint pop counts (GemRate universal pop report) ──
+// Collected 2026-09-07 from gemrate.com (PSA+BGS+SGC+CGC combined, updated daily).
+// "gems" = gem-mint copies (PSA 10 equivalent). Per-card popLabel/popUrl on each card.
+const POP_SNAPSHOT_DATE = 'Sep 7, 2026';
+
+let weights = { popScarcity:8, momentum:7, priceValue:6, compression:6, velocity:6, fanDemand:4 };
+let activeFilters = { pokemon:'all', era:'all', cat:'all' };
 let currentSort = 'score';
 let analysisRun = false;
 let displayedCards = [];
+let ebayDataStatus = ''; // shown after batch fetch
 
-
-
-
-// ─── Pokemon TCG API Integration ─────────────────────────────────────────────
-// Fan favorites for fanTier scoring
 const FAN_TIERS = {
   pikachu:10, charizard:10, mew:10, mewtwo:10, lugia:9, umbreon:10,
   gengar:9, eevee:9, rayquaza:9, gyarados:8, dragonite:8, blaziken:8,
@@ -926,20 +1759,6 @@ const FAN_TIERS = {
   solgaleo:7, lunala:7, necrozma:7, koraidon:8, miraidon:8
 };
 
-// Rarity to estimated pop10 mapping
-const RARITY_POP = {
-  'Rare Holo VMAX': 800, 'Rare Secret': 400, 'Special Illustration Rare': 300,
-  'Illustration Rare': 500, 'Hyper Rare': 350, 'Rare Rainbow': 1200,
-  'Rare Ultra': 600, 'Rare Holo V': 900, 'Rare Holo': 1800,
-  'Rare Holo EX': 700, 'Rare Holo GX': 750, 'Rare Holo LV.X': 600,
-  'Rare BREAK': 800, 'Rare Prime': 400, 'Rare Holo Star': 150,
-  'Gold Star': 100, 'Shining': 200, 'Promo': 500,
-  'Rare': 2000, 'Uncommon': 3000, 'Common': 5000,
-  'LEGEND': 300, 'Classic Collection': 250, 'Amazing Rare': 600,
-  'Radiant Rare': 700, 'Trainer Gallery Rare Holo': 500
-};
-
-// Era detection from set release date
 function getEra(releaseDate) {
   if (!releaseDate) return 'modern';
   const year = parseInt(releaseDate.substring(0,4));
@@ -949,7 +1768,6 @@ function getEra(releaseDate) {
   return 'modern';
 }
 
-// Category detection from rarity/subtype
 function getCat(card) {
   const r = (card.rarity || '').toLowerCase();
   const name = (card.name || '').toLowerCase();
@@ -959,71 +1777,64 @@ function getCat(card) {
   if (r.includes('promo') || sub.includes('promo')) return 'promo';
   if (r.includes('rainbow') || r.includes('hyper') || r.includes('secret') ||
       r.includes('illustration') || r.includes('special')) return 'shiny';
-  if (r.includes('holo')) return 'holo';
   return 'holo';
 }
 
-// Tags from card data
 function getTags(card) {
   const tags = [];
   const r = (card.rarity || '').toLowerCase();
   const year = card.set && card.set.releaseDate ? parseInt(card.set.releaseDate.substring(0,4)) : 2020;
   const pokemon = (card.name || '').toLowerCase().split(' ')[0];
-  const pop = RARITY_POP[card.rarity] || 2000;
-
   if (year <= 2007) tags.push('vintage');
   if (r.includes('promo')) tags.push('promo');
   if (card.set && card.set.name && card.set.name.toLowerCase().includes('japanese')) tags.push('japanese');
-  if (pop <= 300) tags.push('low-pop');
   if (FAN_TIERS[pokemon] >= 9) tags.push('fan-fave');
   if (r.includes('shining') || r.includes('rainbow') || r.includes('illustration')) tags.push('shiny');
   return tags.length ? tags : ['holo'];
 }
 
-// Estimated PSA 10 price based on rarity + pokemon + year
-function estimatePrice(card) {
-  const base = RARITY_POP[card.rarity] || 2000;
-  const year = card.set && card.set.releaseDate ? parseInt(card.set.releaseDate.substring(0,4)) : 2020;
-  const pokemon = (card.name || '').toLowerCase().split(' ')[0];
-  const fanTier = FAN_TIERS[pokemon] || 5;
-  const ageMult = year <= 2003 ? 12 : year <= 2007 ? 5 : year <= 2013 ? 2 : 1;
-  const fanMult = fanTier >= 10 ? 3 : fanTier >= 8 ? 1.8 : 1;
-  const rarityMult = base <= 200 ? 8 : base <= 500 ? 4 : base <= 800 ? 2 : 1;
-  return Math.round(25 * ageMult * fanMult * rarityMult);
+// Dynamic tags shown on a card (adds low-pop from REAL pop data)
+function cardTags(card) {
+  const t = (card.tags || []).filter(x => x !== 'low-pop');
+  if (card.pop10 != null && card.pop10 <= 300 && !t.includes('low-pop')) t.push('low-pop');
+  return t;
 }
 
-// Convert TCG API card to our CARDS format
+// ─── Pokemon TCG API -> local card (real TCGplayer market prices) ────────────
 let tcgIdCounter = 1000;
 function tcgCardToLocal(card) {
   const pokemon = (card.name || 'unknown').toLowerCase()
     .replace(/\s*(ex|gx|v|vmax|vstar|✦|☆|★|&|and)\s*/gi, ' ')
     .split(' ')[0].replace(/[^a-z0-9-]/g, '');
   const year = card.set && card.set.releaseDate ? parseInt(card.set.releaseDate.substring(0,4)) : 2020;
-  const pop10 = RARITY_POP[card.rarity] || 1500;
-  const psa10Price = estimatePrice(card);
-  const fanTier = FAN_TIERS[pokemon] || 5;
-
+  const tp = (card.tcgplayer && card.tcgplayer.prices) || {};
+  const pick = tp.holofoil || tp.reverseHolofoil || tp['1stEditionHolofoil'] || tp.normal || Object.values(tp)[0] || {};
+  const market = pick.market != null ? Math.round(pick.market) : null;
+  const num = card.number || '';
+  const base = (card.name + ' ' + num).trim();
   return {
     id: tcgIdCounter++,
-    name: card.name + (card.number ? ' #' + card.number : ''),
+    name: card.name + (num ? ' #' + num : ''),
     set: card.set ? card.set.name : 'Unknown Set',
     year: year,
     pokemon: pokemon,
     era: getEra(card.set && card.set.releaseDate),
     cat: getCat(card),
     japanese: false,
-    pop10: pop10,
-    popGrowthPerMonth: pop10 > 2000 ? 25 : pop10 > 500 ? 5 : 1,
-    marketPrice: Math.round(psa10Price * 0.75),
-    psa10Price: psa10Price,
-    fanTier: fanTier,
+    fanTier: FAN_TIERS[pokemon] || 5,
     tags: getTags(card),
-    rationale: 'Fetched from Pokemon TCG API. ' + (card.rarity || '') + ' · ' + (card.set ? card.set.name : '') + '. Prices are estimates — use Fetch Comps for real data.',
+    q10: base + ' PSA 10',
+    q9: base + ' PSA 9',
+    qRaw: base + ' -PSA -BGS -CGC -SGC',
+    pop10: null, popTotal: null,
+    marketPrice: market,       // real TCGplayer market price (raw)
+    psa9Price: null, psa10Price: null,
+    trend90d: null, soldCount: null,
+    tcgUrl: (card.tcgplayer && card.tcgplayer.url) || null,
+    rationale: 'Real TCGplayer market price for the raw card. PSA 10 price and pop counts are not available from free live sources - expand and use Fetch Live Sales for real eBay sold comps.',
     detail: {
       distribution: card.set ? card.set.name + ' booster packs' : 'Unknown',
-      gradeRate: '~10%',
-      psaSubmit: '~' + Math.round(pop10 / 0.1).toLocaleString(),
-      note: 'Data from Pokemon TCG API · Pop & prices estimated'
+      note: 'Raw price: TCGplayer market (live). Pop & graded prices: no free live source.'
     },
     tcgImage: card.images && card.images.small ? card.images.small : null
   };
@@ -1031,16 +1842,17 @@ function tcgCardToLocal(card) {
 
 let tcgLoaded = false;
 let currentTcgPokemon = null;
-
-// Cache to avoid re-fetching same pokemon
 const tcgCache = {};
+
+function trimTcgCards() {
+  for (let i = CARDS.length - 1; i >= 0; i--) if (CARDS[i].id >= 1000) CARDS.splice(i, 1);
+  tcgIdCounter = 1000;
+}
 
 async function loadTcgCards(pokemonName) {
   if (pokemonName === 'all' || !pokemonName) {
     hideTcgLoader();
-    // Reset to hardcoded cards only
-    while (CARDS.length > 0 && CARDS[CARDS.length-1].id >= 1000) CARDS.pop();
-    tcgIdCounter = 1000;
+    trimTcgCards();
     currentTcgPokemon = null;
     document.getElementById('dbCount').textContent = CARDS.length;
     document.getElementById('tcgStatus').textContent = 'select pokemon to load cards';
@@ -1049,10 +1861,8 @@ async function loadTcgCards(pokemonName) {
     return;
   }
 
-  // Return cached results instantly
   if (tcgCache[pokemonName]) {
-    while (CARDS.length > 36) CARDS.pop();
-    tcgIdCounter = 1000;
+    trimTcgCards();
     tcgCache[pokemonName].forEach(c => CARDS.push(c));
     currentTcgPokemon = pokemonName;
     document.getElementById('dbCount').textContent = CARDS.length;
@@ -1064,54 +1874,36 @@ async function loadTcgCards(pokemonName) {
 
   currentTcgPokemon = pokemonName;
   showTcgLoader('Loading ' + pokemonName + ' cards...');
-
-  // Remove previous TCG cards, keep original hardcoded ones (id < 1000)
-  while (CARDS.length > 0 && CARDS[CARDS.length-1].id >= 1000) CARDS.pop();
-  tcgIdCounter = 1000;
+  trimTcgCards();
 
   try {
-    // Single fast fetch - 250 cards max, no wildcard (TCG API uses partial matching by default)
     const url = `https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(pokemonName)}&pageSize=250&orderBy=-set.releaseDate`;
-
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000); // 15s timeout
-
+    const timeout = setTimeout(() => controller.abort(), 15000);
     const res = await fetch(url, { signal: controller.signal });
     clearTimeout(timeout);
-
     if (!res.ok) throw new Error('TCG API returned ' + res.status);
     const data = await res.json();
     const cards = (data.data || []);
-
     if (cards.length === 0) throw new Error('No cards found for "' + pokemonName + '"');
 
     setTcgProgress(60, 'Processing ' + cards.length + ' cards...');
-
     const newCards = [];
     cards.forEach(c => {
       const converted = tcgCardToLocal(c);
       newCards.push(converted);
       CARDS.push(converted);
     });
-
-    // Cache for instant re-access
     tcgCache[pokemonName] = newCards;
 
     document.getElementById('dbCount').textContent = CARDS.length;
     document.getElementById('tcgStatus').textContent = newCards.length + ' ' + pokemonName + ' cards';
     document.getElementById('tcgStatus').style.color = 'var(--mint)';
     hideTcgLoader();
-
-    if (analysisRun) renderCards();
-    else runAnalysis();
-
+    if (analysisRun) renderCards(); else runAnalysis();
   } catch(e) {
     hideTcgLoader();
-    if (e.name === 'AbortError') {
-      document.getElementById('tcgStatus').textContent = 'Timeout — click Retry';
-    } else {
-      document.getElementById('tcgStatus').textContent = e.message || 'API error';
-    }
+    document.getElementById('tcgStatus').textContent = e.name === 'AbortError' ? 'Timeout — click Retry' : (e.message || 'API error');
     document.getElementById('tcgStatus').style.color = 'var(--red)';
     if (analysisRun) renderCards();
   }
@@ -1131,85 +1923,10 @@ function hideTcgLoader() {
   document.getElementById('tcgLoadBar').style.display = 'none';
 }
 
-
-// ─── Pokemon dropdown ─────────────────────────────────────────────────────────
 function onPokemonSelect(val) {
   activeFilters.pokemon = val;
   loadTcgCards(val);
 }
-
-
-
-
-function updateEbayConnectStatus() {
-  // No-op: eBay now uses app tokens server-side, no user login needed.
-}
-
-function disconnectEbay() {
-  // No-op: kept for backward compat in case old tokens are in localStorage.
-  persist('ebay_access_token', '');
-  persist('ebay_refresh_token', '');
-  persist('ebay_token_expiry', '0');
-}
-
-async function connectEbay() {
-  // No-op: eBay OAuth user login is no longer required.
-  // The Vercel backend fetches an app token automatically on each search.
-  console.info('PokeGrade: eBay connection is handled server-side automatically.');
-}
-
-
-// ─── Auto fetch sales when card expands ──────────────────────────────────────
-function autoFetchSales(cardId) {
-  // Always fetch — app token is handled server-side, no user login needed.
-  fetchSales(cardId, null);
-}
-
-// ─── eBay token helpers (legacy stubs — app token is now server-side) ─────────
-function getEbayAccessToken() { return retrieve('ebay_access_token'); }
-function getEbayRefreshToken() { return retrieve('ebay_refresh_token'); }
-function isEbayTokenValid() { return false; } // always use server-side app token
-
-function updateEbayStatus(connected) {
-  const badge = document.getElementById('ebayStatusBadge');
-  if (badge) {
-    badge.textContent = '● eBay Live';
-    badge.style.color = 'var(--mint)';
-    badge.style.borderColor = 'rgba(0,229,160,0.3)';
-  }
-}
-
-// No-op: OAuth callback is no longer used
-async function checkEbayCallback() {
-  // Clean up any stale OAuth params that may be in the URL
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('code') || params.get('error')) {
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
-  updateEbayStatus(true);
-}
-
-// eBay sold listings search via Vercel proxy (no client-side token needed)
-async function searchEbaySold(cardName) {
-  try {
-    const query = cardName.replace(/[☆★#\/]/g, '').trim() + ' PSA 10';
-    const res = await fetch(VERCEL_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'search', query: query })
-    });
-    const data = await res.json();
-    if (data.error) {
-      console.warn('eBay search error:', data.error, data.details || '');
-      return null;
-    }
-    return data.items || null;
-  } catch(e) {
-    console.warn('eBay search failed:', e.message);
-    return null;
-  }
-}
-
 
 // ─── Collapsible sections ────────────────────────────────────────────────────
 function toggleSection(bodyId, arrowId) {
@@ -1221,78 +1938,97 @@ function toggleSection(bodyId, arrowId) {
   arrow.classList.toggle('open', !isOpen);
 }
 
-// ─── API Key Management ───────────────────────────────────────────────────────
-// Uses localStorage + cookie fallback so keys persist across sessions
-// even when opened as a local file (file:// protocol)
+// ─── Backend URLs (relative: same Vercel deployment serves the API) ──────────
+const EBAY_API = '/api/ebay-token';
+const PC_API   = '/api/pricecharting';
 
-function setCookie(name, val, days) {
-  const d = new Date();
-  d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = name + '=' + encodeURIComponent(val) + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+// ─── eBay real sold data ─────────────────────────────────────────────────────
+const ebayCache = {}; // cardId -> {psa10:{items,stats}, psa9:{...}, raw:{...}}
+
+async function ebayBatch(queries) {
+  const res = await fetch(EBAY_API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'batch', queries })
+  });
+  const data = await res.json();
+  if (data.error && !data.results) throw new Error(data.error);
+  return data.results || {};
 }
 
-function getCookie(name) {
-  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-  return match ? decodeURIComponent(match[2]) : '';
+async function searchEbaySold(query, limit) {
+  try {
+    const res = await fetch(`${EBAY_API}?action=search&query=${encodeURIComponent(query)}&limit=${limit || 50}`);
+    const data = await res.json();
+    if (data.error && !(data.items || []).length) return null;
+    return data;
+  } catch(e) {
+    console.warn('eBay search failed:', e.message);
+    return null;
+  }
 }
 
-function persist(key, val) {
-  try { localStorage.setItem(key, val); } catch(e) {}
-  try { sessionStorage.setItem(key, val); } catch(e) {}
-  setCookie(key, val, 365);
+// Apply fetched sold data to a card's real fields
+function applyEbayData(card, d) {
+  ebayCache[card.id] = d;
+  const p10 = d.psa10 && d.psa10.stats, p9 = d.psa9 && d.psa9.stats, raw = d.raw && d.raw.stats;
+  if (p10 && p10.median != null) card.psa10Price = p10.median;
+  if (p9 && p9.median != null) card.psa9Price = p9.median;
+  if (raw && raw.median != null) card.marketPrice = raw.median;
+  card.soldCount = (p10 ? p10.count : 0) + (p9 ? p9.count : 0) + (raw ? raw.count : 0);
+  // 90-day trend from PSA 10 weekly medians (fallback: raw)
+  const weekly = (p10 && p10.weekly && p10.weekly.filter(w => w.median != null).length >= 2) ? p10.weekly
+               : (raw && raw.weekly) ? raw.weekly : [];
+  card.weeklyPsa10 = p10 ? p10.weekly : [];
+  card.weeklyRaw = raw ? raw.weekly : [];
+  const pts = weekly.filter(w => w.median != null);
+  if (pts.length >= 2) {
+    const first = pts[0].median, last = pts[pts.length - 1].median;
+    card.trend90d = first > 0 ? Math.round(((last - first) / first) * 100) : null;
+  } else {
+    card.trend90d = null;
+  }
 }
 
-// ── Hardcoded fallback keys (edit these once, never enter again) ──
-const HARDCODED_ANTHROPIC_KEY = '';  // paste your sk-ant-... key here
-const HARDCODED_EBAY_KEY = '';       // paste your eBay App ID here
-
-function retrieve(key) {
-  // Check hardcoded values first
-  if (key === 'pg_api_key' && HARDCODED_ANTHROPIC_KEY) return HARDCODED_ANTHROPIC_KEY;
-  if (key === 'pg_ebay_key' && HARDCODED_EBAY_KEY) return HARDCODED_EBAY_KEY;
-  try { const v = localStorage.getItem(key); if (v) return v; } catch(e) {}
-  try { const v = sessionStorage.getItem(key); if (v) return v; } catch(e) {}
-  return getCookie(key) || '';
+// Prefetch real sold data for all seed cards (id < 1000) at analysis time
+async function prefetchMarketData() {
+  const targets = CARDS.filter(c => c.id < 1000 && !ebayCache[c.id]);
+  if (!targets.length) return { ok: 0, total: 0 };
+  const queries = [];
+  targets.forEach(c => {
+    queries.push({ key: c.id + ':psa10', query: c.q10, limit: 40 });
+    queries.push({ key: c.id + ':psa9',  query: c.q9,  limit: 25 });
+    queries.push({ key: c.id + ':raw',   query: c.qRaw, limit: 40 });
+  });
+  showTcgLoader('Fetching real eBay sold data...');
+  let merged = 0;
+  // two halves to stay inside the batch size limit
+  for (let i = 0; i < queries.length; i += 90) {
+    const chunk = queries.slice(i, i + 90);
+    setTcgProgress(10 + Math.round((i / queries.length) * 80), 'Sold listings ' + Math.min(i + 90, queries.length) + '/' + queries.length + '...');
+    const results = await ebayBatch(chunk);
+    targets.forEach(c => {
+      const d = {
+        psa10: results[c.id + ':psa10'] || null,
+        psa9:  results[c.id + ':psa9'] || null,
+        raw:   results[c.id + ':raw'] || null
+      };
+      if (d.psa10 || d.psa9 || d.raw) { applyEbayData(c, d); merged++; }
+    });
+  }
+  hideTcgLoader();
+  return { ok: merged, total: targets.length };
 }
 
-function saveKey(val) {
-  const k = val.trim();
-  persist('pg_api_key', k);
-  const ok = k.startsWith('sk-ant-');
-  const el = document.getElementById('keyCheck');
-  if (el) { el.textContent = ok ? '&#10003;' : ''; el.style.color = 'var(--mint)'; }
-}
-function getKey() { return retrieve('pg_api_key'); }
-
-
-
-// ─── Vercel Backend URLs ─────────────────────────────────────────────────────
-const VERCEL_API = 'https://poke-hack.vercel.app/api/ebay-token';
-const PC_API     = 'https://poke-hack.vercel.app/api/pricecharting';
-
-// ─── Apify Token ──────────────────────────────────────────────────────────────
-function saveApifyToken(val) {
-  const k = val.trim();
-  persist('pg_apify_token', k);
-  const ok = k.startsWith('apify_api_') || k.length > 20;
-  const el = document.getElementById('apifyTokenCheck');
-  if (el) { el.textContent = ok ? '✓' : ''; el.style.color = 'var(--mint)'; }
-}
-function getApifyToken() { return retrieve('pg_apify_token'); }
-
-// ─── PriceCharting API ───────────────────────────────────────────────────────
+// ─── PriceCharting (lights up when PRICECHARTING_TOKEN is set server-side) ───
 async function fetchPriceCharting(cardName) {
   try {
-    // Build a clean query: card name + set hint if possible
     const query = cardName.replace(/[☆★#\/]/g, '').trim();
     const res = await fetch(`${PC_API}?action=product&q=${encodeURIComponent(query)}`);
     const data = await res.json();
     if (data.error || !data.prices) return null;
     return data;
-  } catch(e) {
-    console.warn('PriceCharting fetch failed:', e.message);
-    return null;
-  }
+  } catch(e) { return null; }
 }
 
 function renderPcPrices(pcData) {
@@ -1305,16 +2041,12 @@ function renderPcPrices(pcData) {
     { label: 'BGS 10',   val: p.bgs10 },
     { label: 'CGC 10',   val: p.cgc10 },
   ].filter(r => r.val && parseFloat(r.val) > 0);
-
   if (!rows.length) return '';
-
   const rowsHtml = rows.map(r =>
     `<div class="trend-row">
       <span class="trlbl">${r.label}</span>
       <span class="trval">$${parseFloat(r.val).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
-    </div>`
-  ).join('');
-
+    </div>`).join('');
   return `<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">
     <div style="font-size:9px;color:var(--gold);margin-bottom:6px;">◆ PriceCharting · ${pcData.name || ''}</div>
     ${rowsHtml}
@@ -1322,287 +2054,74 @@ function renderPcPrices(pcData) {
   </div>`;
 }
 
-// ─── Apify PSA Pop Scraper ────────────────────────────────────────────────────
-async function fetchApifyPsaPop(cardId) {
-  const token = getApifyToken();
-  if (!token || token.length < 10) return;
-
-  const card = displayedCards.find(c => c.id === cardId);
-  if (!card) return;
-
-  // Only run if this card has a PSA cert number
-  if (!card.psaCert) return;
-
-  try {
-    const runUrl = 'https://api.apify.com/v2/acts/lulzasaur~psa-pop-scraper/run-sync-get-dataset-items?token=' + token;
-
-    const res = await fetch(runUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        certNumber: card.psaCert,
-        specId: null
-      })
-    });
-
-    if (!res.ok) throw new Error('Apify error ' + res.status);
-    const items = await res.json();
-
-    if (!items || !items.length) return;
-
-    const popData = items[0];
-    console.log('PSA Pop data:', JSON.stringify(popData));
-    // PSA API returns population in gradeBreakdown array or direct fields
-    // Try multiple field name formats
-    function getGradeCount(data, grade) {
-      return data['grade' + grade] || data['pop' + grade] || data['PSA' + grade] ||
-             data['Grade' + grade] || data['psa' + grade] ||
-             (data.gradeBreakdown && data.gradeBreakdown[grade]) ||
-             (data.grades && data.grades[grade]) || 0;
-    }
-    const pop10 = getGradeCount(popData, 10);
-    const pop9  = getGradeCount(popData, 9);
-    const pop8  = getGradeCount(popData, 8);
-    const pop7  = getGradeCount(popData, 7);
-    const pop6  = getGradeCount(popData, 6);
-    const pop5  = getGradeCount(popData, 5);
-    const pop4  = getGradeCount(popData, 4);
-    const pop3  = getGradeCount(popData, 3);
-    const pop2  = getGradeCount(popData, 2);
-    const pop1  = getGradeCount(popData, 1);
-    const totalPop = popData.total || popData.totalPop || popData.totalPopulation ||
-                     [pop10,pop9,pop8,pop7,pop6,pop5,pop4,pop3,pop2,pop1].reduce((a,b)=>a+b,0);
-
-    if (pop10 > 0) {
-      // Update card data
-      const cardObj = CARDS.find(c => c.id === cardId);
-      if (cardObj) {
-        cardObj.pop10 = pop10;
-        cardObj._popData = popData;
-      }
-
-      // Update the pop display
-      const detailEl = document.getElementById('detail-' + cardId);
-      if (detailEl) {
-        // Show full grade breakdown
-        const existing = detailEl.querySelector('.apify-pop-data');
-        if (existing) existing.remove();
-
-        const breakdown = document.createElement('div');
-        breakdown.className = 'apify-pop-data';
-        breakdown.style.cssText = 'margin-top:10px;padding:10px;background:var(--bg);border-radius:6px;border:1px solid rgba(0,229,160,0.2);';
-        breakdown.innerHTML = `
-          <div style="font-size:9px;color:var(--mint);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-            ✓ Live PSA Pop via Apify
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
-            ${[10,9,8,7,6,5,4,3,2,1].map(g => {
-              const p = getGradeCount(popData, g);
-              return p > 0 ? `<div style="text-align:center;background:var(--bg3);border-radius:4px;padding:5px 3px;">
-                <div style="font-size:9px;color:var(--muted);">PSA ${g}</div>
-                <div style="font-size:12px;font-weight:600;font-family:'DM Mono',monospace;color:${g===10?'var(--mint)':g>=8?'var(--gold)':'var(--text)'};">${p.toLocaleString()}</div>
-              </div>` : '';
-            }).join('')}
-            ${totalPop ? `<div style="text-align:center;background:var(--bg3);border-radius:4px;padding:5px 3px;">
-              <div style="font-size:9px;color:var(--muted);">Total</div>
-              <div style="font-size:12px;font-weight:600;font-family:'DM Mono',monospace;">${totalPop.toLocaleString()}</div>
-            </div>` : ''}
-          </div>`;
-        detailEl.insertBefore(breakdown, detailEl.firstChild);
-
-        // Update the pop metric in card header
-        const popMetric = document.querySelector('#card-' + cardId + ' .metric-val');
-        if (popMetric) {
-          popMetric.textContent = pop10.toLocaleString();
-          popMetric.style.color = pop10 <= 50 ? 'var(--mint)' : pop10 <= 300 ? 'var(--gold)' : '';
-        }
-      }
-    }
-  } catch(e) {
-    console.warn('Apify PSA pop error:', e.message);
-    // Show error in the detail panel so user knows what happened
-    const detailEl2 = document.getElementById('detail-' + cardId);
-    if (detailEl2) {
-      const errDiv = document.createElement('div');
-      errDiv.style.cssText = 'font-size:10px;color:var(--red);padding:6px 8px;background:rgba(255,68,68,0.08);border-radius:5px;margin-top:8px;';
-      errDiv.textContent = '⚠ PSA pop lookup failed: ' + e.message;
-      detailEl2.insertBefore(errDiv, detailEl2.firstChild);
-    }
-  }
-}
-
-function saveEbayKey(val) {
-  const k = val.trim();
-  persist('pg_ebay_key', k);
-  const ok = k.length > 10;
-  const el = document.getElementById('ebayKeyCheck');
-  if (el) { el.textContent = ok ? '&#10003;' : ''; el.style.color = 'var(--mint)'; }
-}
-function getEbayKey() { return retrieve('pg_ebay_key'); }
-
-function savePsaToken(val) {
-  const k = val.trim();
-  persist('pg_psa_token', k);
-  const ok = k.length > 10;
-  const el = document.getElementById('psaTokenCheck');
-  if (el) { el.textContent = ok ? '&#10003;' : ''; el.style.color = 'var(--mint)'; }
-}
-function getPsaToken() { return retrieve('pg_psa_token'); }
-
-function requireKey(container) {
-  const k = getKey();
-  if (!k || !k.startsWith('sk-ant-')) {
-    if (container) container.innerHTML = '<div class="sales-err">&#9888; Anthropic API key needed for AI Expand.<br><a href="https://console.anthropic.com" target="_blank" style="color:var(--mint)">Get one at console.anthropic.com</a></div>';
-    return false;
-  }
-  return true;
-}
-
-async function callClaude(prompt, maxTokens) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': getKey(),
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: maxTokens || 1200,
-      messages: [{ role: 'user', content: prompt }] })
-  });
-  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error((e.error&&e.error.message)||'HTTP '+res.status); }
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-  return (data.content||[]).map(b => b.type==='text' ? b.text : '').join('').trim();
-}
-
-function extractJSON(text) {
-  try { return JSON.parse(text.trim()); } catch(e) {}
-  let c = text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
-  try { return JSON.parse(c); } catch(e) {}
-  const s = c.indexOf('{'), en = c.lastIndexOf('}');
-  if (s !== -1 && en > s) { try { return JSON.parse(c.slice(s,en+1)); } catch(ex) {} }
-  const sa = c.indexOf('['), ea = c.lastIndexOf(']');
-  if (sa !== -1 && ea > sa) { try { return JSON.parse(c.slice(sa,ea+1)); } catch(ex) {} }
-  return null;
-}
-
-// ─── AI Expand Database ───────────────────────────────────────────────────────
-let expandedIds = 100;
-async function expandDatabase() {
-  const btn = document.getElementById('expandBtn');
-  const prog = document.getElementById('expandProgress');
-  const txtEl = document.getElementById('expandBtnTxt');
-
-  if (!requireKey(null)) {
-    prog.textContent = 'Add your API key in the sidebar first.';
-    prog.style.color = 'var(--red)';
-    return;
-  }
-
-  btn.disabled = true;
-  prog.style.color = 'var(--muted)';
-
-  const existing = CARDS.map(c => c.name);
-  const era = activeFilters.era !== 'all' ? activeFilters.era : 'any era';
-  const poke = activeFilters.pokemon !== 'all' ? activeFilters.pokemon : 'any Pokemon';
-  const cat = activeFilters.cat !== 'all' ? activeFilters.cat : 'any category';
-
-  const batches = 4; // 4 batches x 5 cards = 20 new cards per click
-  let added = 0;
-
-  for (let b = 0; b < batches; b++) {
-    txtEl.textContent = `Fetching batch ${b+1}/${batches}...`;
-    prog.textContent = `Added ${added} cards so far...`;
-
-    const prompt = `You are a Pokemon TCG investment database. Generate 5 UNIQUE Pokemon cards NOT in this list: ${existing.slice(-30).join(', ')}.
-
-Focus: ${poke} pokemon, ${era}, ${cat} category.
-Include a mix of: vintage WOTC cards, EX era, DP era, and modern sets. Include Japanese promos, error cards, and obscure low-pop gems.
-
-Return ONLY a valid JSON array, no markdown:
-[
-  {
-    "id": ${expandedIds + b*5 + 1},
-    "name": "Full card name with number and set",
-    "set": "Set name",
-    "year": 2003,
-    "pokemon": "charizard",
-    "era": "ex",
-    "cat": "holo",
-    "japanese": false,
-    "pop10": 145,
-    "popGrowthPerMonth": 2.1,
-    "marketPrice": 380,
-    "psa10Price": 520,
-    "fanTier": 8,
-    "tags": ["vintage","fan-fave"],
-    "rationale": "2-3 sentence investment thesis.",
-    "detail": { "distribution": "...", "gradeRate": "~5%", "psaSubmit": "~2,000", "note": "..." }
-  }
-]
-
-Rules:
-- pop10 and psa10Price MUST be accurate current market values (March 2026)
-- tags: use only vintage, promo, japanese, shiny, fan-fave, low-pop
-- era: wotc, ex, dp, or modern
-- cat: holo, promo, gold-star, shiny, or japanese
-- pokemon: lowercase single pokemon name
-- Make IDs sequential starting at ${expandedIds + b*5 + 1}`;
-
-    try {
-      const text = await callClaude(prompt, 2000);
-      const parsed = extractJSON(text);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        parsed.forEach(c => {
-          if (!CARDS.find(x => x.name === c.name)) {
-            c.tags = (c.tags || []).concat(['ai']);
-            CARDS.push(c);
-            existing.push(c.name);
-            added++;
-          }
-        });
-        expandedIds += 5;
-        document.getElementById('dbCount').textContent = CARDS.length;
-      }
-    } catch(e) {
-      console.warn('Batch failed:', e.message);
-    }
-  }
-
-  btn.disabled = false;
-  txtEl.textContent = 'AI Expand Database';
-  prog.textContent = added > 0 ? `&#10003; Added ${added} cards. Total: ${CARDS.length}` : 'No new cards added — try again.';
-  prog.style.color = added > 0 ? 'var(--mint)' : 'var(--red)';
-  if (analysisRun) renderCards();
-}
-
-// ─── Scoring ──────────────────────────────────────────────────────────────────
+// ─── Scoring: real-data undervaluation signals only ──────────────────────────
+// Factors are null when the underlying real data is missing; null factors drop
+// out of the weighted average instead of being faked.
 function scoreCard(card) {
   const w = weights;
-  const total = w.popScarcity + w.fanDemand + w.priceValue + w.popGrowth;
 
-  // Individual factor scores (0-100)
-  const popScarcity = Math.min(100, (1 / Math.log(card.pop10 + 2)) * 500);
+  // 1. Pop scarcity: real gem-mint population (lower = scarcer)
+  const popScarcity = card.pop10 == null ? null : Math.min(100, (1 / Math.log(card.pop10 + 2)) * 500);
+
+  // 2. Momentum: real 90-day sold-price trend (%) mapped -50..+50 -> 0..100
+  const momentum = card.trend90d == null ? null : Math.min(100, Math.max(0, 50 + card.trend90d));
+
+  // 3. Price/value gap: real PSA 10 sold median vs real raw price
+  let priceValue = null;
+  if (card.psa10Price != null && card.marketPrice != null && card.psa10Price > 0) {
+    priceValue = Math.min(100, Math.max(0, ((card.psa10Price - card.marketPrice) / card.psa10Price) * 300 + 20));
+  }
+
+  // 4. Grade-premium compression (user heuristic): PSA 10/9 price premium vs
+  //    gem-rate scarcity. compression = scarcityRatio / premiumRatio, log-mapped.
+  //    scarcityRatio = totalGraded / gems (real pop data); premiumRatio = price10 / price9 (real sold data).
+  let compression = null;
+  if (card.psa10Price != null && card.psa9Price != null && card.psa9Price > 0 && card.pop10 != null && card.popTotal != null && card.pop10 > 0) {
+    const premiumRatio = card.psa10Price / card.psa9Price;
+    const scarcityRatio = card.popTotal / card.pop10;
+    const raw = scarcityRatio / Math.max(premiumRatio, 0.05);
+    compression = Math.min(100, Math.max(0, (Math.log10(raw + 1) / Math.log10(101)) * 100));
+  }
+
+  // 5. Sales velocity: real number of sold listings in the ~90-day window
+  const velocity = card.soldCount == null ? null : Math.min(100, (Math.log2(1 + card.soldCount) / Math.log2(1 + 80)) * 100);
+
+  // 6. Fan demand: curated tier (not market data)
   const fanDemand = card.fanTier * 10;
-  const priceValue = Math.min(100, Math.max(0, ((card.psa10Price - card.marketPrice) / card.psa10Price) * 300 + 20));
-  const popGrowthScore = Math.min(100, Math.max(0, 100 - (card.popGrowthPerMonth / card.pop10) * 100));
 
-  const raw = (
-    popScarcity * w.popScarcity +
-    fanDemand * w.fanDemand +
-    priceValue * w.priceValue +
-    popGrowthScore * w.popGrowth
-  ) / (total || 1);
+  const factors = [
+    ['popScarcity', popScarcity],
+    ['momentum', momentum],
+    ['priceValue', priceValue],
+    ['compression', compression],
+    ['velocity', velocity],
+    ['fanDemand', fanDemand]
+  ];
+  let sum = 0, wsum = 0, msum = 0, mwsum = 0;
+  const marketKeys = ['popScarcity', 'momentum', 'priceValue', 'compression', 'velocity'];
+  factors.forEach(([k, v]) => {
+    if (v != null) {
+      sum += v * (w[k] || 0); wsum += (w[k] || 0);
+      if (marketKeys.includes(k)) { msum += (w[k] || 0); }
+    }
+    if (marketKeys.includes(k)) mwsum += (w[k] || 0);
+  });
+  // Data-coverage penalty: a card scored on hype (fan demand) alone cannot top
+  // the ranking. Coverage = share of market-data factor weight actually present.
+  const coverage = mwsum > 0 ? msum / mwsum : 0;
+  const total = (wsum > 0 ? sum / wsum : 0) * (0.5 + 0.5 * coverage);
 
-  const upside = Math.round(((card.psa10Price / (card.marketPrice || card.psa10Price)) - 1) * 100);
+  const upside = (card.psa10Price != null && card.marketPrice != null && card.marketPrice > 0)
+    ? Math.round(((card.psa10Price / card.marketPrice) - 1) * 100) : null;
 
   return {
-    total: Math.round(raw),
-    popScarcity: Math.round(popScarcity),
+    total: Math.round(total),
+    popScarcity: popScarcity == null ? null : Math.round(popScarcity),
+    momentum: momentum == null ? null : Math.round(momentum),
+    priceValue: priceValue == null ? null : Math.round(priceValue),
+    compression: compression == null ? null : Math.round(compression),
+    velocity: velocity == null ? null : Math.round(velocity),
     fanDemand: Math.round(fanDemand),
-    priceValue: Math.round(priceValue),
-    popGrowth: Math.round(popGrowthScore),
     upside
   };
 }
@@ -1613,7 +2132,6 @@ function getGrade(score) {
   if (score >= 48) return { letter:'B', cls:'score-b' };
   return { letter:'C', cls:'score-c' };
 }
-
 
 // ─── Filters & Sort ───────────────────────────────────────────────────────────
 function toggleChip(el, group) {
@@ -1639,24 +2157,21 @@ function setSort(key, btn) {
 }
 
 function fmt(n) {
+  if (n == null) return '—';
   if (n >= 1000000) return '$' + (n/1000000).toFixed(2) + 'M';
   if (n >= 1000) return '$' + (n/1000).toFixed(1) + 'K';
   return '$' + n;
 }
 
-
-// ─── Log-scale price slider ───────────────────────────────────────────────────
 function logScalePrice(sliderVal) {
   const v = parseInt(sliderVal);
   if (v >= 100) return 10000000;
   if (v <= 0) return 0;
   return Math.round(Math.pow(10, (v / 100) * 7));
 }
-
 function getPriceMax() {
   return logScalePrice(document.getElementById('priceRange').value);
 }
-
 function onPriceSlide(val) {
   const price = logScalePrice(val);
   const lbl = parseInt(val) >= 100 ? 'Any'
@@ -1667,69 +2182,63 @@ function onPriceSlide(val) {
   if (analysisRun) renderCards();
 }
 
-// Grade multipliers relative to PSA 10 pop (approximate ratios)
-const GRADE_MULTIPLIERS = {
-  '10': 1, '9': 4.2, '8': 2.8, '7': 1.6, '6': 0.9,
-  '5': 0.7, '4': 0.5, '3': 0.4, '2': 0.3, '1': 0.2, 'auth': 0.15
-};
-const GRADE_PRICE_MULTIPLIERS = {
-  '10': 1, '9': 0.35, '8': 0.18, '7': 0.10, '6': 0.06,
-  '5': 0.04, '4': 0.025, '3': 0.015, '2': 0.008, '1': 0.004, 'auth': 0.002
-};
-function getGradePop(card, grade) {
-  const pop = card.pop10 || 0;
-  if (!grade || grade === 'all' || grade === '10') return pop;
-  return Math.round(pop * (GRADE_MULTIPLIERS[grade] || 1));
-}
-function getGradePrice(card, grade) {
-  const price = card.psa10Price || 0;
-  if (!grade || grade === 'all' || grade === '10') return price;
-  return Math.round(price * (GRADE_PRICE_MULTIPLIERS[grade] || 1));
+function cardPriceForFilter(c) {
+  return c.psa10Price != null ? c.psa10Price : c.marketPrice;
 }
 
 function filterCards() {
   const q = document.getElementById('cardSearch').value.toLowerCase();
   const maxPop = parseInt(document.getElementById('popRange').value);
-  const grade = activeFilters.grade || 'all';
-  const hasTcgCards = currentTcgPokemon && currentTcgPokemon !== 'all';
   return CARDS.filter(c => {
-    // When TCG cards are loaded, TCG cards already match the selected pokemon
-    // Only filter hardcoded cards (id < 1000) by pokemon
     if (activeFilters.pokemon !== 'all' && c.id < 1000 && c.pokemon !== activeFilters.pokemon) return false;
     if (activeFilters.era !== 'all' && c.era !== activeFilters.era) return false;
     if (activeFilters.cat !== 'all' && c.cat !== activeFilters.cat) return false;
-    if (getGradePop(c, grade) > maxPop) return false;
-    const priceMax = getPriceMax(); if (priceMax < 10000000 && getGradePrice(c, grade) > priceMax) return false;
+    if (c.pop10 != null && c.pop10 > maxPop) return false;
+    const priceMax = getPriceMax();
+    const pf = cardPriceForFilter(c);
+    if (priceMax < 10000000 && pf != null && pf > priceMax) return false;
     if (q && !c.name.toLowerCase().includes(q) && !c.set.toLowerCase().includes(q)) return false;
     return true;
   });
 }
 
 // ─── Run Analysis ─────────────────────────────────────────────────────────────
-function runAnalysis() {
+async function runAnalysis() {
   const btn = document.getElementById('runBtn');
-  btn.disabled = true; btn.textContent = '&#9889; Analyzing...';
+  btn.disabled = true; btn.textContent = '⚡ Analyzing...';
   const grid = document.getElementById('cardsGrid');
   grid.innerHTML = Array(6).fill(`<div class="skeleton-card"><div class="skel" style="height:16px;width:55%"></div><div class="skel" style="height:10px;width:35%;margin-top:3px"></div><div class="skel" style="height:46px;margin-top:12px;border-radius:6px"></div><div class="skel" style="height:28px;margin-top:8px;border-radius:5px"></div></div>`).join('');
-  setTimeout(() => { btn.disabled=false; btn.textContent='&#9889; Run Analysis'; analysisRun=true; renderCards(); }, 700);
+
+  let status = '';
+  try {
+    const r = await prefetchMarketData();
+    if (r.total > 0) status = `eBay sold data: ${r.ok}/${r.total} cards · pop snapshot ${POP_SNAPSHOT_DATE}`;
+  } catch(e) {
+    console.warn('Market data prefetch failed:', e.message);
+    status = '⚠ Live eBay data unavailable — showing pop snapshot only';
+  }
+  ebayDataStatus = status;
+  btn.disabled = false; btn.textContent = '⚡ Run Analysis';
+  analysisRun = true;
+  renderCards();
 }
 
 // ─── Render Cards ─────────────────────────────────────────────────────────────
 function renderCards() {
   const filtered = filterCards();
   const scored = filtered.map(c => ({...c, scores: scoreCard(c)}));
+  const nullLast = v => v == null ? -Infinity : v;
   scored.sort((a,b) => {
     if (currentSort==='score') return b.scores.total - a.scores.total;
-    if (currentSort==='pop') return a.pop10 - b.pop10;
-    if (currentSort==='price') return b.psa10Price - a.psa10Price;
-    if (currentSort==='upside') return b.scores.upside - a.scores.upside;
+    if (currentSort==='pop') return nullLast(a.pop10) === -Infinity ? 1 : nullLast(b.pop10) === -Infinity ? -1 : a.pop10 - b.pop10;
+    if (currentSort==='price') return nullLast(cardPriceForFilter(b)) - nullLast(cardPriceForFilter(a));
+    if (currentSort==='upside') return nullLast(b.scores.upside) - nullLast(a.scores.upside);
     return 0;
   });
   displayedCards = scored;
   document.getElementById('countDisplay').textContent = scored.length;
   const grid = document.getElementById('cardsGrid');
   if (!scored.length) {
-    // If TCG search returned nothing, show a helpful message with retry
     const msg = currentTcgPokemon && currentTcgPokemon !== 'all'
       ? `<div class="empty"><h3>No cards found for "${currentTcgPokemon}"</h3><p>This Pokémon may not have cards in the TCG database, or the search timed out.<br><button class="sort-btn" onclick="loadTcgCards('${currentTcgPokemon}')" style="margin-top:12px">↺ Retry</button></p></div>`
       : `<div class="empty"><h3>No cards match</h3><p>Try adjusting your filters.</p></div>`;
@@ -1743,12 +2252,14 @@ function renderCards() {
     const sc = g.cls==='score-s'?'#38d9a9':g.cls==='score-a'?'#f0c040':g.cls==='score-b'?'#4a9de0':'#4e4e62';
     const breakdown = [
       {name:'Pop scarcity', val:s.popScarcity, color:'#38d9a9'},
-      {name:'Fan demand', val:s.fanDemand, color:'#f0c040'},
-      {name:'Price/value gap', val:s.priceValue, color:'#9b55e0'},
-      {name:'Pop growth', val:s.popGrowth, color:'#4a9de0'},
+      {name:'90d momentum', val:s.momentum, color:'#4a9de0'},
+      {name:'Raw/graded gap', val:s.priceValue, color:'#9b55e0'},
+      {name:'10/9 compression', val:s.compression, color:'#f0c040'},
+      {name:'Sales velocity', val:s.velocity, color:'#e07855'},
+      {name:'Fan demand', val:s.fanDemand, color:'#8888a0'},
     ];
-    const tagHtml = (card.tags||[]).map(t=>`<div class="tag tag-${t.replace(' ','-')}">${t.replace('-',' ')}</div>`).join('');
-    const isAI = (card.tags||[]).includes('ai');
+    const tagHtml = cardTags(card).map(t=>`<div class="tag tag-${t.replace(' ','-')}">${t.replace('-',' ')}</div>`).join('');
+    const trend = card.trend90d;
     return `<div class="card" id="card-${card.id}" style="--score-color:${sc}" onclick="toggleCard(${card.id})">
       ${card.tcgImage ? `<img src="${card.tcgImage}" style="float:right;height:60px;border-radius:4px;margin:-4px -4px 4px 8px;opacity:0.9;" onerror="this.style.display='none'">` : ""}
       <div class="card-top">
@@ -1759,31 +2270,33 @@ function renderCards() {
         <div class="score-pill ${g.cls}">${g.letter} ${s.total}</div>
       </div>
       <div class="metrics">
-        <div class="metric"><div class="metric-lbl">${activeFilters.grade==='all'?'PSA 10':'PSA '+activeFilters.grade.toUpperCase()} Pop</div><div class="metric-val ${getGradePop(card,activeFilters.grade||'all')<=50?'v-green':getGradePop(card,activeFilters.grade||'all')<=300?'v-gold':''}">${(()=>{ const p=getGradePop(card,activeFilters.grade||'all'); return p?p.toLocaleString():'—'; })()}</div></div>
-        <div class="metric"><div class="metric-lbl">${activeFilters.grade==='all'?'PSA 10 $':'PSA '+activeFilters.grade.toUpperCase()+' $'}</div><div class="metric-val v-gold">${fmt(getGradePrice(card,activeFilters.grade||'all'))}</div></div>
-        <div class="metric"><div class="metric-lbl">Upside %</div><div class="metric-val ${s.upside>0?'v-green':'v-red'}">${s.upside>0?'+':''}${s.upside}%</div></div>
-        <div class="metric"><div class="metric-lbl">Pop/Mo &#8593;</div><div class="metric-val ${card.popGrowthPerMonth<1?'v-green':card.popGrowthPerMonth<10?'v-gold':'v-red'}">+${card.popGrowthPerMonth}</div></div>
+        <div class="metric"><div class="metric-lbl">Gem Pop</div><div class="metric-val ${card.pop10!=null&&card.pop10<=50?'v-green':card.pop10!=null&&card.pop10<=300?'v-gold':''}">${card.pop10!=null?card.pop10.toLocaleString():'—'}</div></div>
+        <div class="metric"><div class="metric-lbl">PSA 10 $ (sold)</div><div class="metric-val v-gold">${fmt(card.psa10Price)}</div></div>
+        <div class="metric"><div class="metric-lbl">Upside vs raw</div><div class="metric-val ${s.upside>0?'v-green':s.upside!=null?'v-red':''}">${s.upside!=null?(s.upside>0?'+':'')+s.upside+'%':'—'}</div></div>
+        <div class="metric"><div class="metric-lbl">90d trend</div><div class="metric-val ${trend>0?'v-green':trend!=null?'v-red':''}">${trend!=null?(trend>0?'+':'')+trend+'%':'—'}</div></div>
       </div>
       <div class="bars">
-        ${breakdown.map(b=>`<div class="brow"><span class="bname">${b.name}</span><div class="btrack"><div class="bfill" style="width:${b.val}%;background:${b.color}"></div></div><span class="bscore">${b.val}</span></div>`).join('')}
+        ${breakdown.map(b=>`<div class="brow"><span class="bname">${b.name}</span><div class="btrack"><div class="bfill" style="width:${b.val||0}%;background:${b.color}"></div></div><span class="bscore">${b.val!=null?b.val:'—'}</span></div>`).join('')}
       </div>
       <div class="tags">${tagHtml}</div>
       <div class="detail" id="detail-${card.id}">
         <div class="dgrid">
-          <div class="ditem"><div class="dk">PSA Pop Report</div><div class="dv"><a href="https://www.psacard.com/pop" target="_blank" style="color:var(--mint);font-size:10px;">psacard.com/pop &#8599;</a><div style="font-size:9px;color:var(--red);margin-top:2px;">&#9888; Pop counts on this page are estimates</div></div></div>
-        <div class="ditem"><div class="dk">PSA Pop (estimated)</div><div class="dv" style="color:var(--gold)">&#9888; Verify at <a href="https://www.psacard.com/pop" target="_blank" style="color:var(--mint);text-decoration:none;">psacard.com/pop &#8599;</a></div></div>
-        <div class="ditem"><div class="dk">Distribution</div><div class="dv">${card.detail.distribution}</div></div>
-          <div class="ditem"><div class="dk">Grade rate (10)</div><div class="dv">${card.detail.gradeRate}</div></div>
-          <div class="ditem"><div class="dk">Est. PSA submissions</div><div class="dv">${card.detail.psaSubmit}</div></div>
-          <div class="ditem"><div class="dk">Upside vs raw &times;10</div><div class="dv" style="color:var(--mint)">+${s.upside}%</div></div>
+          <div class="ditem"><div class="dk">Gem Pop (PSA 10 equiv)</div><div class="dv">${card.pop10!=null?card.pop10.toLocaleString():'no data'}</div></div>
+          <div class="ditem"><div class="dk">Total graded</div><div class="dv">${card.popTotal!=null?card.popTotal.toLocaleString():'—'}</div></div>
+          <div class="ditem"><div class="dk">Pop source</div><div class="dv">${card.popUrl?`<a href="${card.popUrl}" target="_blank" style="color:var(--mint);font-size:10px;">GemRate · ${POP_SNAPSHOT_DATE} ↗</a>`:`<span style="font-size:10px;color:var(--muted)">unavailable · <a href="https://www.psacard.com/pop" target="_blank" style="color:var(--mint);">PSA pop report ↗</a></span>`}</div></div>
+          <div class="ditem"><div class="dk">Price basis</div><div class="dv" style="font-size:10px;">${card.psa10Price!=null?'median real eBay sold (90d)':card.marketPrice!=null?(card.tcgUrl?'TCGplayer market':'eBay sold'):'no data'}</div></div>
+          <div class="ditem"><div class="dk">Raw $</div><div class="dv">${fmt(card.marketPrice)}</div></div>
+          <div class="ditem"><div class="dk">Sold (90d)</div><div class="dv">${card.soldCount!=null?card.soldCount:'—'}</div></div>
+          <div class="ditem"><div class="dk">Distribution</div><div class="dv">${card.detail.distribution}</div></div>
+          <div class="ditem"><div class="dk">Upside vs raw</div><div class="dv" style="color:var(--mint)">${s.upside!=null?'+'+s.upside+'%':'—'}</div></div>
         </div>
-        <div class="rationale">${card.detail.note?`<strong style="color:var(--gold)">Note:</strong> ${card.detail.note}<br><br>`:''  }${card.rationale}</div>
+        <div class="rationale">${card.detail.note?`<strong style="color:var(--gold)">Note:</strong> ${card.detail.note}<br><br>`:''}${card.rationale}</div>
         <div class="spark-wrap">
           <div class="spark-hdr">
-            <span class="spark-title">Price Movement (simulated)</span>
+            <span class="spark-title">eBay Sold · ~90 days</span>
             <div class="spark-btns" id="spkbtns-${card.id}">
-              <button class="spark-btn active" onclick="event.stopPropagation();drawSpark(${card.id},'3m',this)">3M</button>
-              <button class="spark-btn" onclick="event.stopPropagation();drawSpark(${card.id},'6m',this)">6M</button>
+              <button class="spark-btn active" onclick="event.stopPropagation();drawSpark(${card.id},'psa10',this)">PSA 10</button>
+              <button class="spark-btn" onclick="event.stopPropagation();drawSpark(${card.id},'raw',this)">Raw</button>
             </div>
           </div>
           <canvas class="spark" id="spark-${card.id}"></canvas>
@@ -1795,13 +2308,13 @@ function renderCards() {
         </div>
         <div class="sales-wrap">
           <div class="sales-hdr">
-            <span class="sales-title">Real Comp Sources</span>
+            <span class="sales-title">Real Sold Comps</span>
             <button class="fetch-btn" id="fb-${card.id}" onclick="event.stopPropagation();fetchSales(${card.id},this)">
               <div class="mini-spin" id="fs-${card.id}"></div>
               <span id="fl-${card.id}">⚡ Fetch Live Sales</span>
             </button>
           </div>
-          <div id="sd-${card.id}" class="sales-ph">Expand to load real comp links.</div>
+          <div id="sd-${card.id}" class="sales-ph">Expand to load real sold comps.</div>
         </div>
       </div>
     </div>`;
@@ -1818,30 +2331,13 @@ function toggleCard(id) {
   if (!wasOpen) {
     det.classList.add('open');
     crd.classList.add('open');
-    setTimeout(() => drawSpark(id, '3m', null), 50);
+    setTimeout(() => drawSpark(id, 'psa10', null), 50);
     setTimeout(() => autoFetchSales(id), 300);
-    setTimeout(() => fetchPsaPop(id), 150);
-    setTimeout(() => fetchApifyPsaPop(id), 500);
   }
 }
 
-// ─── Sparkline ────────────────────────────────────────────────────────────────
-function generatePriceHistory(card, months) {
-  const base = card.psa10Price;
-  const pts = months * 4;
-  const vol = base > 10000 ? 0.035 : base > 1000 ? 0.055 : 0.08;
-  const bias = card.popGrowthPerMonth > 15 ? -0.003 : card.pop10 < 50 ? 0.004 : 0.001;
-  const prices = [];
-  let price = base * (0.9 + Math.random() * 0.06);
-  for (let i = 0; i < pts; i++) {
-    price = Math.max(base * 0.45, price + (Math.random() - 0.47 + bias) * vol * price);
-    prices.push(Math.round(price));
-  }
-  prices[prices.length - 1] = base;
-  return prices;
-}
-
-function drawSpark(cardId, range, btn) {
+// ─── Sparkline: real weekly median sold prices (no simulation) ───────────────
+function drawSpark(cardId, series, btn) {
   if (btn) {
     const wrap = document.getElementById('spkbtns-' + cardId);
     if (wrap) wrap.querySelectorAll('.spark-btn').forEach(b => b.classList.remove('active'));
@@ -1851,8 +2347,8 @@ function drawSpark(cardId, range, btn) {
   if (!card) return;
   const canvas = document.getElementById('spark-' + cardId);
   if (!canvas) return;
-  const months = range === '3m' ? 3 : 6;
-  const prices = generatePriceHistory(card, months);
+  const weekly = (series === 'raw' ? card.weeklyRaw : card.weeklyPsa10) || [];
+  const ptsData = weekly.filter(w => w.median != null);
   const dpr = window.devicePixelRatio || 1;
   const W = canvas.offsetWidth || 300;
   const H = 68;
@@ -1860,6 +2356,15 @@ function drawSpark(cardId, range, btn) {
   const ctx = canvas.getContext('2d');
   ctx.scale(dpr, dpr);
   ctx.clearRect(0, 0, W, H);
+  const loEl=document.getElementById('spk-lo-'+cardId), chEl=document.getElementById('spk-ch-'+cardId), hiEl=document.getElementById('spk-hi-'+cardId);
+  if (ptsData.length < 2) {
+    ctx.fillStyle = '#666';
+    ctx.font = '10px "DM Mono", monospace';
+    ctx.fillText(ptsData.length === 0 ? 'No recent sold data for this series' : 'Only one week of sold data', 8, H/2 + 3);
+    if(loEl) loEl.textContent='—'; if(chEl){chEl.textContent='—';chEl.style.color='';} if(hiEl) hiEl.textContent='—';
+    return;
+  }
+  const prices = ptsData.map(w => w.median);
   const minP = Math.min(...prices), maxP = Math.max(...prices);
   const pad = {l:3,r:3,t:5,b:3};
   const cw = W-pad.l-pad.r, ch = H-pad.t-pad.b, rng = maxP-minP||1;
@@ -1879,99 +2384,17 @@ function drawSpark(cardId, range, btn) {
   const last=pts[pts.length-1];
   ctx.beginPath();ctx.arc(last.x,last.y,3,0,Math.PI*2);ctx.fillStyle=lc;ctx.fill();
   const fmtS = v => v>=1000?'$'+(v/1000).toFixed(1)+'K':'$'+v;
-  const lo=Math.min(...prices), hi=Math.max(...prices);
   const pct=((prices[prices.length-1]-prices[0])/prices[0]*100).toFixed(1);
-  const loEl=document.getElementById('spk-lo-'+cardId), chEl=document.getElementById('spk-ch-'+cardId), hiEl=document.getElementById('spk-hi-'+cardId);
-  if(loEl) loEl.textContent=fmtS(lo);
+  if(loEl) loEl.textContent=fmtS(minP);
   if(chEl){chEl.textContent=(pct>0?'+':'')+pct+'%';chEl.style.color=isUp?'var(--mint)':'var(--red)';}
-  if(hiEl) hiEl.textContent=fmtS(hi);
+  if(hiEl) hiEl.textContent=fmtS(maxP);
 }
 
-
-// ─── Apify PSA Pop Lookup ────────────────────────────────────────────────────
-async function fetchPsaPop(cardId) {
-  const token = getApifyToken();
-  if (!token || !token.startsWith('apify_api_')) return;
-
-  const card = displayedCards.find(c => c.id === cardId);
-  if (!card) return;
-
-  // Show loading on pop metric
-  const cardEl = document.getElementById('card-' + cardId);
-  const popEl = cardEl ? cardEl.querySelector('.metric-val') : null;
-  if (popEl) { popEl.textContent = '...'; }
-
-  // Clean card name for search — remove set info, keep core name
-  const searchName = card.name
-    .replace(/#[\d\/]+/g, '')
-    .replace(/\s*(PSA|BGS|SGC)\s*\d+/gi, '')
-    .replace(/[☆★✦]/g, '')
-    .trim();
-
-  try {
-    // Step 1: Start the Apify actor run
-    const runRes = await fetch(
-      'https://api.apify.com/v2/acts/lulzasaur~psa-pop-scraper/run-sync-get-dataset-items?token=' + token + '&timeout=30',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          searchQuery: searchName,
-          maxResults: 1
-        })
-      }
-    );
-
-    if (!runRes.ok) throw new Error('Apify error ' + runRes.status);
-    const results = await runRes.json();
-
-    if (!results || !results.length) throw new Error('No PSA data found');
-
-    const result = results[0];
-    // Extract PSA 10 pop from result
-    const pop10 = result.grade10 || result.pop10 || result.PSA10 || result['10'] || 0;
-    const totalPop = result.total || result.totalPop || 0;
-
-    if (pop10 > 0) {
-      // Update card data
-      const cardObj = CARDS.find(c => c.id === cardId);
-      if (cardObj) cardObj.pop10 = pop10;
-
-      // Update pop display
-      if (popEl) {
-        popEl.textContent = pop10.toLocaleString();
-        popEl.style.color = pop10 <= 50 ? 'var(--mint)' : pop10 <= 300 ? 'var(--gold)' : '';
-      }
-
-      // Show confirmed badge with full grade breakdown in detail panel
-      const detailEl = document.getElementById('detail-' + cardId);
-      if (detailEl) {
-        const existing = detailEl.querySelector('.pop-confirmed');
-        if (existing) existing.remove();
-
-        const grades = ['1','2','3','4','5','6','7','8','9','10'];
-        const gradeRows = grades.map(g => {
-          const val = result['grade'+g] || result[g] || result['PSA'+g] || 0;
-          return val > 0 ? `<span style="color:var(--muted);font-size:9px;">${g}:</span> <strong>${val.toLocaleString()}</strong>` : '';
-        }).filter(Boolean).join(' &nbsp; ');
-
-        const badge = document.createElement('div');
-        badge.className = 'pop-confirmed';
-        badge.style.cssText = 'font-size:10px;padding:8px 10px;background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.2);border-radius:6px;margin-top:10px;line-height:1.8;';
-        badge.innerHTML = '<span style="color:var(--mint);font-weight:600;">✓ Live PSA Pop (via Apify)</span><br>' +
-          (gradeRows || '') +
-          '<br><span style="color:var(--muted);">PSA 10: <strong style="color:var(--mint);">' + pop10.toLocaleString() + '</strong>' +
-          (totalPop ? ' &nbsp;·&nbsp; Total: <strong>' + totalPop.toLocaleString() + '</strong>' : '') + '</span>';
-        detailEl.prepend(badge);
-      }
-    }
-  } catch(e) {
-    console.warn('Apify pop fetch:', e.message);
-    if (popEl) popEl.textContent = '—';
-  }
+// ─── Live sold comps per card (expand / refresh) ─────────────────────────────
+function autoFetchSales(cardId) {
+  fetchSales(cardId, null);
 }
 
-// ─── eBay Live Comps ──────────────────────────────────────────────────────────
 async function fetchSales(cardId, btn) {
   const card = displayedCards.find(c => c.id === cardId);
   if (!card) return;
@@ -1985,37 +2408,53 @@ async function fetchSales(cardId, btn) {
     if (lbl) lbl.textContent = loading ? 'Fetching...' : '↺ Refresh';
   }
 
-  // ── Fetch eBay + PriceCharting in parallel
   setLoading(true);
-  container.innerHTML = '<div class="sales-ph">Fetching live prices...</div>';
+  container.innerHTML = '<div class="sales-ph">Fetching real sold listings...</div>';
 
-  const [items, pcData] = await Promise.all([
-    searchEbaySold(card.name),
-    fetchPriceCharting(card.name)
-  ]);
+  // Use cache when present, else fetch just this card
+  if (!ebayCache[cardId]) {
+    try {
+      const results = await ebayBatch([
+        { key: 'psa10', query: card.q10, limit: 40 },
+        { key: 'psa9',  query: card.q9,  limit: 25 },
+        { key: 'raw',   query: card.qRaw, limit: 40 }
+      ]);
+      applyEbayData(card, { psa10: results.psa10 || null, psa9: results.psa9 || null, raw: results.raw || null });
+    } catch(e) {
+      console.warn('fetchSales error:', e.message);
+    }
+  }
+
+  const [pcData] = await Promise.all([ fetchPriceCharting(card.name) ]);
+  const d = ebayCache[cardId];
+  const items = d && d.psa10 && d.psa10.items ? d.psa10.items : [];
 
   let html = '';
-
-  if (items && items.length > 0) {
+  if (items.length > 0) {
     const rows = items.slice(0,6).map(item => {
       const date = item.soldDate ? item.soldDate.substring(0,10) : '—';
-      const price = item.price ? '$' + parseFloat(item.price).toLocaleString() : '—';
+      const price = item.price != null ? '$' + parseFloat(item.price).toLocaleString() : '—';
       return `<a href="${item.itemUrl||'#'}" target="_blank" class="sale-row-link">
         <span class="sale-date">${date}</span>
         <span class="sale-plat">eBay</span>
         <span class="sale-price">${price}</span>
       </a>`;
     }).join('');
-    const prices = items.filter(i=>i.price).map(i=>parseFloat(i.price));
-    const avg = prices.length ? Math.round(prices.reduce((a,b)=>a+b,0)/prices.length) : 0;
-    html += `<div style="font-size:9px;color:var(--mint);margin-bottom:7px;">● Live from eBay · ${items.length} sold listings</div>${rows}${avg ? `<div class="trend-row"><span class="trlbl">eBay Avg</span><span class="trval">$${avg.toLocaleString()}</span></div>` : ''}`;
-    fetchedCards.add(cardId);
+    const st = d.psa10.stats || {};
+    html += `<div style="font-size:9px;color:var(--mint);margin-bottom:7px;">● Real eBay sold · PSA 10 · ${st.count||items.length} sales (90d)</div>${rows}${st.median!=null?`<div class="trend-row"><span class="trlbl">PSA 10 median</span><span class="trval">$${st.median.toLocaleString()}</span></div>`:''}`;
+    if (d.psa9 && d.psa9.stats && d.psa9.stats.median != null) {
+      html += `<div class="trend-row"><span class="trlbl">PSA 9 median</span><span class="trval">$${d.psa9.stats.median.toLocaleString()}</span></div>`;
+    }
+    if (d.raw && d.raw.stats && d.raw.stats.median != null) {
+      html += `<div class="trend-row"><span class="trlbl">Raw median</span><span class="trval">$${d.raw.stats.median.toLocaleString()}</span></div>`;
+    }
+    // refresh card header metrics + spark with the new real data
+    refreshCardMetrics(card);
+  } else if (d && (d.psa10 || d.raw)) {
+    html += `<div style="font-size:10px;color:var(--muted);margin-bottom:6px;">No PSA 10 sold listings in the last ~90 days.</div>`;
   }
 
-  if (pcData) {
-    html += renderPcPrices(pcData);
-    fetchedCards.add(cardId);
-  }
+  if (pcData) html += renderPcPrices(pcData);
 
   if (html) {
     container.innerHTML = html;
@@ -2024,12 +2463,28 @@ async function fetchSales(cardId, btn) {
   }
 
   setLoading(false);
-
-  // ── Fallback: show comp links if both sources returned nothing
   showCompLinks(card, container);
   if (btn) { btn.disabled = false; if (lbl) lbl.textContent = '↺ Retry'; }
 }
 
+// Update a card's header metrics in place after fresh sold data arrives
+function refreshCardMetrics(card) {
+  const cardEl = document.getElementById('card-' + card.id);
+  if (!cardEl) return;
+  const s = scoreCard(card);
+  const vals = cardEl.querySelectorAll('.metric-val');
+  if (vals[0]) { vals[0].textContent = card.pop10 != null ? card.pop10.toLocaleString() : '—'; }
+  if (vals[1]) { vals[1].textContent = fmt(card.psa10Price); }
+  if (vals[2]) { vals[2].textContent = s.upside != null ? (s.upside>0?'+':'') + s.upside + '%' : '—'; }
+  if (vals[3]) { vals[3].textContent = card.trend90d != null ? (card.trend90d>0?'+':'') + card.trend90d + '%' : '—'; }
+  const pill = cardEl.querySelector('.score-pill');
+  if (pill) {
+    const g = getGrade(s.total);
+    pill.textContent = g.letter + ' ' + s.total;
+    pill.className = 'score-pill ' + g.cls;
+  }
+  drawSpark(card.id, 'psa10', null);
+}
 
 function showCompLinks(card, container, append) {
   const q10   = encodeURIComponent(card.name + ' PSA 10');
@@ -2053,46 +2508,14 @@ function showCompLinks(card, container, append) {
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
-  // Restore saved keys (localStorage + cookie fallback)
-  const saved = getKey();
-  if (saved) {
-    const el = document.getElementById('apiKey');
-    if (el) el.value = saved;
-    if (saved.startsWith('sk-ant-')) {
-      const ck = document.getElementById('keyCheck');
-      if (ck) { ck.textContent = '&#10003;'; ck.style.color = 'var(--mint)'; }
-    }
-  }
-  const apifySaved = getApifyToken();
-  if (apifySaved) {
-    const el4 = document.getElementById('apifyToken');
-    if (el4) el4.value = apifySaved;
-    const ck4 = document.getElementById('apifyTokenCheck');
-    if (ck4) { ck4.textContent = '✓'; ck4.style.color = 'var(--mint)'; }
-  }
-  const psaSaved = getPsaToken();
-  if (psaSaved) {
-    const el3 = document.getElementById('psaToken');
-    if (el3) el3.value = psaSaved;
-    if (psaSaved.length > 10) {
-      const ck3 = document.getElementById('psaTokenCheck');
-      if (ck3) { ck3.textContent = '&#10003;'; ck3.style.color = 'var(--mint)'; }
-    }
-  }
-  // Restore pokemon dropdown if saved
-  const savedPokemon = activeFilters.pokemon;
-  if (savedPokemon && savedPokemon !== 'all') {
-    const sel = document.getElementById('pokemonSelect');
-    if (sel) sel.value = savedPokemon;
-  }
-  checkEbayCallback();
-  // Always run analysis on load
+  document.getElementById('dbCount').textContent = CARDS.length;
   try {
     setTimeout(runAnalysis, 300);
   } catch(e) {
     console.error('Init error:', e);
   }
 });
+
 </script>
 </body>
 </html>

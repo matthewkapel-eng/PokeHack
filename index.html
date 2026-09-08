@@ -4407,6 +4407,7 @@ async function acLoadMeta() {
   try {
     acSets = await fetch('catalog/sets.json').then(r => r.json());
     if (!window.acPops) { try { window.acPops = (await fetch('pops.json').then(r => r.json())).cards; } catch(e) { window.acPops = {}; } }
+    if (!window.clExtra) { try { window.clExtra = await fetch('cl-extra.json').then(r => r.json()); } catch(e) { window.clExtra = {}; } }
     const total = acSets.reduce((a, s) => a + s.t, 0);
     document.getElementById('acMeta').textContent = total.toLocaleString() + ' cards · ' + acSets.length + ' sets · prices: TCGplayer market (snapshot)';
     document.getElementById('allCountSub').textContent = total.toLocaleString() + ' cards';
@@ -4549,6 +4550,9 @@ function acOpenCard(sid, cardId) {
         <h3>${c.n}</h3>
         <div class="ac-dset">${setMeta.n} · #${c.num} · ${c.r || '—'}</div>
         ${window.acPops && acPops[c.id] ? `<div style="font-size:11px;color:var(--gold);margin:-8px 0 12px;">PSA 10 pop: <strong>${acPops[c.id].p}</strong> · ${acPops[c.id].t.toLocaleString()} total graded${acPops[c.id].u ? ` · <a href="${acPops[c.id].u}" target="_blank" style="color:var(--gold);">source</a>` : ''}</div>` : ''}
+        ${(() => { const cl = window.clExtra && clExtra['cid:' + c.id]; if (!cl || (cl.med10 == null && cl.med9 == null)) return '';
+          const rows = (cl.r10 || []).slice(0, 4).map(r => `<a class="sale-row-link" style="cursor:default;"><span class="sale-date">${r.d}</span><span class="sale-plat">${r.pf.split(' - ')[0]}</span><span class="sale-price">$${r.p.toLocaleString()}</span></a>`).join('');
+          return `<div style="margin:-4px 0 12px;font-size:11px;"><span style="color:var(--mint);font-weight:700;">Auctions 90d (multi-house)</span>${cl.med10 != null ? ` · PSA 10 med <strong>$${cl.med10.toLocaleString()}</strong> (${cl.n10})` : ''}${cl.med9 != null ? ` · PSA 9 med <strong>$${cl.med9.toLocaleString()}</strong> (${cl.n9})` : ''}<div style="margin-top:4px;">${rows}</div></div>`; })()}
         ${priceRows ? `<table class="ac-ptable"><tr><th>Finish</th><th>Low</th><th>Market</th><th>High</th></tr>${priceRows}</table>` : '<div style="color:var(--muted);font-size:11px;margin-bottom:14px;">No TCGplayer price data for this card.</div>'}
         <div style="margin-bottom:14px;">
           <button class="run-btn" style="padding:8px 14px;font-size:11px;" onclick="acLiveSold()" id="acLiveBtn">&#9889; Load live eBay sold data</button>
@@ -4606,6 +4610,7 @@ async function lpLoad() {
   try {
     const data = await fetch('lowpop.json').then(r => r.json());
     lpRows = data.rows;
+    if (!window.clExtra) { try { window.clExtra = await fetch('cl-extra.json').then(r => r.json()); } catch(e) { window.clExtra = {}; } }
     const bySet = {};
     lpRows.forEach(r => { (bySet[r.setId] = bySet[r.setId] || []).push(r); });
     const setOrder = {};
@@ -4624,6 +4629,7 @@ async function lpLoad() {
             <div class="ac-sub">#${c.num} · ${c.r || '—'}</div>
             <div class="ac-sub" style="color:var(--gold);font-weight:700;">PSA 10 pop: ${c.pop}${c.total ? ' / ' + c.total.toLocaleString() + ' graded' : ''}</div>
             <div class="ac-price">${c.price != null ? '$' + c.price.toLocaleString() : ''}</div>
+            ${(() => { const cl = window.clExtra && clExtra['cid:' + c.cid]; return cl && cl.med10 != null ? `<div class="ac-sub" style="color:var(--mint);">CL 90d PSA10: $${cl.med10.toLocaleString()} (${cl.n10} sales)</div>` : ''; })()}
           </div>`).join('')}</div>
       </div>`;
     }).join('');

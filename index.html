@@ -491,9 +491,15 @@ canvas.spark{width:100%;height:68px;display:block;}
           <div class="chip-row" id="eraChips" style="margin-top:5px">
             <div class="chip active" onclick="toggleChip(this,'era')" data-val="all">All</div>
             <div class="chip" onclick="toggleChip(this,'era')" data-val="wotc">WOTC</div>
-            <div class="chip" onclick="toggleChip(this,'era')" data-val="ex">EX Era</div>
+            <div class="chip" onclick="toggleChip(this,'era')" data-val="ex">EX</div>
             <div class="chip" onclick="toggleChip(this,'era')" data-val="dp">DP/Plat</div>
-            <div class="chip" onclick="toggleChip(this,'era')" data-val="modern">Modern</div>
+            <div class="chip" onclick="toggleChip(this,'era')" data-val="hgss">HGSS</div>
+            <div class="chip" onclick="toggleChip(this,'era')" data-val="bw">B&amp;W</div>
+            <div class="chip" onclick="toggleChip(this,'era')" data-val="xy">XY</div>
+            <div class="chip" onclick="toggleChip(this,'era')" data-val="sm">S&amp;M</div>
+            <div class="chip" onclick="toggleChip(this,'era')" data-val="swsh">S&amp;S</div>
+            <div class="chip" onclick="toggleChip(this,'era')" data-val="sv">S&amp;V</div>
+            <div class="chip" onclick="toggleChip(this,'era')" data-val="me">Mega</div>
           </div>
         </div>
         <div style="margin-top:12px">
@@ -593,7 +599,20 @@ canvas.spark{width:100%;height:68px;display:block;}
     </div>
 
     <div id="viewLowPop" style="display:none">
-      <div class="ac-meta" id="lpMeta" style="margin-bottom:12px;">Loading low-pop screen...</div>
+      <div class="ac-meta" id="lpMeta" style="margin-bottom:8px;">Loading low-pop screen...</div>
+      <div class="chip-row" id="lpEraChips" style="margin-bottom:12px;">
+        <div class="chip active" onclick="lpSetEra(this,'all')">All</div>
+        <div class="chip" onclick="lpSetEra(this,'wotc')">WOTC</div>
+        <div class="chip" onclick="lpSetEra(this,'ex')">EX</div>
+        <div class="chip" onclick="lpSetEra(this,'dp')">DP/Plat</div>
+        <div class="chip" onclick="lpSetEra(this,'hgss')">HGSS</div>
+        <div class="chip" onclick="lpSetEra(this,'bw')">B&amp;W</div>
+        <div class="chip" onclick="lpSetEra(this,'xy')">XY</div>
+        <div class="chip" onclick="lpSetEra(this,'sm')">S&amp;M</div>
+        <div class="chip" onclick="lpSetEra(this,'swsh')">S&amp;S</div>
+        <div class="chip" onclick="lpSetEra(this,'sv')">S&amp;V</div>
+        <div class="chip" onclick="lpSetEra(this,'me')">Mega</div>
+      </div>
       <div id="lpBody"></div>
     </div>
 
@@ -4044,12 +4063,40 @@ function cardPriceForFilter(c) {
   return c.psa10Price != null ? c.psa10Price : c.marketPrice;
 }
 
+
+// ─── Fine-grained era mapping (full era list, not buckets) ───
+const ERA_KEYS = ['wotc','ex','dp','hgss','bw','xy','sm','swsh','sv','me'];
+function eraOfCard(c) {
+  const s = ((c.set || '') + ' ' + (c.name || '')).toLowerCase();
+  const y = c.year || 0;
+  if (/mega evolution|mega brave|mega dream|ascended heroes/.test(s)) return 'me';
+  if (/scarlet|violet|paldea|obsidian flames|paradox rift|temporal forces|twilight masquerade|shrouded fable|stellar crown|surging sparks|prismatic|151|destined rivals|black bolt|white flare/.test(s)) return 'sv';
+  if (/sword|shield|vivid voltage|champion|evolving skies|fusion strike|lost origin|silver tempest|pok[eé]mon go|crown zenith|brilliant stars|astral radiance|battle styles|chilling reign|celebrations|darkness ablaze|rebel clash|shining fates/.test(s)) return 'swsh';
+  if (/\bsm\b|sun & moon|sun and moon|team up|hidden fates|shining legends|burning shadows|guardians rising|ultra prism|forbidden light|celestial storm|lost thunder|unbroken bonds|unified minds|cosmic eclipse|crimson invasion/.test(s)) return 'sm';
+  if (/\bxy\b|flashfire|phantom forces|ancient origins|fates collide|evolutions|primal clash|roaring skies|breakthrough|breakpoint|steam siege|generations|double crisis/.test(s)) return 'xy';
+  if (/\bbw\b|black & white|black and white|legendary treasures|dark explorers|plasma|boundaries crossed|next destinies|dragons exalted|emerging powers|noble victories/.test(s)) return 'bw';
+  if (/heartgold|soulsilver|call of legends|hgss/.test(s)) return 'hgss';
+  if (/diamond|pearl|platinum|rumble|pop series [6-9]/.test(s)) return 'dp';
+  if (/\bex\b|deoxys|unseen forces|emerald|delta species|crystal guardians|legend maker|holon phantoms|power keepers|firered|leafgreen|team rocket returns|pcg|nintendo black star|pop series [1-5]/.test(s)) return 'ex';
+  if (/base|jungle|fossil|gym|neo|legendary collection|expedition|aquapolis|skyridge|southern islands|wotc|corocoro|topsun|best of game|movie promo/.test(s)) return 'wotc';
+  if (y >= 2026) return 'me';
+  if (y >= 2023) return 'sv';
+  if (y >= 2019 && y <= 2022) return 'swsh';
+  if (y >= 2016 && y <= 2019) return 'sm';
+  if (y >= 2013 && y <= 2016) return 'xy';
+  if (y >= 2011 && y <= 2013) return 'bw';
+  if (y >= 2010 && y <= 2011) return 'hgss';
+  if (y >= 2007 && y <= 2010) return 'dp';
+  if (y >= 2003 && y <= 2007) return 'ex';
+  return 'wotc';
+}
+
 function filterCards() {
   const q = document.getElementById('cardSearch').value.toLowerCase();
   const maxPop = parseInt(document.getElementById('popRange').value);
   return CARDS.filter(c => {
     if (activeFilters.pokemon !== 'all' && c.id < 1000 && c.pokemon !== activeFilters.pokemon) return false;
-    if (activeFilters.era !== 'all' && c.era !== activeFilters.era) return false;
+    if (activeFilters.era !== 'all' && eraOfCard(c) !== activeFilters.era) return false;
     if (activeFilters.cat !== 'all' && c.cat !== activeFilters.cat) return false;
     if (c.pop10 != null && c.pop10 > maxPop) return false;
     const priceMax = getPriceMax();
@@ -4110,6 +4157,17 @@ async function runAnalysis() {
   renderCards();
 }
 
+
+function wlImage(card) {
+  if (card.tcgImage) return card.tcgImage;
+  const st = wlStats && wlStats[card.id];
+  if (st && st.cid) {
+    const i = st.cid.lastIndexOf('-');
+    if (i > 0) return 'https://images.pokemontcg.io/' + st.cid.slice(0, i) + '/' + st.cid.slice(i + 1) + '.png';
+  }
+  return null;
+}
+
 // ─── Render Cards ─────────────────────────────────────────────────────────────
 function renderCards() {
   const filtered = filterCards();
@@ -4148,7 +4206,7 @@ function renderCards() {
     const tagHtml = cardTags(card).map(t=>`<div class="tag tag-${t.replace(' ','-')}">${t.replace('-',' ')}</div>`).join('');
     const trend = card.trend90d;
     return `<div class="card" id="card-${card.id}" style="--score-color:${sc}" onclick="toggleCard(${card.id})">
-      ${card.tcgImage ? `<img src="${card.tcgImage}" style="float:right;height:60px;border-radius:4px;margin:-4px -4px 4px 8px;opacity:0.9;" onerror="this.style.display='none'">` : ""}
+      ${wlImage(card) ? `<img loading="lazy" src="${wlImage(card)}" style="float:right;height:88px;border-radius:5px;margin:-4px -4px 4px 8px;box-shadow:0 2px 8px rgba(0,0,0,0.4);" onerror="this.style.display='none'">` : ""}
       <div class="card-top">
         <div>
           <div class="card-name">${card.name}</div>
@@ -4167,6 +4225,7 @@ function renderCards() {
       </div>
       <div class="tags">${tagHtml}</div>
       <div class="detail" id="detail-${card.id}">
+        ${wlImage(card) ? `<div style="text-align:center;margin-bottom:10px;"><img loading="lazy" src="${wlImage(card).replace('.png','_hires.png')}" style="max-height:220px;border-radius:8px;" onerror="this.onerror=null;this.src='${wlImage(card)}';" alt=""></div>` : ""}
         <div class="dgrid">
           <div class="ditem"><div class="dk">Gem Pop (PSA 10 equiv)</div><div class="dv">${card.pop10!=null?card.pop10.toLocaleString():'no data'}</div></div>
           <div class="ditem"><div class="dk">Total graded</div><div class="dv">${card.popTotal!=null?card.popTotal.toLocaleString():'—'}</div></div>
@@ -4635,17 +4694,62 @@ async function acLiveSold() {
 
 // ─── Low Pop screen: PSA 10 pop < 80, grouped by set ───
 let lpRows = null;
+let lpSets = [];
+let lpEra = 'all';
+function lpEraOfSet(s) {
+  const series = (s.s || '').toLowerCase();
+  if (series.includes('mega')) return 'me';
+  if (series.includes('scarlet')) return 'sv';
+  if (series.includes('sword')) return 'swsh';
+  if (series.includes('sun')) return 'sm';
+  if (series.includes('xy')) return 'xy';
+  if (series.includes('black')) return 'bw';
+  if (series.includes('heartgold')) return 'hgss';
+  if (series.includes('diamond') || series.includes('platinum')) return 'dp';
+  if (series.includes('ex') || series === 'np') return 'ex';
+  if (series === 'pop') { const n = parseInt((s.id || '').replace(/[^0-9]/g, '')) || 0; return n >= 6 ? 'dp' : 'ex'; }
+  if (['base','gym','neo','e-card'].includes(series)) return 'wotc';
+  const yr = parseInt((s.d || '').slice(0, 4)) || 0;
+  if (yr >= 2026) return 'me'; if (yr >= 2023) return 'sv';
+  if (yr >= 2019) return 'swsh'; if (yr >= 2016) return 'sm';
+  if (yr >= 2013) return 'xy'; if (yr >= 2011) return 'bw';
+  if (yr >= 2010) return 'hgss'; if (yr >= 2007) return 'dp';
+  if (yr >= 2003) return 'ex';
+  return 'wotc';
+}
+function lpSetEra(el, era) {
+  document.querySelectorAll('#lpEraChips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  lpEra = era;
+  lpRender();
+}
 async function lpLoad() {
   try {
     const data = await fetch('lowpop.json').then(r => r.json());
     lpRows = data.rows;
+    lpSets = data.sets;
     if (!window.clExtra) { try { window.clExtra = await fetch('cl-extra.json').then(r => r.json()); } catch(e) { window.clExtra = {}; } }
     const bySet = {};
     lpRows.forEach(r => { (bySet[r.setId] = bySet[r.setId] || []).push(r); });
     const setOrder = {};
     data.sets.forEach((s, i) => setOrder[s.id] = i);
+    lpRender();
+  } catch(e) {
+    document.getElementById('lpMeta').textContent = 'Low-pop data failed to load: ' + e.message;
+  }
+}
+
+function lpRender() {
+  try {
+    const data = { rows: lpRows, sets: lpSets };
+    const eraSets = new Set(lpSets.filter(s => lpEra === 'all' || lpEraOfSet(s) === lpEra).map(s => s.id));
+    const rows = lpEra === 'all' ? lpRows : lpRows.filter(r => eraSets.has(r.setId));
+    const bySet = {};
+    rows.forEach(r => { (bySet[r.setId] = bySet[r.setId] || []).push(r); });
+    const setOrder = {};
+    lpSets.forEach((s, i) => setOrder[s.id] = i);
     const setIds = Object.keys(bySet).sort((a, b) => (setOrder[a] ?? 999) - (setOrder[b] ?? 999));
-    document.getElementById('lpMeta').textContent = lpRows.length + ' cards with PSA 10 population under 80 · real PSA pops (GemRate, Sep 7 2026) · holo-and-above rarities · prices: TCGplayer market';
+    document.getElementById('lpMeta').textContent = rows.length + ' cards with PSA 10 population under 80' + (lpEra !== 'all' ? ' · era filter on' : '') + ' · real PSA pops (GemRate, Sep 7 2026) · holo-and-above rarities · prices: TCGplayer market';
     document.getElementById('lpBody').innerHTML = setIds.map(sid => {
       const cards = bySet[sid].sort((a, b) => a.pop - b.pop);
       const meta = data.sets.find(s => s.id === sid) || { n: sid, s: '' };
@@ -4663,7 +4767,7 @@ async function lpLoad() {
       </div>`;
     }).join('');
   } catch(e) {
-    document.getElementById('lpMeta').textContent = 'Low-pop data failed to load: ' + e.message;
+    document.getElementById('lpMeta').textContent = 'Low-pop render failed: ' + e.message;
   }
 }
 

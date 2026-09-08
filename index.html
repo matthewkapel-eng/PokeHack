@@ -260,6 +260,54 @@ canvas.spark{width:100%;height:68px;display:block;}
   .toolbar{margin-bottom:14px;}
   .sort-btn{font-size:10px;padding:4px 10px;}
 
+
+/* ─── View tabs + All Cards ─── */
+.vtabs { display:flex; gap:8px; margin-bottom:14px; }
+.vtab { background:var(--bg2); border:1px solid var(--border); color:var(--muted); font-family:inherit; font-size:12px; font-weight:600; padding:9px 16px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px; }
+.vtab.active { color:var(--gold); border-color:var(--gold); background:var(--bg3); }
+.vtab-sub { font-size:9px; font-weight:400; color:var(--muted); font-family:'DM Mono',monospace; }
+.vtab.active .vtab-sub { color:var(--gold); opacity:.7; }
+.ac-head { margin-bottom:14px; }
+.ac-meta { font-size:10px; color:var(--muted); font-family:'DM Mono',monospace; margin-top:6px; }
+.ac-layout { display:grid; grid-template-columns:230px 1fr; gap:16px; align-items:start; }
+.ac-sets { max-height:calc(100vh - 220px); overflow-y:auto; background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:10px; }
+.ac-series { margin-bottom:6px; }
+.ac-series-btn { width:100%; text-align:left; background:none; border:none; color:var(--text); font-family:inherit; font-size:11px; font-weight:600; padding:7px 8px; cursor:pointer; border-radius:6px; display:flex; justify-content:space-between; }
+.ac-series-btn:hover { background:var(--bg3); }
+.ac-set-list { display:none; padding-left:8px; }
+.ac-set-list.open { display:block; }
+.ac-set-btn { width:100%; text-align:left; background:none; border:none; color:var(--muted); font-family:inherit; font-size:10.5px; padding:5px 8px; cursor:pointer; border-radius:5px; display:flex; justify-content:space-between; gap:6px; }
+.ac-set-btn:hover { background:var(--bg3); color:var(--text); }
+.ac-set-btn.active { color:var(--gold); background:var(--bg3); }
+.ac-set-btn .ac-set-total { font-family:'DM Mono',monospace; font-size:9px; opacity:.6; }
+.ac-results { margin-bottom:12px; }
+.ac-hit { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:7px 10px; background:var(--bg2); border:1px solid var(--border); border-radius:7px; margin-bottom:5px; cursor:pointer; font-size:11px; }
+.ac-hit:hover { border-color:var(--gold); }
+.ac-hit .ac-hit-set { color:var(--muted); font-size:9.5px; font-family:'DM Mono',monospace; white-space:nowrap; }
+.ac-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:10px; }
+.ac-card { background:var(--bg2); border:1px solid var(--border); border-radius:9px; padding:8px; cursor:pointer; text-align:center; transition:transform .12s, border-color .12s; }
+.ac-card:hover { transform:translateY(-2px); border-color:var(--gold); }
+.ac-card img { width:100%; border-radius:5px; background:var(--dim); aspect-ratio:63/88; object-fit:cover; }
+.ac-card .ac-name { font-size:10px; font-weight:600; color:var(--text); margin-top:6px; line-height:1.25; min-height:24px; }
+.ac-card .ac-sub { font-size:8.5px; color:var(--muted); font-family:'DM Mono',monospace; margin-top:2px; }
+.ac-card .ac-price { font-size:10px; color:var(--mint); font-family:'DM Mono',monospace; margin-top:3px; }
+.ac-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.78); z-index:100; align-items:center; justify-content:center; padding:20px; }
+.ac-modal.open { display:flex; }
+.ac-modal-box { background:var(--bg2); border:1px solid var(--border2); border-radius:14px; max-width:720px; width:100%; max-height:90vh; overflow-y:auto; padding:22px; }
+.ac-detail { display:grid; grid-template-columns:240px 1fr; gap:20px; }
+.ac-detail img { width:100%; border-radius:8px; }
+.ac-detail h3 { margin:0 0 2px; font-size:17px; color:var(--text); }
+.ac-detail .ac-dset { font-size:11px; color:var(--muted); margin-bottom:14px; font-family:'DM Mono',monospace; }
+.ac-ptable { width:100%; border-collapse:collapse; margin-bottom:14px; }
+.ac-ptable td, .ac-ptable th { font-size:10.5px; padding:6px 8px; border-bottom:1px solid var(--border); text-align:right; font-family:'DM Mono',monospace; color:var(--text); }
+.ac-ptable th { color:var(--muted); font-size:9px; text-transform:uppercase; letter-spacing:.5px; }
+.ac-ptable td:first-child, .ac-ptable th:first-child { text-align:left; }
+.ac-links { display:flex; flex-wrap:wrap; gap:8px; }
+.ac-links a { font-size:10px; color:var(--gold); background:var(--bg3); border:1px solid var(--border2); padding:6px 10px; border-radius:6px; text-decoration:none; }
+.ac-links a:hover { border-color:var(--gold); }
+.ac-close { float:right; background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer; }
+@media (max-width:860px) { .ac-layout { grid-template-columns:1fr; } .ac-sets { max-height:260px; } .ac-detail { grid-template-columns:1fr; } }
+
 </style>
 </head>
 <body>
@@ -496,6 +544,12 @@ canvas.spark{width:100%;height:68px;display:block;}
 
   <main class="main">
 
+    <div class="vtabs">
+      <button class="vtab active" id="tabWatchlist" onclick="switchView('watchlist')">&#9889; Watchlist <span class="vtab-sub">tracked cards</span></button>
+      <button class="vtab" id="tabAll" onclick="switchView('all')">&#128451; All Cards <span class="vtab-sub" id="allCountSub">full catalog</span></button>
+    </div>
+
+    <div id="viewWatchlist">
     <div class="notice">
       <span>&#9889;</span>
       <span>Real data only: gem-mint pops from <a href="https://www.gemrate.com" target="_blank">GemRate</a> (snapshot Sep 7, 2026), prices &amp; sales from real eBay sold listings (last ~90 days), raw TCG prices from TCGplayer. Verify any card: <a href="https://www.psacard.com/pop" target="_blank">PSA Pop Report</a> (login) · <a href="https://www.ebay.com/sh/research" target="_blank">eBay Sold</a>.</span>
@@ -521,6 +575,25 @@ canvas.spark{width:100%;height:68px;display:block;}
     </div>
 
     <div class="cards-grid" id="cardsGrid"></div>
+    </div><!-- /viewWatchlist -->
+
+    <div id="viewAll" style="display:none">
+      <div class="ac-head">
+        <input class="search-input" id="acSearch" placeholder="Search every Pokemon card ever printed..." oninput="acOnSearch(this.value)">
+        <div class="ac-meta" id="acMeta">Loading catalog...</div>
+      </div>
+      <div class="ac-layout">
+        <div class="ac-sets" id="acSets"></div>
+        <div>
+          <div class="ac-results" id="acResults"></div>
+          <div class="ac-grid" id="acGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ac-modal" id="acModal" onclick="if(event.target===this)acClose()">
+      <div class="ac-modal-box" id="acModalBox"></div>
+    </div>
 
   </main>
 </div>
@@ -2541,6 +2614,213 @@ window.addEventListener('DOMContentLoaded', () => {
     console.error('Init error:', e);
   }
 });
+
+
+// ─── All Cards: full catalog (Pokemon TCG API snapshot, prices = TCGplayer) ───
+let acSets = null, acIndex = null, acSetCache = {}, acOpenSeries = new Set();
+
+function switchView(v) {
+  document.getElementById('viewWatchlist').style.display = v === 'watchlist' ? '' : 'none';
+  document.getElementById('viewAll').style.display = v === 'all' ? '' : 'none';
+  document.getElementById('tabWatchlist').classList.toggle('active', v === 'watchlist');
+  document.getElementById('tabAll').classList.toggle('active', v === 'all');
+  if (v === 'all' && !acSets) acLoadMeta();
+}
+
+async function acLoadMeta() {
+  try {
+    acSets = await fetch('catalog/sets.json').then(r => r.json());
+    const total = acSets.reduce((a, s) => a + s.t, 0);
+    document.getElementById('acMeta').textContent = total.toLocaleString() + ' cards · ' + acSets.length + ' sets · prices: TCGplayer market (snapshot)';
+    document.getElementById('allCountSub').textContent = total.toLocaleString() + ' cards';
+    acRenderSets();
+  } catch(e) {
+    document.getElementById('acMeta').textContent = 'Catalog failed to load: ' + e.message;
+  }
+}
+
+function acRenderSets() {
+  const bySeries = {};
+  acSets.forEach(s => { (bySeries[s.s] = bySeries[s.s] || []).push(s); });
+  const el = document.getElementById('acSets');
+  el.innerHTML = Object.entries(bySeries).map(([series, sets]) => `
+    <div class="ac-series">
+      <button class="ac-series-btn" onclick="acToggleSeries(this)">${series} <span>&#8250;</span></button>
+      <div class="ac-set-list${acOpenSeries.has(series) ? ' open' : ''}" data-series="${series}">
+        ${sets.map(s => `<button class="ac-set-btn" data-set="${s.id}" onclick="acOpenSet('${s.id}', this)">${s.n} <span class="ac-set-total">${s.t}</span></button>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function acToggleSeries(btn) {
+  const list = btn.nextElementSibling;
+  list.classList.toggle('open');
+  const series = list.dataset.series;
+  if (list.classList.contains('open')) acOpenSeries.add(series); else acOpenSeries.delete(series);
+}
+
+async function acOpenSet(sid, btn) {
+  document.querySelectorAll('.ac-set-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('acResults').innerHTML = '';
+  document.getElementById('acGrid').innerHTML = '<div style="color:var(--muted);font-size:11px;padding:20px;">Loading set...</div>';
+  if (!acSetCache[sid]) acSetCache[sid] = await fetch('catalog/' + sid + '.json').then(r => r.json());
+  acRenderGrid(sid, acSetCache[sid]);
+}
+
+function acBestPrice(p) {
+  if (!p) return null;
+  const order = ['1stEditionHolofoil','holofoil','normal','reverseHolofoil','1stEditionNormal','unlimitedHolofoil','unlimited'];
+  for (const k of order) if (p[k] && p[k].market != null) return { kind: k, v: p[k] };
+  for (const k of Object.keys(p)) if (p[k] && p[k].market != null) return { kind: k, v: p[k] };
+  return null;
+}
+
+let acSortMode = 'num';
+function acSetSort(mode, btn) {
+  acSortMode = mode;
+  document.querySelectorAll('.ac-sort-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const sid = document.querySelector('.ac-set-btn.active');
+  if (sid) acRenderGrid(sid.dataset.set, acSetCache[sid.dataset.set]);
+}
+
+function acRenderGrid(sid, cards) {
+  const setMeta = acSets.find(s => s.id === sid);
+  if (acSortMode === 'price') {
+    cards = [...cards].sort((a, b) => {
+      const pa = acBestPrice(a.p), pb = acBestPrice(b.p);
+      return (pb ? pb.v.market : 0) - (pa ? pa.v.market : 0);
+    });
+  }
+  document.getElementById('acGrid').innerHTML = cards.map(c => {
+    const bp = acBestPrice(c.p);
+    return `<div class="ac-card" onclick="acOpenCard('${sid}','${c.id}')">
+      <img loading="lazy" src="${c.img}" alt="${c.n.replace(/"/g,'&quot;')}">
+      <div class="ac-name">${c.n}</div>
+      <div class="ac-sub">#${c.num} · ${c.r || '—'}</div>
+      <div class="ac-price">${bp ? '$' + bp.v.market.toLocaleString() : 'no price'}</div>
+    </div>`;
+  }).join('');
+  if (setMeta) document.getElementById('acResults').innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <span style="font-size:11px;color:var(--muted);">${setMeta.n} · ${setMeta.s} · ${cards.length} cards</span>
+    <span class="sort-row">
+      <button class="sort-btn ac-sort-btn${acSortMode==='num'?' active':''}" onclick="acSetSort('num',this)">#</button>
+      <button class="sort-btn ac-sort-btn${acSortMode==='price'?' active':''}" onclick="acSetSort('price',this)">$ high-low</button>
+    </span></div>`;
+}
+
+let acSearchTimer = null;
+function acOnSearch(q) {
+  clearTimeout(acSearchTimer);
+  q = q.trim();
+  if (q.length < 2) { document.getElementById('acResults').innerHTML = ''; return; }
+  acSearchTimer = setTimeout(() => acSearch(q), 250);
+}
+
+async function acSearch(q) {
+  if (!acIndex) {
+    document.getElementById('acResults').innerHTML = '<div style="color:var(--muted);font-size:11px;">Loading search index...</div>';
+    acIndex = await fetch('catalog/index.json').then(r => r.json());
+  }
+  const needle = q.toLowerCase();
+  const setName = {};
+  acSets.forEach(s => setName[s.id] = s.n);
+  const hits = [];
+  for (const [n, sid, num, id] of acIndex) {
+    if (n.toLowerCase().includes(needle)) {
+      hits.push({ n, sid, num, id });
+      if (hits.length >= 40) break;
+    }
+  }
+  document.getElementById('acResults').innerHTML = hits.length === 0
+    ? '<div style="color:var(--muted);font-size:11px;">No matches.</div>'
+    : hits.map(h => `<div class="ac-hit" onclick="acGoToCard('${h.sid}','${h.id}')">
+        <span>${h.n} <span style="color:var(--muted)">#${h.num}</span></span>
+        <span class="ac-hit-set">${setName[h.sid] || h.sid}</span>
+      </div>`).join('');
+}
+
+async function acGoToCard(sid, cardId) {
+  if (!acSetCache[sid]) acSetCache[sid] = await fetch('catalog/' + sid + '.json').then(r => r.json());
+  const setMeta = acSets.find(s => s.id === sid);
+  if (setMeta && !acOpenSeries.has(setMeta.s)) { acOpenSeries.add(setMeta.s); acRenderSets(); }
+  const btn = document.querySelector(`.ac-set-btn[data-set="${sid}"]`);
+  document.querySelectorAll('.ac-set-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  acRenderGrid(sid, acSetCache[sid]);
+  acOpenCard(sid, cardId);
+}
+
+let acCurrent = null;
+function acOpenCard(sid, cardId) {
+  const cards = acSetCache[sid] || [];
+  const c = cards.find(x => x.id === cardId);
+  if (!c) return;
+  acCurrent = { sid, cardId };
+  const setMeta = acSets.find(s => s.id === sid) || { n: sid };
+  const large = c.img.replace('/small.png', '/large.png');
+  const priceRows = Object.entries(c.p || {}).map(([k, v]) =>
+    `<tr><td>${k.replace(/([A-Z])/g, ' $1')}</td><td>${v.low != null ? '$'+v.low.toLocaleString() : '—'}</td><td>${v.market != null ? '$'+v.market.toLocaleString() : '—'}</td><td>${v.high != null ? '$'+v.high.toLocaleString() : '—'}</td></tr>`).join('');
+  const q = encodeURIComponent(c.n + ' ' + setMeta.n);
+  document.getElementById('acModalBox').innerHTML = `
+    <button class="ac-close" onclick="acClose()">&times;</button>
+    <div class="ac-detail">
+      <img src="${large}" alt="${c.n.replace(/"/g,'&quot;')}">
+      <div>
+        <h3>${c.n}</h3>
+        <div class="ac-dset">${setMeta.n} · #${c.num} · ${c.r || '—'}</div>
+        ${priceRows ? `<table class="ac-ptable"><tr><th>Finish</th><th>Low</th><th>Market</th><th>High</th></tr>${priceRows}</table>` : '<div style="color:var(--muted);font-size:11px;margin-bottom:14px;">No TCGplayer price data for this card.</div>'}
+        <div style="margin-bottom:14px;">
+          <button class="run-btn" style="padding:8px 14px;font-size:11px;" onclick="acLiveSold()" id="acLiveBtn">&#9889; Load live eBay sold data</button>
+          <div id="acLive" style="margin-top:10px;"></div>
+        </div>
+        <div class="ac-links">
+          <a href="https://www.ebay.com/sch/i.html?_nkw=${q}+PSA+10&LH_Sold=1&LH_Complete=1" target="_blank">eBay sold · PSA 10</a>
+          <a href="https://www.ebay.com/sch/i.html?_nkw=${q}+PSA+9&LH_Sold=1&LH_Complete=1" target="_blank">eBay sold · PSA 9</a>
+          <a href="https://www.ebay.com/sch/i.html?_nkw=${q}&LH_Sold=1&LH_Complete=1" target="_blank">eBay sold · raw</a>
+          <a href="https://www.tcgplayer.com/search/pokemon/product?q=${encodeURIComponent(c.n)}" target="_blank">TCGplayer</a>
+          <a href="https://www.psacard.com/pop" target="_blank">PSA Pop Report</a>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('acModal').classList.add('open');
+}
+
+
+async function acLiveSold() {
+  if (!acCurrent) return;
+  const { sid, cardId } = acCurrent;
+  const c = (acSetCache[sid] || []).find(x => x.id === cardId);
+  const setMeta = acSets.find(s => s.id === sid) || { n: '' };
+  const el = document.getElementById('acLive');
+  const btn = document.getElementById('acLiveBtn');
+  if (!c || !el) return;
+  btn.disabled = true;
+  el.innerHTML = '<div style="color:var(--muted);font-size:10px;">Fetching real sold listings...</div>';
+  const base = c.n + ' ' + setMeta.n;
+  const [p10, p9] = await Promise.all([
+    searchEbaySold(base + ' PSA 10', 30),
+    searchEbaySold(base + ' PSA 9', 20)
+  ]);
+  let html = '';
+  for (const [label, d] of [['PSA 10', p10], ['PSA 9', p9]]) {
+    const items = d && d.items ? d.items : [];
+    const st = d && d.stats ? d.stats : {};
+    if (!items.length) { html += `<div style="font-size:10px;color:var(--muted);margin:6px 0;">${label}: no recent sold listings found.</div>`; continue; }
+    const rows = items.slice(0, 4).map(it => {
+      const date = it.soldDate ? it.soldDate.substring(0, 10) : '—';
+      const price = it.price != null ? '$' + parseFloat(it.price).toLocaleString() : '—';
+      return `<a href="${it.itemUrl || '#'}" target="_blank" class="sale-row-link">
+        <span class="sale-date">${date}</span><span class="sale-plat">eBay</span><span class="sale-price">${price}</span></a>`;
+    }).join('');
+    html += `<div style="font-size:9px;color:var(--mint);margin:8px 0 4px;">● ${label} · ${st.count || items.length} sold (90d)${st.median != null ? ' · median $' + st.median.toLocaleString() : ''}</div>${rows}`;
+  }
+  el.innerHTML = html;
+  btn.disabled = false;
+}
+
+function acClose() { document.getElementById('acModal').classList.remove('open'); }
 
 </script>
 </body>

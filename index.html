@@ -4061,6 +4061,34 @@ function filterCards() {
 }
 
 // ─── Run Analysis ─────────────────────────────────────────────────────────────
+
+// ─── Static watchlist price snapshot (Card Ladder multi-house + TCGplayer) ───
+// Loads instantly so tiles never open empty; live eBay fetch upgrades values after.
+let wlStats = null;
+async function preloadWatchlistStats() {
+  if (wlStats) return;
+  try { wlStats = await fetch('watchlist-stats.json').then(r => r.json()); }
+  catch(e) { wlStats = {}; return; }
+  CARDS.forEach(c => {
+    const st = wlStats[c.id];
+    if (!st) return;
+    if (c.psa10Price == null) {
+      if (st.psa10 && st.psa10.med90 != null) { c.psa10Price = st.psa10.med90; c.psa10Basis = 'Card Ladder 90d median'; }
+      else if (st.psa10 && st.psa10.last) { c.psa10Price = st.psa10.last.p; c.psa10Basis = 'last recorded sale · ' + st.psa10.last.d + (st.psa10.last.pf ? ' · ' + st.psa10.last.pf : ''); }
+    }
+    if (c.psa9Price == null) {
+      if (st.psa9 && st.psa9.med90 != null) c.psa9Price = st.psa9.med90;
+      else if (st.psa9 && st.psa9.last) c.psa9Price = st.psa9.last.p;
+    }
+    if (c.marketPrice == null && st.raw && st.raw.tcg != null) c.marketPrice = st.raw.tcg;
+    if (c.soldCount == null) {
+      const n = ((st.psa10 && st.psa10.n90) || 0) + ((st.psa9 && st.psa9.n90) || 0);
+      if (n > 0) c.soldCount = n;
+    }
+    if (c.trend90d == null && st.trend90d != null) c.trend90d = st.trend90d;
+  });
+}
+
 async function runAnalysis() {
   const btn = document.getElementById('runBtn');
   btn.disabled = true; btn.textContent = '⚡ Analyzing...';
@@ -4068,6 +4096,8 @@ async function runAnalysis() {
   grid.innerHTML = Array(6).fill(`<div class="skeleton-card"><div class="skel" style="height:16px;width:55%"></div><div class="skel" style="height:10px;width:35%;margin-top:3px"></div><div class="skel" style="height:46px;margin-top:12px;border-radius:6px"></div><div class="skel" style="height:28px;margin-top:8px;border-radius:5px"></div></div>`).join('');
 
   let status = '';
+  analysisRun = true;
+  try { await preloadWatchlistStats(); renderCards(); } catch(e) {}
   try {
     const r = await prefetchMarketData();
     if (r.total > 0) status = `eBay sold data: ${r.ok}/${r.total} cards · pop snapshot ${POP_SNAPSHOT_DATE}`;
@@ -4077,7 +4107,6 @@ async function runAnalysis() {
   }
   ebayDataStatus = status;
   btn.disabled = false; btn.textContent = '⚡ Run Analysis';
-  analysisRun = true;
   renderCards();
 }
 
@@ -4129,7 +4158,7 @@ function renderCards() {
       </div>
       <div class="metrics">
         <div class="metric"><div class="metric-lbl">Gem Pop</div><div class="metric-val ${card.pop10!=null&&card.pop10<=50?'v-green':card.pop10!=null&&card.pop10<=300?'v-gold':''}">${card.pop10!=null?card.pop10.toLocaleString():'—'}</div></div>
-        <div class="metric"><div class="metric-lbl">PSA 10 $ (sold)</div><div class="metric-val v-gold">${fmt(card.psa10Price)}</div></div>
+        <div class="metric"><div class="metric-lbl">PSA 10 $${card.psa10Basis && card.psa10Basis.startsWith('last') ? ' (last sale)' : ' (sold)'}</div><div class="metric-val v-gold" ${card.psa10Price==null?'style="font-size:9px;color:var(--muted)"':''}>${card.psa10Price!=null?fmt(card.psa10Price):'no recorded sales'}</div></div>
         <div class="metric"><div class="metric-lbl">Upside vs raw</div><div class="metric-val ${s.upside>0?'v-green':s.upside!=null?'v-red':''}">${s.upside!=null?(s.upside>0?'+':'')+s.upside+'%':'—'}</div></div>
         <div class="metric"><div class="metric-lbl">90d trend</div><div class="metric-val ${trend>0?'v-green':trend!=null?'v-red':''}">${trend!=null?(trend>0?'+':'')+trend+'%':'—'}</div></div>
       </div>
@@ -4142,7 +4171,7 @@ function renderCards() {
           <div class="ditem"><div class="dk">Gem Pop (PSA 10 equiv)</div><div class="dv">${card.pop10!=null?card.pop10.toLocaleString():'no data'}</div></div>
           <div class="ditem"><div class="dk">Total graded</div><div class="dv">${card.popTotal!=null?card.popTotal.toLocaleString():'—'}</div></div>
           <div class="ditem"><div class="dk">Pop source</div><div class="dv">${card.popUrl?`<a href="${card.popUrl}" target="_blank" style="color:var(--mint);font-size:10px;">GemRate · ${POP_SNAPSHOT_DATE} ↗</a>`:`<span style="font-size:10px;color:var(--muted)">unavailable · <a href="https://www.psacard.com/pop" target="_blank" style="color:var(--mint);">PSA pop report ↗</a></span>`}</div></div>
-          <div class="ditem"><div class="dk">Price basis</div><div class="dv" style="font-size:10px;">${card.psa10Price!=null?'median real eBay sold (90d)':card.marketPrice!=null?(card.tcgUrl?'TCGplayer market':'eBay sold'):'no data'}</div></div>
+          <div class="ditem"><div class="dk">Price basis</div><div class="dv" style="font-size:10px;">${card.psa10Basis?card.psa10Basis:card.psa10Price!=null?'median real eBay sold (90d)':card.marketPrice!=null?(card.tcgUrl?'TCGplayer market':'TCGplayer / eBay sold'):'no data'}</div></div>
           <div class="ditem"><div class="dk">Raw $</div><div class="dv">${fmt(card.marketPrice)}</div></div>
           <div class="ditem"><div class="dk">Sold (90d)</div><div class="dv">${card.soldCount!=null?card.soldCount:'—'}</div></div>
           <div class="ditem"><div class="dk">Distribution</div><div class="dv">${card.detail.distribution}</div></div>

@@ -547,6 +547,7 @@ canvas.spark{width:100%;height:68px;display:block;}
     <div class="vtabs">
       <button class="vtab active" id="tabWatchlist" onclick="switchView('watchlist')">&#9889; Watchlist <span class="vtab-sub">tracked cards</span></button>
       <button class="vtab" id="tabAll" onclick="switchView('all')">&#128451; All Cards <span class="vtab-sub" id="allCountSub">full catalog</span></button>
+      <button class="vtab" id="tabLowPop" onclick="switchView('lowpop')">&#128142; Low Pop <span class="vtab-sub">PSA 10 &lt; 80</span></button>
     </div>
 
     <div id="viewWatchlist">
@@ -589,6 +590,11 @@ canvas.spark{width:100%;height:68px;display:block;}
           <div class="ac-grid" id="acGrid"></div>
         </div>
       </div>
+    </div>
+
+    <div id="viewLowPop" style="display:none">
+      <div class="ac-meta" id="lpMeta" style="margin-bottom:12px;">Loading low-pop screen...</div>
+      <div id="lpBody"></div>
     </div>
 
     <div class="ac-modal" id="acModal" onclick="if(event.target===this)acClose()">
@@ -4389,14 +4395,18 @@ let acSets = null, acIndex = null, acSetCache = {}, acOpenSeries = new Set();
 function switchView(v) {
   document.getElementById('viewWatchlist').style.display = v === 'watchlist' ? '' : 'none';
   document.getElementById('viewAll').style.display = v === 'all' ? '' : 'none';
+  document.getElementById('viewLowPop').style.display = v === 'lowpop' ? '' : 'none';
   document.getElementById('tabWatchlist').classList.toggle('active', v === 'watchlist');
   document.getElementById('tabAll').classList.toggle('active', v === 'all');
+  document.getElementById('tabLowPop').classList.toggle('active', v === 'lowpop');
   if (v === 'all' && !acSets) acLoadMeta();
+  if (v === 'lowpop' && !lpRows) lpLoad();
 }
 
 async function acLoadMeta() {
   try {
     acSets = await fetch('catalog/sets.json').then(r => r.json());
+    if (!window.acPops) { try { window.acPops = (await fetch('pops.json').then(r => r.json())).cards; } catch(e) { window.acPops = {}; } }
     const total = acSets.reduce((a, s) => a + s.t, 0);
     document.getElementById('acMeta').textContent = total.toLocaleString() + ' cards · ' + acSets.length + ' sets · prices: TCGplayer market (snapshot)';
     document.getElementById('allCountSub').textContent = total.toLocaleString() + ' cards';
@@ -4466,6 +4476,7 @@ function acRenderGrid(sid, cards) {
       <img loading="lazy" src="${c.img}" alt="${c.n.replace(/"/g,'&quot;')}">
       <div class="ac-name">${c.n}</div>
       <div class="ac-sub">#${c.num} · ${c.r || '—'}</div>
+      ${window.acPops && acPops[c.id] ? `<div class="ac-sub" style="color:var(--gold);">P10 pop: ${acPops[c.id].p}</div>` : ''}
       <div class="ac-price">${bp ? '$' + bp.v.market.toLocaleString() : 'no price'}</div>
     </div>`;
   }).join('');
@@ -4537,6 +4548,7 @@ function acOpenCard(sid, cardId) {
       <div>
         <h3>${c.n}</h3>
         <div class="ac-dset">${setMeta.n} · #${c.num} · ${c.r || '—'}</div>
+        ${window.acPops && acPops[c.id] ? `<div style="font-size:11px;color:var(--gold);margin:-8px 0 12px;">PSA 10 pop: <strong>${acPops[c.id].p}</strong> · ${acPops[c.id].t.toLocaleString()} total graded${acPops[c.id].u ? ` · <a href="${acPops[c.id].u}" target="_blank" style="color:var(--gold);">source</a>` : ''}</div>` : ''}
         ${priceRows ? `<table class="ac-ptable"><tr><th>Finish</th><th>Low</th><th>Market</th><th>High</th></tr>${priceRows}</table>` : '<div style="color:var(--muted);font-size:11px;margin-bottom:14px;">No TCGplayer price data for this card.</div>'}
         <div style="margin-bottom:14px;">
           <button class="run-btn" style="padding:8px 14px;font-size:11px;" onclick="acLiveSold()" id="acLiveBtn">&#9889; Load live eBay sold data</button>
@@ -4585,6 +4597,39 @@ async function acLiveSold() {
   }
   el.innerHTML = html;
   btn.disabled = false;
+}
+
+
+// ─── Low Pop screen: PSA 10 pop < 80, grouped by set ───
+let lpRows = null;
+async function lpLoad() {
+  try {
+    const data = await fetch('lowpop.json').then(r => r.json());
+    lpRows = data.rows;
+    const bySet = {};
+    lpRows.forEach(r => { (bySet[r.setId] = bySet[r.setId] || []).push(r); });
+    const setOrder = {};
+    data.sets.forEach((s, i) => setOrder[s.id] = i);
+    const setIds = Object.keys(bySet).sort((a, b) => (setOrder[a] ?? 999) - (setOrder[b] ?? 999));
+    document.getElementById('lpMeta').textContent = lpRows.length + ' cards with PSA 10 population under 80 · real PSA pops (GemRate, Sep 7 2026) · holo-and-above rarities · prices: TCGplayer market';
+    document.getElementById('lpBody').innerHTML = setIds.map(sid => {
+      const cards = bySet[sid].sort((a, b) => a.pop - b.pop);
+      const meta = data.sets.find(s => s.id === sid) || { n: sid, s: '' };
+      return `<div style="margin-bottom:18px;">
+        <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px;">${meta.n} <span style="color:var(--muted);font-weight:400;font-size:10px;">${meta.s} · ${cards.length} low-pop card${cards.length > 1 ? 's' : ''}</span></div>
+        <div class="ac-grid">${cards.map(c => `
+          <div class="ac-card" ${c.cid ? `onclick="acGoToCard('${c.setId}','${c.cid}')"` : ''}>
+            ${c.img ? `<img loading="lazy" src="${c.img}" alt="">` : '<div style="aspect-ratio:63/88;background:var(--dim);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:22px;">&#127775;</div>'}
+            <div class="ac-name">${c.n}</div>
+            <div class="ac-sub">#${c.num} · ${c.r || '—'}</div>
+            <div class="ac-sub" style="color:var(--gold);font-weight:700;">PSA 10 pop: ${c.pop}${c.total ? ' / ' + c.total.toLocaleString() + ' graded' : ''}</div>
+            <div class="ac-price">${c.price != null ? '$' + c.price.toLocaleString() : ''}</div>
+          </div>`).join('')}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    document.getElementById('lpMeta').textContent = 'Low-pop data failed to load: ' + e.message;
+  }
 }
 
 function acClose() { document.getElementById('acModal').classList.remove('open'); }
